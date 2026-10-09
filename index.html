@@ -3304,7 +3304,9 @@ function confetti(color){
 function buzz(p){
   Snd.init();
   const pad = $('#pad'+p); pad.classList.add('hit'); setTimeout(() => pad.classList.remove('hit'), 90);
-  if (cur && cur.buzz) cur.buzz(p);
+  if (!cur || !cur.buzz) return;
+  // online: bei „wer zuerst“ entscheidet die Reihenfolge des Drückens, nicht die der Ankunft
+  if (cur.seq && holdMs() > 0) netSeq(p, cur); else cur.buzz(p);
 }
 [0,1].forEach(i => $('#pad'+i).addEventListener('pointerdown', e => { e.preventDefault(); if (NET.on && NET.role === 'guest') return; if (mayAct(i)) buzz(i); }));
 // Bedienelemente gehören einem Spieler: fremde Seite gesperrt (Bot, online die andere Person)
@@ -3364,21 +3366,31 @@ function updateHud(){
 }
 
 /* Fortschrittsbalken-Countdown */
+// Online: läuft die Zeit ab, wartet der Gastgeber noch kurz auf Eingaben des Gasts, die vor Ablauf gedrückt wurden.
+// late(t) sagt, ob ein Druck zur Zeit t außerhalb der Frist lag (nach Ablauf oder noch vor dem Start, also im vorigen Zug).
+// Den Balken zeichnet der Gast selbst (data-cd).
 function makeCd(bar, isOver){
-  let tok = 0;
+  let tok = 0, T0 = 0, FULL = 0, on = false;
+  const freeze = () => { if (bar && bar.hasAttribute('data-cd')) { bar.removeAttribute('data-cd'); bar.removeAttribute('data-cc'); bar.removeAttribute('data-v'); } };
   return {
     run(ms, color, fn, full = ms){
       const my = ++tok, t0 = performance.now() - (full - ms);
-      if (bar) bar.style.background = color;
+      T0 = t0; FULL = full; on = true;
+      if (bar) { bar.style.background = color; if (NET.on) { bar.dataset.v = ''; bar.dataset.cd = `${Math.round(t0*10)/10} ${full}`; bar.dataset.cc = color; } }
       const step = () => {
-        if (my !== tok || isOver()) return;
+        if (my !== tok) return;
+        if (isOver()) { on = false; freeze(); return; }
         const el = (performance.now()-t0)/full;
         if (bar) bar.style.width = Math.max(0, 100-el*100) + '%';
-        if (el >= 1) fn(); else frame(step);
+        if (el >= 1 + holdMs()/full) {
+          netSeqRun(); if (my !== tok) return;
+          on = false; freeze(); fn();
+        } else frame(step);
       };
       frame(step);
     },
-    stop(){ tok++; }
+    stop(){ tok++; on = false; freeze(); },
+    late(t){ return on && (t > T0 + FULL || t < T0); }
   };
 }
 
@@ -3391,6 +3403,7 @@ function reaktion(done, need=LEN.react){
   const s = G.start.slice();
   const FAKES = ['Jetzt?','Grün?','Los?','Fast!'];
   function round(){
+    const tR = performance.now();   // online: Drücke von vor dieser Runde (Gast sah noch die alte) zählen nicht
     pads(true);
     view(`<div class="stage cut" id="st"><div class="big" id="big">Warten …</div><div class="sub" id="sb">Nur bei Grün drücken. Gelb ist eine Falle.</div></div>`);
     const st = $('#st'), big = $('#big');
@@ -3410,13 +3423,23 @@ function reaktion(done, need=LEN.react){
       if (over) return;
       green = true; st.classList.remove('fake'); st.classList.add('go'); big.textContent = 'Jetzt!'; Snd.go(); t0 = performance.now();
       if (BOT.on) { const [m, sd] = bv(BOTP.react); later(() => { if (!over) buzz(1); }, Math.max(160, m + gauss()*sd)); }
-      later(() => { if (over) return; over = true; cur = null; st.classList.remove('go'); big.textContent = 'Zu langsam!'; $('#sb').innerHTML = 'Keiner hat gedrückt, nochmal.'; nextPt(round, 1300*WAIT); }, 2500);
+      const slow = () => {
+        netSeqRun(); if (over) return;
+        // online: ein Druck von vor Ablauf kann noch in der Warteschlange stehen
+        if (NET.seq.some(e => e.c === cur)) return later(slow, 15);
+        over = true; cur = null; st.classList.remove('go'); big.textContent = 'Zu langsam!'; $('#sb').innerHTML = 'Keiner hat gedrückt, nochmal.'; nextPt(round, 1300*WAIT);
+      };
+      later(slow, 2500 + holdMs());
     }, total);
-    cur = { buzz: p => {
-      if (over) return; over = true; cur = null;
+    // online zählt der Moment des Drückens (beim Gast: das Bild, das er gerade vor sich hatte), nicht die Ankunft
+    cur = { seq: true, buzz: p => {
+      if (over) return;
+      const t = inT();
+      if (t < tR || (green && t - t0 > 2500)) return;
+      over = true; cur = null;
       let w, msg;
-      if (!green) { w = 1-p; msg = `${esc(P[p].name)} war zu früh`; st.classList.remove('fake'); st.classList.add('bad'); big.textContent = 'Zu früh!'; Snd.bad(); }
-      else { w = p; const ms = Math.round(performance.now()-t0); note.react(p, ms); msg = `${esc(P[p].name)}: ${ms} ms`; big.textContent = 'Treffer!'; }
+      if (!green || t < t0) { w = 1-p; msg = `${esc(P[p].name)} war zu früh`; st.classList.remove('fake', 'go'); st.classList.add('bad'); big.textContent = 'Zu früh!'; Snd.bad(); }
+      else { w = p; const ms = Math.round(t-t0); note.react(p, ms); msg = `${esc(P[p].name)}: ${ms} ms`; big.textContent = 'Treffer!'; }
       if (subpt(w)) s[w]++;
       $('#sb').innerHTML = `${msg}.${zcTail(w)}`;
       after(s, need, done, round);
@@ -3469,7 +3492,8 @@ function duoGame(done, next, o = {}){
     };
     const answer = (p, i) => {
       if (!open || over || ans[p] !== null || i >= n) return;
-      ans[p] = i; at[p] = performance.now() - t0; mark[p] = R.mark ? R.mark() : '';
+      const t = inT(); if (t < t0 || cd.late(t)) return;
+      ans[p] = i; at[p] = t - t0; mark[p] = R.mark ? R.mark(t - t0) : '';
       Snd.buzz(p); $('#pk'+p).textContent = '✓ geantwortet';
       main.querySelectorAll(`.duo[data-p="${p}"]`).forEach(b => b.disabled = true);
       if (ans[0] !== null && ans[1] !== null) evaluate();
@@ -3521,7 +3545,7 @@ function emoji(done){
     return { kick:`Emoji-Rätsel: ${cat}`, title:`<span class="emo" id="emo">${parts[0]}</span>`, opts:opts.map(esc), correct:opts.indexOf(right),
       ms: parts.length*1800 + 5000,
       start: () => later(step, 1800), stop: () => { stopped = true; },
-      mark: () => `nach ${shown} von ${parts.length} Emojis`,
+      mark: el => `nach ${NET.vt != null ? Math.min(parts.length, 1 + Math.floor(el/1800)) : shown} von ${parts.length} Emojis`,
       after: () => { const el = $('#emo'); if (el) el.textContent = e; return ''; } };
   }, {need: LEN.emo, bot:'emo'});
 }
@@ -3599,7 +3623,7 @@ function chainGame(done, kind){
     const btns = [...main.querySelectorAll('.opt')], st = $('#st');
     const cd = makeCd($('#qt'), () => over);
     const answer = i => {
-      if (over) return; over = true; cd.stop(); cur = null;
+      if (over || (i >= 0 && cd.late(inT()))) return; over = true; cd.stop(); cur = null;
       btns.forEach(b => b.disabled = true);
       const truth = nx.v > ref.v ? 1 : 0;
       $('#nv').textContent = show(nx.v);
@@ -3633,7 +3657,7 @@ function typeGame(done, o){
   function round(){
     const task = o.next(r);
     let over = false, phase = 'read', ans = -1, konter = false, botAt = Infinity;
-    const lockUntil = [0,0];
+    const lockUntil = [0,0], tR = performance.now();
     pads(true);
     view(`<div class="card cut"><div class="kick">${o.kick}</div>${task.html}
       <div class="hint" id="hn">&nbsp;</div><div id="ar"></div>
@@ -3661,7 +3685,7 @@ function typeGame(done, o){
       else if (remote) { inp.readOnly = true; inp.dataset.net = 'in'; inp.placeholder = `⌨️ ${P[p].name} tippt …`; $('#ok').dataset.net = 'ok'; $('#ok').style.display = 'none'; }
       else inp.focus();
       const check = () => {
-        if (over || ans !== p || !inp.value.trim()) return;
+        if (over || ans !== p || !inp.value.trim() || cd.late(inT())) return;
         if (task.ok(inp.value)) { note.correct(p); Snd.good(); end(p, konter ? `Konter sitzt! ${nm(p)} hat es.` : `${nm(p)} hat es!`); }
         else miss(false);
       };
@@ -3677,16 +3701,18 @@ function typeGame(done, o){
       if (!konter) { konter = true; const was = ans; $('#ar').innerHTML = ''; st.innerHTML = `${nm(was)} ${slow ? 'war zu langsam' : 'liegt falsch'}.`; later(() => { if (!over) input(1 - was); }, 900); return; }
       end(-1, `${nm(ans)} ${slow ? 'war beim Konter zu langsam' : 'liegt beim Konter auch falsch'}, kein Punkt.`);
     };
-    cur = { buzz: p => {
+    let tb = 0;
+    cur = { seq: true, buzz: p => {
       if (over || ans >= 0) return;
-      const now = performance.now();
-      if (phase !== 'buzz') { lockUntil[p] = now + 2000 + o.readMs; Snd.bad(); st.innerHTML = `${nm(p)} war zu früh und ist kurz gesperrt.`; return; }
-      if (now < lockUntil[p]) return;
+      const now = inT();
+      if (now < tR) return;   // Druck aus der vorigen Runde
+      if (phase !== 'buzz' || now < tb) { lockUntil[p] = now + 2000 + o.readMs; Snd.bad(); st.innerHTML = `${nm(p)} war zu früh und ist kurz gesperrt.`; return; }
+      if (now < lockUntil[p] || cd.late(now)) return;
       Snd.buzz(p); cd.stop(); input(p);
     }};
     later(() => {
       if (over) return;
-      phase = 'buzz'; st.textContent = o.buzzTxt;
+      phase = 'buzz'; tb = performance.now(); st.textContent = o.buzzTxt;
       if (BOT.on && o.bot) { const tt = o.bot.solve(task); botAt = performance.now() + tt; if (tt < o.buzzMs - 400) later(() => { if (!over && ans < 0) buzz(1); }, tt); }
       cd.run(o.buzzMs, 'var(--acc)', () => { Snd.bad(); end(-1, 'Zeit abgelaufen, niemand hat gebuzzert.'); });
     }, o.readMs);
@@ -3797,20 +3823,25 @@ function tippen(done){
     view(`<div class="stage cut"><div class="sub" id="hs">Runde ${r+1}: 3 bis 5 Sekunden, das Ende kommt überraschend</div><div class="big" id="big">3</div>
       <div class="tapbars"><div><b id="c0">0</b>${esc(P[0].name)}</div><div><b id="c1">0</b>${esc(P[1].name)}</div></div>
       <div class="timer"><i id="tb"></i></div></div>`);
-    cur = { buzz: p => { if (!live) return; c[p]++; $('#c'+p).textContent = c[p]; } };
+    let t0 = 0, stopped = false;
+    // gezählt wird jeder Druck zwischen Start und Ende, online nach dem Moment des Drückens
+    cur = { buzz: p => { const t = inT(); if (!t0 || t < t0 || t > t0 + dur) return; c[p]++; $('#c'+p).textContent = c[p]; } };
     let n = 3; Snd.tick();
     const cdn = () => {
       n--;
       if (n > 0) { $('#big').textContent = n; Snd.tick(); later(cdn, 850); return; }
       $('#big').textContent = 'Hämmern!'; Snd.go(); live = true;
       if (BOT.on) { const tap = () => { if (!live) return; buzz(1); later(tap, 1000/(bv(BOTP.ham)*brnd(.8, 1.2))); }; later(tap, brnd(130, 280)); }
-      const t0 = performance.now();
+      t0 = performance.now();
+      const tb0 = $('#tb'); if (tb0 && NET.on) { tb0.dataset.v = ''; tb0.dataset.cd = `${Math.round(t0*10)/10} ${Math.round(dur)}`; }
       const tick = () => {
-        const el = (performance.now()-t0)/dur;
+        const now = performance.now(), el = (now-t0)/dur;
         const tb = $('#tb'); if (tb) tb.style.width = Math.max(0,100-el*100) + '%';
         if (el < 1) return frame(tick);
-        live = false; cur = null; r++;
-        $('#big').textContent = 'Stopp';
+        if (!stopped) { stopped = true; live = false; $('#big').textContent = 'Stopp'; if (tb) { tb.removeAttribute('data-cd'); tb.removeAttribute('data-v'); } }
+        // online: Drücke des Gasts von kurz vor Schluss sind vielleicht noch unterwegs
+        if (now < t0 + dur + holdMs()) return frame(tick);
+        cur = null; r++;
         note.taps(0, c[0]); note.taps(1, c[1]);
         const w = c[0] > c[1] ? 0 : c[1] > c[0] ? 1 : -1;
         if (w >= 0) { if (subpt(w)) s[w]++; $('#hs').innerHTML = wonMsg(w, 'hat öfter gedrückt', 'und gewinnt die Runde'); after(s, LEN.ham, done, round, 2000); }
@@ -3828,7 +3859,7 @@ function tauziehen(done){
   const s = G.start.slice(); let r = 0;
   function round(){
     let over = false, pos = 0;
-    const N = 8, LEAD = 1900, TRAVEL = 1700, WIN = 260, MAXS = 6;
+    const N = 8, LEAD = 1900, TRAVEL = 1700, WIN = 260, MAXS = 6, tR = performance.now();
     pads(true);
     view(`<div class="stage cut neutral"><div class="sub" id="ts">Runde ${r+1}: drückt genau, wenn eine Note die gelbe Linie trifft. Wer genauer ist, zieht das Seil. Fehlklicks ziehen für den Gegner.</div>
       <div class="track" id="trk"><i class="hitline"></i></div>
@@ -3838,7 +3869,8 @@ function tauziehen(done){
     const base = Math.max(430, 760 - r*45);
     const beats = []; let t = performance.now() + LEAD;
     for (let i = 0; i < N; i++) { beats.push({t, judged:[null,null], done:false}); t += base * pickOne([.75, 1, 1, 1.25, 1.5]); }
-    const addEl = (b, cls) => { b.el = document.createElement('i'); b.el.className = 'note' + (cls ? ' ' + cls : ''); trk.appendChild(b.el); };
+    // online zeichnet der Gast die Noten selbst nach der gemeinsamen Uhr (data-bt: Schlagzeit beim Gastgeber)
+    const addEl = (b, cls) => { b.el = document.createElement('i'); b.el.className = 'note' + (cls ? ' ' + cls : ''); if (NET.on) { b.el.dataset.v = ''; b.el.dataset.bt = Math.round(b.t*10)/10; b.el.dataset.tr = TRAVEL; } trk.appendChild(b.el); };
     beats.forEach(b => addEl(b));
     const botBeat = b => { if (!BOT.on) return; const [sd, miss] = bv(BOTP.tug); if (Math.random() < miss) return; later(() => { if (!over) buzz(1); }, Math.max(0, b.t - performance.now() + gauss()*sd)); };
     beats.forEach(botBeat);
@@ -3854,10 +3886,15 @@ function tauziehen(done){
     };
     cur = { buzz: p => {
       if (over) return;
-      const now = performance.now();
+      const now = inT();
+      if (now < tR) return;   // Druck aus der Pause vor dieser Runde
       let best = null;
       for (const b of beats) { if (b.done || b.judged[p] != null) continue; const d = Math.abs(now - b.t); if (d <= WIN && (!best || d < Math.abs(now - best.t))) best = b; }
-      if (!best) { pull(1-p); show(p, 'Fehlklick'); Snd.bad(); return; }
+      if (!best) {
+        // Note war schon gewertet, bevor der Druck ankam: zählt weder als Treffer noch als Fehlklick
+        if (beats.some(b => b.done && b.judged[p] == null && Math.abs(now - b.t) <= WIN)) return;
+        pull(1-p); show(p, 'Fehlklick'); Snd.bad(); return;
+      }
       const dev = Math.round(Math.abs(now - best.t)); best.judged[p] = dev; show(p, `±${dev} ms`); Snd.buzz(p);
       if (best.judged[0] != null && best.judged[1] != null) judge(best);
     }};
@@ -3881,8 +3918,8 @@ function tauziehen(done){
         const f = 1 - (b.t - now)/TRAVEL;
         b.el.style.left = (12 + (1 - f)*88) + '%';
         b.el.style.opacity = f < 0 ? 0 : 1;
-        if (!b.ticked && now >= b.t) { b.ticked = true; Snd.tick(); }
-        if (!b.done && now > b.t + WIN) judge(b);
+        if (!b.ticked && now >= b.t) { b.ticked = true; sndLocal(() => Snd.tick()); }
+        if (!b.done && now > b.t + WIN + holdMs()) judge(b);
       }
       if (beats.every(b => b.done)) return end();
       frame(loop);
@@ -3906,7 +3943,7 @@ function zeitgefuehl(done){
       <div class="sub" id="zs">Die Uhr verschwindet nach 2 Sekunden. Jeder drückt einmal.</div></div>`);
     const clk = $('#clk');
     const end = () => {
-      if (over) return; over = true; live = false; cur = null;
+      if (over) return; over = true; live = false; cur = null; clk.removeAttribute('data-za');
       const d = press.map(v => v === null ? Infinity : Math.abs(v-T));
       [0,1].forEach(i => { $('#m'+i).textContent = press[i] === null ? 'nicht gedrückt' : `${f2(press[i])} s (${d[i] < .005 ? 'perfekt' : '± ' + f2(d[i])})`; });
       clk.textContent = f2(T);
@@ -3917,8 +3954,9 @@ function zeitgefuehl(done){
       after(s, LEN.zeit, done, round, 2800);
     };
     cur = { buzz: p => {
-      if (!live || press[p] !== null) return;
-      press[p] = (performance.now()-t0)/1000; Snd.buzz(p);
+      const t = inT();
+      if (!live || press[p] !== null || t < t0 || t - t0 > (T + 5)*1000) return;
+      press[p] = (t-t0)/1000; Snd.buzz(p);
       $('#m'+p).textContent = '✓ gedrückt';
       if (press[0] !== null && press[1] !== null) end();
     }};
@@ -3927,12 +3965,14 @@ function zeitgefuehl(done){
       n--;
       if (n > 0) { clk.textContent = n; Snd.tick(); later(cdn, 800); return; }
       Snd.go(); t0 = performance.now(); live = true;
+      // online: der Gast misst ab dem Moment, in dem bei ihm die Uhr losläuft (data-za = Startzeit beim Gastgeber)
+      if (NET.on) clk.dataset.za = Math.round(t0*10)/10;
       if (BOT.on) later(() => { if (live && press[1] === null) buzz(1); }, Math.max(300, (T + gauss()*bv(BOTP.zeit))*1000));
       const tick = () => {
         if (over) return;
         const el = (performance.now()-t0)/1000;
         clk.textContent = el < 2 ? f2(el) : '?,??';
-        if (el > T + 5) end(); else frame(tick);
+        if (el > T + 5 + holdMs()/1000) end(); else frame(tick);
       };
       tick();
     };
@@ -3946,6 +3986,7 @@ function farbfalle(done){
   const s = G.start.slice();
   const C = [['ROT','#ff3040'],['BLAU','#3a86ff'],['GRÜN','#2bff88'],['GELB','#f9f002']];
   let live = false, match = false, over = false, streak = 0, iv = 1150, tok = 0;
+  const hist = [];   // gezeigte Wörter mit Zeit: online zählt das Wort, das beim Drücken zu sehen war
   pads(true);
   view(`<div class="stage cut neutral"><div class="sub">Buzzern, wenn das Wort in seiner eigenen Farbe erscheint, etwa ROT in Rot</div>
     <div class="stroop" id="wd">Gleich …</div>
@@ -3960,16 +4001,23 @@ function farbfalle(done){
     wd.textContent = C[wi][0]; wd.style.color = C[ci][1];
     wd.style.transform = `rotate(${(Math.random()*10-5).toFixed(1)}deg)`;
     live = true; iv = Math.max(620, iv - 30);
+    hist.push({t: performance.now(), m: match, w: wd.textContent, c: wd.style.color, r: wd.style.transform, end: Infinity}); if (hist.length > 40) hist.shift();
     if (BOT.on) { const [m, sd, fb] = bv(BOTP.farb); if (match || Math.random() < fb) later(() => { if (my === tok && live) buzz(1); }, Math.max(250, m + gauss()*sd)); }
     later(() => { if (my === tok) show(); }, iv);
   };
-  cur = { buzz: p => {
+  cur = { seq: true, buzz: p => {
     if (!live || over) return;
+    const t = inT(); let h = null;
+    for (let k = hist.length - 1; k >= 0; k--) if (hist[k].t <= t) { h = hist[k]; break; }
+    if (!h || t >= h.end) return;
+    hist.forEach(x => { if (x.end > t) x.end = t; });
     live = false; tok++;
-    const w = match ? p : 1-p;
-    if (match) Snd.good(); else Snd.bad();
+    // kam inzwischen schon ein neues Wort, wird das gewertete wieder gezeigt
+    if (h !== hist[hist.length - 1]) { wd.textContent = h.w; wd.style.color = h.c; wd.style.transform = h.r; }
+    const hit = h.m, w = hit ? p : 1-p;
+    if (hit) Snd.good(); else Snd.bad();
     if (subpt(w)) s[w]++;
-    fs.innerHTML = match ? `${nm(p)} erwischt den Treffer.${zcTail(w)}` : `${nm(p)} fällt rein, ${ptFor(1-p)}.`;
+    fs.innerHTML = hit ? `${nm(p)} erwischt den Treffer.${zcTail(w)}` : `${nm(p)} fällt rein, ${ptFor(1-p)}.`;
     if (s[0] >= LEN.farb || s[1] >= LEN.farb) { over = true; cur = null; nextPt(() => done(s[0] > s[1] ? 0 : 1, s.slice()), 1600*WAIT); }
     else nextPt(() => { if (over) return; wd.textContent = '…'; wd.style.color = 'var(--muted)'; later(show, 500); }, 1000*WAIT);
   }};
@@ -4018,7 +4066,7 @@ function senso(done){
       }
     };
     function press(i){
-      if (over || idx < 0) return;
+      if (over || idx < 0 || cd.late(inT())) return;
       flash(i, 180);
       if (adding) {
         seq.push(i); cd.stop(); note.chain(seq.length); Snd.good();
@@ -4076,7 +4124,7 @@ function nim(done){
     let deadline = 0;
     const redraw = () => { if (cd) cd.stop(); draw(); };
     function take(pi, k, auto){
-      if (over || pi < 0 || !v.take.includes(k) || k > piles[pi]) return;
+      if (over || pi < 0 || !v.take.includes(k) || k > piles[pi] || (!auto && cd && cd.late(inT()))) return;
       if (cd) cd.stop();
       piles[pi] -= k; Snd.tick();
       if (total() <= 0) {
@@ -4132,7 +4180,7 @@ function ssp(done){
   const s = G.start.slice();
   const H = ['✊','✋','✌️'], HN = ['Stein','Papier','Schere'];
   function round(){
-    const ch = [null,null]; let open = false, over = false, schnuck = false;
+    const ch = [null,null]; let open = false, over = false, schnuck = false, tOpen = 0;
     pads(false);
     view(`<div class="card cut"><div class="kick">Schnick Schnack Schnuck</div>
       <div class="call" id="call">Bereit?</div>
@@ -4158,6 +4206,7 @@ function ssp(done){
     }
     const choose = (p, c) => {
       if (!open || over || ch[p] !== null) return;
+      const t = inT(); if (t < tOpen || t > tOpen + 2300) return;
       ch[p] = c; Snd.buzz(p); $('#pk'+p).textContent = '✓';
       main.querySelectorAll(`.hand[data-p="${p}"]`).forEach(b => b.disabled = true);
       if (schnuck && ch[0] !== null && ch[1] !== null) reveal();
@@ -4168,10 +4217,10 @@ function ssp(done){
     [['Schnick',700],['Schnack',1400],['Schnuck!',2100]].forEach(([word,t],i) => later(() => {
       if (over) return;
       call.textContent = word; Snd.tick();
-      if (i === 0) open = true;
+      if (i === 0) { open = true; tOpen = performance.now(); }
       if (i === 2) { schnuck = true; if (ch[0] !== null && ch[1] !== null) reveal(); }
     }, t));
-    later(() => { if (!over) reveal(); }, 3000);
+    later(() => { if (!over) reveal(); }, 3000 + holdMs());
   }
   round();
 }
@@ -4229,6 +4278,7 @@ function sprintPaint(ctx, S){
 
 }
 const SPRINT = { v0:300, a:38, a2:3.5 };   // Tempo in px/s: v0 + a·t + a2·t², steigt ohne Obergrenze
+const SPRINT_NETW = 520;   // online rechnen beide Geräte mit derselben Bahnbreite, jedes zeigt sie in seiner Größe
 function sprint(done){
   const s = G.start.slice();
   function run(){
@@ -4237,48 +4287,60 @@ function sprint(done){
       <div class="srow"><span class="c1">▲ ${esc(P[0].name)}</span><span id="sinfo" class="hint" style="margin:0">${sub(s)}</span><span class="c2">${esc(P[1].name)} ▼</span></div>
       <p class="hint">${kb('A')} / ${kb('L')} oder Buzzer = springen. Über Blöcke springen, unter gelben Drohnen durchlaufen. Gelbe Rauten schicken dem Gegner ein Extra-Hindernis.</p></div>`);
     const cv = $('#cv'), ctx = cv.getContext && cv.getContext('2d');
-    const W = Math.max(280, cv.clientWidth || 600), H = 280, dpr = Math.min(2, window.devicePixelRatio || 1);
-    cv.width = W*dpr; cv.height = H*dpr;
-    if (ctx) ctx.setTransform(dpr,0,0,dpr,0,0);
-    const LH = H/2, RX = Math.round(Math.min(80, W*.14)), RW = 18, RH = 26, G = 2300, JV = 620, AIR = 2*JV/G;
+    const online = NET.on && NET.role === 'host';
+    const cw = Math.max(280, cv.clientWidth || 600), W = online ? SPRINT_NETW : cw, H = 280, dpr = Math.min(2, window.devicePixelRatio || 1);
+    const sc = online ? Math.min(cw/W, 1.15) : 1;
+    if (online) { cv.style.width = Math.round(W*sc) + 'px'; cv.style.height = Math.round(H*sc) + 'px'; cv.style.margin = '0 auto'; }
+    cv.width = W*sc*dpr; cv.height = H*sc*dpr;
+    if (ctx) ctx.setTransform(dpr*sc,0,0,dpr*sc,0,0);
+    const LH = H/2, RX = Math.round(Math.min(80, W*.14)), RW = 18, RH = 26, GR = 2300, JV = 620, AIR = 2*JV/GR;
     const K = clamp(W/600, .7, 1.1), V = tt => K*(SPRINT.v0 + SPRINT.a*tt + SPRINT.a2*tt*tt);
-    const col = ['#ff2a6d','#05d9e8'];
-    const rn = [{y:0,vy:0,dead:false,buf:0},{y:0,vy:0,dead:false,buf:0}];
+    // deadT: Zeitpunkt des Crashs, null solange der Läufer lebt
+    const rn = [{y:0,vy:0,buf:0,deadT:null},{y:0,vy:0,buf:0,deadT:null}];
     let obs = [], queue = [], items = [], warn = [0,0], t = 0, speed = V(0), dist = 0, since = 0, gap = V(0)*.9;
-    let over = false, started = false, last = 0, nowT = 0, label = '3', lsize = 56;
+    let over = false, started = false, last = 0, label = '3', lsize = 56;
+    // Zeitausgleich online: Sprünge des Gasts kommen verspätet an. Der Gastgeber merkt sich die letzten 1,7 s und rechnet
+    // den Läufer des Gasts ab dem Moment des Drückens neu. Ein Crash des Gasts gilt erst, wenn kein rettender Sprung mehr unterwegs sein kann.
+    const rem = () => isRemote(1) && holdMs() > 0;
+    const hist = []; let frozen = false, ja = 0;
+    // Vorlauf: online entstehen Hindernisse LT Sekunden bevor sie ins Bild kommen (rechts außerhalb). Muster, Abstände und Zeitpunkt
+    // im Bild sind dieselben wie offline (dort ist LT = 0), aber der Gast kennt sie schon, wenn sie auftauchen.
+    const LT = online ? clamp(holdMs()/1000 + .15, .35, .8) : 0;
+    let tl = 0, distl = 0;
+    const edge = () => W + 10 + (distl - dist);
     const block = (w = 14+R0(16), h = 18+R0(22)) => ({w, h, b:0, fly:false});
     const drone = () => ({w:28, h:12, b:RH+9, fly:true});
     // Hindernis-Muster: [Hindernis, Zeit bis zum nächsten in s]
     const pattern = () => {
-      const lvl = Math.min(1, t/14), r = Math.random();
-      const free = () => AIR + .26 + Math.random()*Math.max(.12, .6 - t*.03);
-      if (t < 1.5) return [[block(), free()]];
+      const lvl = Math.min(1, tl/14), r = Math.random();
+      const free = () => AIR + .26 + Math.random()*Math.max(.12, .6 - tl*.03);
+      if (tl < 1.5) return [[block(), free()]];
       if (r < .2 + .15*lvl) return [[drone(), free()]];
-      if (t > 3 && r < .38 + .2*lvl) return [[block(), AIR + .13 + Math.random()*.06], [drone(), free()]];   // Block, dann gleich Drohne
-      if (t > 6 && r < .52 + .2*lvl) return [[drone(), .34 + Math.random()*.1], [block(), free()]];         // Drohne, dann gleich Block
-      if (t > 5 && r < .64 + .15*lvl) return [[block(), AIR + .3 + Math.random()*.1], [block(), free()]];   // Doppelblock
+      if (tl > 3 && r < .38 + .2*lvl) return [[block(), AIR + .13 + Math.random()*.06], [drone(), free()]];   // Block, dann gleich Drohne
+      if (tl > 6 && r < .52 + .2*lvl) return [[drone(), .34 + Math.random()*.1], [block(), free()]];         // Drohne, dann gleich Block
+      if (tl > 5 && r < .64 + .15*lvl) return [[block(), AIR + .3 + Math.random()*.1], [block(), free()]];   // Doppelblock
       if (r < .74) return [[block(34 + R0(18), 14 + R0(10)), free()]];                                     // langer, flacher Block
       return [[block(), free()]];
     };
     const spawn = () => {
       if (!queue.length) queue = pattern();
       const [o, gt] = queue.shift();
-      obs.push(Object.assign({x: W + 10}, o));
-      since = 0; gap = gt * speed;
-      if (t > 3 && !o.fly && !queue.length && Math.random() < .3) items.push({x: W + 10 + gap*.5, y: 34 + R0(14), taken:[false,false]});
+      obs.push(Object.assign({x: edge()}, o));
+      since = 0; gap = gt * V(tl);
+      if (tl > 3 && !o.fly && !queue.length && Math.random() < .3) items.push({x: edge() + gap*.5, y: 34 + R0(14), taken:[false,false]});
     };
     // Störsender: schickt dem Gegner ein Extra-Hindernis mit fairem Abstand
     const sabotage = q => {
-      const minGap = speed*(AIR + .22);
-      let x = W + 10;
+      const e = edge(), minGap = V(tl)*(AIR + .22);
+      let x = e;
       obs.forEach(o => { if ((o.lane == null || o.lane === q) && Math.abs(o.x - x) < minGap) x = Math.max(x, o.x + minGap); });
       obs.push({x, w:16, h:20 + R0(6), b:0, fly:false, lane:q});
-      since = Math.min(since, gap - (x - (W + 10)) - minGap);
-      warn[q] = t + 1.3; Snd.tone(300, .15, 'square', .04);
+      since = Math.min(since, gap - (x - e) - minGap);
+      warn[q] = t + 1.3 + LT; Snd.tone(300, .15, 'square', .04);
     };
     const bot = BOT.on ? {tgt:null, eps:0, skip:false} : null;
-    const botStep = () => {
-      const r = rn[1]; if (r.dead) return;
+    const botStep = st => {
+      const r = rn[1]; if (r.deadT != null) return;
       const inLane = o => o.lane == null || o.lane === 1;
       const ahead = obs.filter(o => inLane(o) && o.x + o.w > RX - 2).sort((a, b) => a.x - b.x);
       const tgt = ahead.find(o => !o.fly && !o.botDone);
@@ -4286,9 +4348,9 @@ function sprint(done){
       if (bot.tgt !== tgt) { const [sd, miss] = bv(BOTP.sprint); bot.tgt = tgt; bot.eps = gauss()*sd*(1 + .25*Math.max(0, speed/V(0) - 1)); bot.skip = Math.random() < miss; }
       if (bot.skip || r.y > 0) return;
       const tIn = o => (o.x - (RX + RW - 3))/speed, tOut = o => (o.x + o.w - (RX + 3))/speed;
-      const dsc = JV*JV - 2*G*Math.max(1, tgt.h - 2);
+      const dsc = JV*JV - 2*GR*Math.max(1, tgt.h - 2);
       if (dsc <= 0) return;
-      const ta = (JV - Math.sqrt(dsc))/G, tb = (JV + Math.sqrt(dsc))/G;
+      const ta = (JV - Math.sqrt(dsc))/GR, tb = (JV + Math.sqrt(dsc))/GR;
       let lo = tOut(tgt) - tb, hi = tIn(tgt) - ta;
       for (const o of ahead) {
         if (!o.fly) continue;
@@ -4296,16 +4358,22 @@ function sprint(done){
         else if (o.x < tgt.x + tgt.w + speed*(AIR + .3)) hi = Math.min(hi, tIn(o) - (AIR - .02));
       }
       const want = hi > lo ? lo + .3*(hi - lo) : lo;
-      if (want - bot.eps <= 0) { r.buf = nowT; tgt.botDone = true; }
+      if (want - bot.eps <= 0) { r.buf = st; tgt.botDone = true; }
     };
-    const hitTest = (r,o) => { const m = 3; return RX+m < o.x+o.w && RX+RW-m > o.x && r.y+m < o.b+o.h && r.y+RH-m > o.b; };
-    const paintState = () => ({W, H, LH, RX, RW, RH, dist, speed, v0: V(0), started, over, items, warn, t, obs, rn, label, lsize});
-    const draw = () => { const S = paintState(); if (ctx) sprintPaint(ctx, S); netSprint(S); };
+    // sh: so viel weiter rechts lagen die Hindernisse zum betrachteten Zeitpunkt
+    const hitTest = (r, o, sh) => { const m = 3, x = o.x + sh; return RX+m < x+o.w && RX+RW-m > x && r.y+m < o.b+o.h && r.y+RH-m > o.b; };
+    const shownDead = (r, p) => r.deadT != null && (over || p !== 1 || !rem() || performance.now() - r.deadT >= holdMs());
+    const paintState = () => ({W, H, LH, RX, RW, RH, dist, speed, v0: V(0), started, over, items, warn, t, obs, rn: rn.map((r, p) => ({y: r.y, dead: shownDead(r, p)})), label, lsize});
+    const draw = () => { const S = paintState(); if (ctx) sprintPaint(ctx, S); if (NET.on) netSprint(S, {ht: started && !frozen ? last : performance.now(), ac: K*(SPRINT.a + 2*SPRINT.a2*t), g: GR, jv: JV, fz: frozen, rn, ja}); };
     const end = () => {
       over = true; cur = null; Snd.crash();
       const m = Math.floor(dist/10);
+      // Wer zuerst crasht, verliert. Crashen beide im selben Teilschritt, ist es ein Doppel-Crash
+      const d0 = rn[0].deadT == null ? Infinity : rn[0].deadT, d1 = rn[1].deadT == null ? Infinity : rn[1].deadT, T = Math.min(d0, d1);
+      if (d0 > T) rn[0].deadT = null;
+      if (d1 > T) rn[1].deadT = null;
       let w = -1;
-      if (rn[0].dead && !rn[1].dead) w = 1; else if (rn[1].dead && !rn[0].dead) w = 0;
+      if (d0 === T && d1 > T) w = 1; else if (d1 === T && d0 > T) w = 0;
       if (w >= 0) note.sprint(w, m);
       lsize = 30; label = w < 0 ? 'Doppel-Crash!' : `${P[1-w].name} crasht!`;
       draw();
@@ -4314,40 +4382,76 @@ function sprint(done){
       if (w < 0) nextPt(run, 1700*WAIT); else after(s, LEN.sprint, done, run, 1900);
     };
     // Physik in kleinen Teilschritten, damit bei hohem Tempo nichts durchgetunnelt wird
-    const step = h => {
+    const world = (h, st) => {
       t += h;
       speed = V(t);
-      const dx = speed*h; dist += dx; since += dx;
+      const dx = speed*h; dist += dx;
       for (const o of obs) o.x -= dx;
       for (const it of items) it.x -= dx;
-      if (since >= gap) spawn();
-      if (bot) botStep();
-      for (let p=0; p<2; p++) {
-        const r = rn[p];
-        if (r.y === 0 && r.buf && nowT - r.buf < 150) { r.vy = JV; r.buf = 0; Snd.jump(p); }
-        if (r.y > 0 || r.vy > 0) { r.vy -= G*h; r.y += r.vy*h; if (r.y <= 0) { r.y = 0; r.vy = 0; } }
-        if (obs.some(o => (o.lane == null || o.lane === p) && hitTest(r,o))) r.dead = true;
-        for (const it of items) if (!it.taken[p] && RX < it.x + 12 && RX + RW > it.x && r.y + RH > it.y && r.y < it.y + 12) { it.taken[p] = true; sabotage(1-p); }
+      lead(h);
+      if (bot) botStep(st - h*1000);
+    };
+    // Vorlauf: Zeit und Strecke, bei der neue Hindernisse entstehen
+    const lead = h => { tl += h; const dl = V(tl)*h; distl += dl; since += dl; if (since >= gap) spawn(); };
+    // ein Läufer, ein Teilschritt zur Uhrzeit st: Sprung, Schwerkraft, Aufprall, Rauten
+    const runner = (p, st, h, sh) => {
+      const r = rn[p];
+      if (r.deadT != null) return;
+      // Sprung genau ab dem Moment des Drückens: im Teilschritt nur die Zeit danach steigen (gleich für beide Seiten, auch online)
+      let hj = h;
+      if (r.y === 0 && r.buf && st >= r.buf && st - r.buf < 150) { r.vy = JV; hj = Math.min(h, (st - r.buf)/1000); r.buf = 0; if (isRemote(p)) sndLocal(() => Snd.jump(p)); else Snd.jump(p); }
+      if (r.y > 0 || r.vy > 0) { r.vy -= GR*hj; r.y += r.vy*hj; if (r.y <= 0 && r.vy <= 0) { r.y = 0; r.vy = 0; } }
+      if (obs.some(o => (o.lane == null || o.lane === p) && hitTest(r, o, sh))) { r.deadT = st; return; }
+      for (const it of items) if (!it.taken[p] && RX < it.x + sh + 12 && RX + RW > it.x + sh && r.y + RH > it.y && r.y < it.y + 12) { it.taken[p] = true; sabotage(1-p); }
+    };
+    // Sprung des Gasts zum Zeitpunkt ct einbauen: Zustand von damals holen und bis jetzt neu rechnen
+    const retro = ct => {
+      const r = rn[1];
+      ja = Math.max(ja, ct);
+      if (r.deadT != null && ct > r.deadT) return;
+      const k = hist.findIndex(e => e.t >= ct);
+      if (k < 0) { if (r.deadT == null) r.buf = ct; return; }
+      r.y = hist[k].y; r.vy = hist[k].vy; r.buf = ct; r.deadT = null;
+      for (let j = k; j < hist.length; j++) {
+        const e = hist[j];
+        e.y = r.y; e.vy = r.vy; e.buf = r.buf;
+        runner(1, e.t, e.h, dist - e.d);
+        if (r.deadT != null) break;
       }
     };
-    const loop = now => {
+    const loop = () => {
       if (over) return;
-      nowT = now;
-      const dt = clamp((now-last)/1000, 0, .05); last = now;
-      const n = Math.max(1, Math.ceil(dt/.008));
-      for (let i=0; i<n; i++) { step(dt/n); if (rn[0].dead || rn[1].dead) break; }
-      obs = obs.filter(o => o.x + o.w > -30); items = items.filter(it => it.x > -30);
+      const now = performance.now();
+      if (!frozen) {
+        const t1 = last, dt = clamp((now-last)/1000, 0, .05), R = rem();
+        last = now;
+        const n = Math.max(1, Math.ceil(dt/.008));
+        for (let i=0; i<n; i++) {
+          const h = dt/n, st = t1 + (now - t1)*(i + 1)/n;
+          world(h, st);
+          if (R) hist.push({t: st, h, d: dist, y: rn[1].y, vy: rn[1].vy, buf: rn[1].buf});
+          runner(0, st, h, 0); runner(1, st, h, 0);
+          if (rn[0].deadT != null || (!R && rn[1].deadT != null)) { frozen = true; break; }
+        }
+        // alte Hindernisse online erst spät wegwerfen, ein verspäteter Sprung braucht sie noch
+        const keep = R ? -30 - speed*1.8 : -30;
+        obs = obs.filter(o => o.x + o.w > keep); items = items.filter(it => it.x > keep);
+        while (hist.length && hist[0].t < now - 1700) hist.shift();
+      }
       draw();
-      if (rn[0].dead || rn[1].dead) return end();
+      const d0 = rn[0].deadT == null ? Infinity : rn[0].deadT, d1 = rn[1].deadT == null ? Infinity : rn[1].deadT, T = Math.min(d0, d1);
+      if (T < Infinity && now >= T + holdMs()) return end();
       frame(loop);
     };
-    cur = { buzz: p => { if (!over) rn[p].buf = performance.now(); } };
+    cur = { buzz: p => { if (over) return; if (p === 1 && rem()) retro(inT()); else rn[p].buf = performance.now(); } };
     draw();
     let n = 3; Snd.tick();
     const cdn = () => {
       n--;
       if (n > 0) { label = String(n); draw(); Snd.tick(); later(cdn, 700); return; }
-      label = ''; started = true; Snd.go(); last = performance.now(); frame(loop);
+      label = ''; started = true; Snd.go(); last = performance.now();
+      for (let k = Math.round(LT/.008); k > 0; k--) lead(.008);
+      frame(loop);
     };
     later(cdn, 700);
   }
@@ -4397,7 +4501,7 @@ function memory(done){
     });
   };
   const flip = i => {
-    if (lock || over || open.includes(i) || cards[i].classList.contains('done')) return;
+    if (lock || over || open.includes(i) || cards[i].classList.contains('done') || cd.late(inT())) return;
     cards[i].classList.add('up'); open.push(i); Snd.tick(); if (BOT.on && Math.random() < bv(BOTP.memo)) mem[i] = deck[i];
     if (open.length < 2) return;
     lock = true; cd.stop();
@@ -4428,7 +4532,7 @@ const BOMB_PEN = .15, BOMB_PEN_MAX = .45;
 function bombe(done){
   const s = G.start.slice();
   function round(){
-    let holder = nextStarter(), over = false, pos = 0, dir = 1, lockUntil = 0, speed = 1.1, zone, pen = 0, botAt = null;
+    let holder = nextStarter(), over = false, lockUntil = 0, speed = 1.1, zone, pen = 0, botAt = null;
     const fuse = 9000 + Math.random()*10000, t0 = performance.now();
     const newZone = () => { const w = .22, a = .06 + Math.random()*(.88 - w); zone = [a, a + w]; };
     newZone();
@@ -4436,9 +4540,15 @@ function bombe(done){
     view(`<div class="stage cut neutral"><div class="sub">Wer die Bombe hat, drückt, wenn der Zeiger im grünen Feld ist. Dann wandert sie rüber. Daneben gedrückt: kurz gesperrt, der Zeiger wird schneller.</div>
       <div class="bombrow"><div class="bomb" id="bomb">💣</div></div>
       <div class="sub" id="bh"></div>
-      <div class="bbar"><i class="bzone" id="bz"></i><i class="bptr" id="bp"></i></div>
+      <div class="bbar"><i class="bzone" id="bz"></i><i class="bptr" id="bp" data-v=""></i></div>
       <div class="sub" id="bs">&nbsp;</div></div>`);
     const bomb = $('#bomb'), bh = $('#bh'), bz = $('#bz'), bp = $('#bp'), bs = $('#bs');
+    // Der Zeiger läuft auf einer Zickzack-Bahn: ab Zeitpunkt t von Stelle u (0 bis 2, ab 1 geht es zurück) mit Tempo v.
+    // Daraus rechnen Gastgeber und Online-Gast dieselbe Position, und ein verspäteter Druck zählt an der Stelle von damals.
+    let seg = {t: t0, u: 0, v: speed};
+    const segAt = t => { const u = ((seg.u + seg.v*Math.max(0, t - seg.t)/1000) % 2 + 2) % 2; return u <= 1 ? [u, 1] : [2 - u, -1]; };
+    const setSeg = t => { const [x, d] = segAt(t); seg = {t, u: d > 0 ? x : 2 - x, v: speed + pen}; bp.dataset.seg = `${Math.round(t*10)/10} ${seg.u.toFixed(5)} ${seg.v.toFixed(4)}`; };
+    setSeg(t0);
     const showHolder = () => {
       bh.innerHTML = `${nm(holder)} hat die Bombe`;
       bomb.style.left = holder === 0 ? '22%' : '78%';
@@ -4447,12 +4557,13 @@ function bombe(done){
     showHolder();
     cur = { buzz: p => {
       if (over || p !== holder) return;
-      const now = performance.now();
-      if (now < lockUntil) return;
-      if (pos >= zone[0] && pos <= zone[1]) { holder = 1-holder; newZone(); speed = Math.min(2.6, speed + .12); pen = 0; bp.classList.remove('fast'); Snd.buzz(p); bs.textContent = 'Weitergegeben!'; showHolder(); }
-      else { lockUntil = now + 450; pen = Math.min(BOMB_PEN_MAX, pen + BOMB_PEN); bp.classList.add('fast'); Snd.bad(); bs.textContent = `${P[p].name}: daneben, kurz gesperrt, der Zeiger wird schneller.`; }
+      const now = inT();
+      if (now < seg.t || now < lockUntil || now - t0 >= fuse) return;
+      const [pos] = segAt(now);
+      if (pos >= zone[0] && pos <= zone[1]) { holder = 1-holder; newZone(); speed = Math.min(2.6, speed + .12); pen = 0; setSeg(now); bp.classList.remove('fast'); Snd.buzz(p); bs.textContent = 'Weitergegeben!'; showHolder(); }
+      else { lockUntil = now + 450; pen = Math.min(BOMB_PEN_MAX, pen + BOMB_PEN); setSeg(now); bp.classList.add('fast'); Snd.bad(); bs.textContent = `${P[p].name}: daneben, kurz gesperrt, der Zeiger wird schneller.`; }
     }};
-    let lastT = 0, lastTick = 0;
+    let lastTick = 0;
     const boom = () => {
       over = true; cur = null;
       bomb.textContent = '💥'; bomb.classList.add('boom'); Snd.crash();
@@ -4460,10 +4571,10 @@ function bombe(done){
       bs.innerHTML = `Boom! ${nm(holder)} hatte die Bombe, ${ptFor(w)}.`;
       after(s, LEN.bomb, done, round, 2000);
     };
-    const loop = now => {
+    const loop = () => {
       if (over) return;
-      const dt = lastT ? Math.min(.05, (now - lastT)/1000) : 0; lastT = now;
-      pos += dir*(speed + pen)*dt; if (pos > 1) { pos = 1; dir = -1; } if (pos < 0) { pos = 0; dir = 1; }
+      const now = performance.now();
+      const [pos, dir] = segAt(now);
       bp.style.left = pos*100 + '%';
       if (isBot(holder)) {
         if (botAt == null && now >= lockUntil) {
@@ -4475,7 +4586,8 @@ function bombe(done){
       } else botAt = null;
       const el = now - t0, iv = Math.max(110, Math.min(700, (fuse - el)/8));
       if (now - lastTick > iv) { lastTick = now; Snd.tick(); bomb.classList.toggle('pulse'); }
-      if (el >= fuse) return boom();
+      // Hält der Online-Gast die Bombe, kann sein rettender Druck noch unterwegs sein: kurz abwarten
+      if (el >= fuse && (!isRemote(holder) || el >= fuse + holdMs())) return boom();
       frame(loop);
     };
     frame(loop);
@@ -5144,11 +5256,13 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'v20';
+const NET_BUILD = 'v21';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
-  tickT:0, watchT:0, retryT:0, lostT:0, joinT:0, loading:null, guestTok:'', joinCode:'', ovState:'', toastLocal:null, lastMode:'', needT:0};
+  tickT:0, watchT:0, retryT:0, lostT:0, joinT:0, loading:null, guestTok:'', joinCode:'', ovState:'', toastLocal:null, lastMode:'', needT:0,
+  // Zeitausgleich
+  off:0, offOk:false, offS:[], dispH:0, dispG:0, mutT:0, flushQ:false, mo:null, mch:null, hold:150, lags:[], vt:null, seq:[], seqT:0, lrP:[], lrY:0, graf:0, testLag:0, noEv:false, za:'', zaG:0, offT:0};
 /* =====================================================================
    ONLINE: zwei Geräte, eine Partie.
    Der Gastgeber (Spieler 1) rechnet das ganze Spiel wie bisher. Der Gast (Spieler 2)
@@ -5163,6 +5277,72 @@ const mayAct = p => !isBot(p) && (!NET.on || NET.role !== 'host' || NET.from ===
 const netCode = () => { const a = new Uint32Array(4); (window.crypto || {getRandomValues: x => x.map(() => Math.random()*1e9)}).getRandomValues(a); return [...a].map(v => NET_ABC[v % NET_ABC.length]).join(''); };
 const netCodeOk = c => new RegExp(`^[${NET_ABC}]{4}$`).test(c);
 const netLink = c => location.origin + location.pathname + '#' + c;
+
+/* ---------- Zeitausgleich ----------
+   Der Gast sieht alles etwas später, und seine Eingaben kommen später an. Darum zählt beim Gastgeber nicht die Ankunft,
+   sondern der Moment, in dem der Gast gedrückt hat. Jede Eingabe des Gasts trägt zwei Zeitstempel (Uhr des Gastgebers):
+   - vt: der Zeitpunkt des Bildes, das der Gast beim Drücken vor sich hatte (für alles, was er im gespiegelten Bild sieht)
+   - ct: die echte Uhrzeit beim Drücken (für das, was der Gast selbst nach der gemeinsamen Uhr zeichnet: Bombenzeiger, Noten, Sprint)
+   Wo es auf „wer zuerst“ oder auf eine Frist ankommt, wartet der Gastgeber kurz (NET.hold), bis verspätete Eingaben da sein können. */
+function holdMs(){ return NET.on && NET.role === 'host' && NET.open ? NET.hold : 0; }
+function inT(){ return NET.vt != null ? NET.vt : performance.now(); }
+function netHoldCalc(){
+  const r = NET.rtts.length ? Math.max(...NET.rtts) : 150, l = NET.lags.length ? Math.max(...NET.lags) : 0;
+  NET.hold = Math.round(clamp(Math.max(r + 45, l + 25), 50, 450));
+}
+// Eingaben, bei denen es um „wer zuerst“ geht: nach Zeit sortiert, jede hold ms nach dem Drücken
+function netSeq(p, c){
+  NET.seq.push({p, t: inT(), c, g: gen});
+  NET.seq.sort((a, b) => a.t - b.t);
+  netSeqRun();
+}
+function netSeqRun(){
+  clearTimeout(NET.seqT); NET.seqT = 0;
+  const H = holdMs();
+  while (NET.seq.length && NET.seq[0].t + H <= performance.now()) {
+    const e = NET.seq.shift();
+    if (e.g !== gen || !cur || cur !== e.c || !cur.buzz) continue;
+    NET.vt = e.t;
+    try { cur.buzz(e.p); } finally { NET.vt = null; }
+  }
+  if (NET.seq.length) NET.seqT = setTimeout(netSeqRun, Math.max(0, NET.seq[0].t + H - performance.now()) + 1);
+}
+// Ton nur hier abspielen, nicht an den Gast schicken (der spielt ihn selbst zur richtigen Zeit)
+function sndLocal(fn){ NET.noEv = true; try { fn(); } finally { NET.noEv = false; } }
+// Uhrabgleich (Gast): Uhr des Gastgebers = eigene Uhr + NET.off. Von den letzten Messungen zählt die mit der kürzesten Laufzeit.
+// Nach den ersten Messungen wird nur noch langsam nachgeführt (höchstens etwa 2 ms pro Sekunde): bewegte Teile springen nicht,
+// und weil Bild und Zeitstempel des Gasts dieselbe Uhr nutzen, stört ein kleiner Rest-Fehler die Wertung nicht.
+function netClock(m){
+  const now = performance.now(), rtt = now - m.a;
+  if (!Number.isFinite(m.a) || !Number.isFinite(m.h) || rtt < 0 || rtt > 5000) return;
+  NET.offS.push({rtt, off: m.h - (m.a + now)/2});
+  if (NET.offS.length > 16) NET.offS.shift();
+  let b = NET.offS[0]; for (const x of NET.offS) if (x.rtt < b.rtt) b = x;
+  if (!NET.offOk || NET.offS.length < 5) NET.off = b.off;
+  else { const lim = (now - NET.offT)*.002 + .5; NET.off += clamp(b.off - NET.off, -lim, lim); }
+  NET.offOk = true; NET.offT = now;
+}
+// Zeit des Gastgebers, wie der Gast sie im Bild sieht (tP) und wie sie wirklich ist (tS)
+const netTP = now => NET.dispG ? now + NET.dispH - NET.dispG : now + NET.off;
+const netTS = now => NET.offOk ? now + NET.off : netTP(now);
+function netDisp(hs){ if (Number.isFinite(hs)) { NET.dispH = hs; NET.dispG = performance.now(); } }
+// Eingabe des Gasts mit beiden Zeitstempeln losschicken
+function netIn(o){
+  const now = performance.now();
+  o.t = 'in';
+  const za = NET.za ? +NET.za : NaN;
+  if (Number.isFinite(za)) o.vt = Math.round((za + now - NET.zaG)*10)/10;
+  else if (NET.dispG) o.vt = Math.round(netTP(now)*10)/10;
+  if (NET.offOk) o.ct = Math.round((now + NET.off)*10)/10;
+  netSend(o);
+  return o;
+}
+// Nur für Tests: künstliche Verzögerung beim Empfang (NET.testLag ms)
+function netRx(c, d){
+  if (NET.conn !== c) return;
+  if (NET.testLag > 0) setTimeout(() => { if (NET.conn === c) netRecv(d); }, NET.testLag);
+  else netRecv(d);
+}
 
 function netLoad(){
   if (window.Peer) return Promise.resolve();
@@ -5213,7 +5393,9 @@ function netRecv(raw){
     if (!m || typeof m !== 'object') return;
   }
   if (m.t === 'pi') { netSend({t:'po', a: m.a}); return; }
-  if (m.t === 'po') { if (Number.isFinite(m.a)) { NET.rtts.push(performance.now() - m.a); if (NET.rtts.length > 7) NET.rtts.shift(); NET.ping = Math.round([...NET.rtts].sort((x, y) => x - y)[NET.rtts.length >> 1]); netBadge(); } return; }
+  if (m.t === 'po') { if (Number.isFinite(m.a)) { NET.rtts.push(performance.now() - m.a); if (NET.rtts.length > 7) NET.rtts.shift(); NET.ping = Math.round([...NET.rtts].sort((x, y) => x - y)[NET.rtts.length >> 1]); netHoldCalc(); netBadge(); } return; }
+  if (m.t === 'gp') { if (Number.isFinite(m.a)) netSend({t:'gq', a: m.a, h: performance.now()}); return; }
+  if (m.t === 'gq') { netClock(m); return; }
   if (m.t === 'bye') { netEnd(NET.role === 'host' ? `${P[1].name} hat das Online-Spiel verlassen. Spieler 2 spielt jetzt wieder an diesem Gerät.` : `${P[0].name} hat das Online-Spiel beendet.`); return; }
   if (NET.role === 'host') netHostMsg(m); else netGuestMsg(m);
 }
@@ -5226,7 +5408,7 @@ function netBind(c){
     NET.open = true; NET.lastRx = performance.now();
     netSend({t:'hi', b: NET_BUILD, name: NET.on ? P[1].name : NET.myName, av: NET.on ? AV[1] : NET.myAv, tok: NET.tok});
   });
-  c.on('data', d => { if (NET.conn === c) netRecv(d); });
+  c.on('data', d => netRx(c, d));
   c.on('close', () => { if (NET.conn === c) netLost(); });
   c.on('error', () => { if (NET.conn === c) netLost(); });
 }
@@ -5236,6 +5418,7 @@ function netLost(){
   NET.open = false;
   try { NET.conn && NET.conn.close(); } catch(e) {}
   NET.conn = null;
+  netSeqRun();   // ohne Verbindung wird nicht mehr gewartet: Wartende in der richtigen Reihenfolge abarbeiten
   if (!NET.on) { netOvMsg('Die Verbindung ist abgebrochen. Bitte nochmal versuchen.'); return; }
   netBadge();
   const who = NET.role === 'host' ? P[1].name : P[0].name;
@@ -5255,14 +5438,15 @@ function netRetry(){
   };
   NET.retryT = setTimeout(go, 1200);
 }
-// Lebenszeichen: alle 2 Sekunden ein Ping, nach 7 Sekunden Funkstille gilt die Verbindung als weg
+// Lebenszeichen: jede Sekunde ein Ping (Gastgeber: Laufzeit, Gast: Uhrabgleich), nach 7 Sekunden Funkstille gilt die Verbindung als weg
 function netWatch(){
   if (!NET.open) return;
   if (NET.role === 'host') netSend({t:'pi', a: performance.now()});
+  else netSend({t:'gp', a: performance.now()});
   if (performance.now() - NET.lastRx > 7000) netLost();
 }
 function netStartTimers(){
-  clearInterval(NET.watchT); NET.watchT = setInterval(netWatch, 2000);
+  clearInterval(NET.watchT); NET.watchT = setInterval(netWatch, 1000);
   if (NET.role === 'host') { clearInterval(NET.tickT); NET.tickT = setInterval(netTick, 33); }
 }
 function netPeerErr(e){
@@ -5299,7 +5483,7 @@ function netCand(c){
   let ok = false;
   const bye = t => { try { c.send(JSON.stringify({t})); } catch(e) {} setTimeout(() => { try { c.close(); } catch(e) {} }, 400); };
   c.on('data', raw => {
-    if (ok) { if (NET.conn === c) netRecv(raw); return; }
+    if (ok) { netRx(c, raw); return; }
     if (typeof raw !== 'string' || raw.length > 4000) return;
     let m; try { m = JSON.parse(raw); } catch(e) { return; }
     if (!m || m.t !== 'hi') return;
@@ -5324,11 +5508,12 @@ function netHostHello(m, tok){
       document.body.classList.add('net', 'net-host');
     }
     netSetGuest(m);
-    NET.lastMain = null; NET.lastG = ''; NET.lastL = ''; NET.pbLast = ['',''];
+    NET.lastMain = null; NET.lastG = ''; NET.lastL = ''; NET.pbLast = ['','']; NET.mutT = 0;
     netSend({t:'wel', b: NET_BUILD});
     netFlushG();
     netSend({t:'e', e:'clsync', a:[climb.p.slice()]});
-    netStartTimers(); netTick();
+    netStartTimers(); netTick(); netObserve();
+    netSend({t:'pi', a: performance.now()});
     clearTimeout(NET.lostT); netBanner('');
     const ov = $('#netov'); if (ov) ov.remove();
     NET.toastLocal(first ? `${P[1].name} ist verbunden!` : `${P[1].name} ist wieder da.`);
@@ -5348,19 +5533,25 @@ function netSetGuest(m){
   AV[1] = avFix(m.av, 1);
   drawFigures(); updateHud();
 }
-// Eingaben des Gasts laufen über dieselben Wege wie ein Druck am eigenen Gerät
+// Eingaben des Gasts laufen über dieselben Wege wie ein Druck am eigenen Gerät, mit dem Zeitpunkt seines Drückens
+const NET_CT = ['tauziehen', 'bombe', 'sprint'];   // hier zeichnet der Gast nach der gemeinsamen Uhr
 function netHostIn(m){
   const now = performance.now();
   if (now - NET.rlT > 1000) { NET.rlT = now; NET.rlN = 0; }
   if (++NET.rlN > 60) return;
-  NET.from = 1;
+  let t = curDisc && NET_CT.includes(curDisc.id) && Number.isFinite(m.ct) ? m.ct : m.vt;
+  t = Number.isFinite(t) ? clamp(t, now - 1500, now) : now;
+  NET.lags.push(now - t); if (NET.lags.length > 20) NET.lags.shift();
+  netHoldCalc();
+  NET.from = 1; NET.vt = t;
   try {
     if (m.k === 'buzz') buzz(1);
     else if (m.k === 'row') { if (Number.isInteger(m.i) && m.i >= 0 && m.i < 5 && cur && cur.row) cur.row(1, m.i); }
-    else if (m.k === 'key') { if ((m.n === 'enter' || m.n === ' ') && cur && cur.key) cur.key(m.n); }
+    // die Sieg-Animation am Gerät des Gastgebers schließt nur der Gastgeber
+    else if (m.k === 'key') { if ((m.n === 'enter' || m.n === ' ') && cur && cur.key && !$('.vic')) cur.key(m.n); }
     else if (m.k === 'pd' || m.k === 'ck') netTap(m.m, m.k);
     else if (m.k === 'text') netText(m.v);
-  } finally { NET.from = 0; }
+  } finally { NET.from = 0; NET.vt = null; }
 }
 function netTap(id, kind){
   if (!Number.isInteger(id) || id < 1) return;
@@ -5386,11 +5577,37 @@ function netStamp(root){
 }
 function netMainHTML(){
   netStamp(main);
-  if (!main.querySelector('.mcard')) return main.innerHTML;
-  // Memory: verdeckte Karten verraten ihr Symbol nicht
-  const c = main.cloneNode(true);
-  c.querySelectorAll('.mcard:not(.up):not(.done) span').forEach(s => { s.textContent = ''; });
-  return c.innerHTML;
+  if (NET.mo) NET.mo.takeRecords();   // die eigenen Nummern sind keine Änderung
+  let h;
+  if (!main.querySelector('.mcard')) h = main.innerHTML;
+  else {
+    // Memory: verdeckte Karten verraten ihr Symbol nicht
+    const c = main.cloneNode(true);
+    c.querySelectorAll('.mcard:not(.up):not(.done) span').forEach(s => { s.textContent = ''; });
+    h = c.innerHTML;
+  }
+  // Bewegte Teile (data-v: Zeiger, Noten, Zeitbalken) zeichnet der Gast selbst, ihre Position geht nicht mit
+  return h.indexOf('data-v') < 0 ? h : h.replace(/<[a-z][^>]*\sdata-v="[^"]*"[^>]*>/gi, tag => tag.replace(/\sstyle="[^"]*"/, ''));
+}
+// Gastgeber: jede Änderung am Spielfeld sofort schicken, mit dem Zeitpunkt der Änderung (hs)
+function netObserve(){
+  if (NET.mo) return;
+  NET.mo = new MutationObserver(recs => {
+    if (!NET.on || NET.role !== 'host' || !NET.open) return;
+    for (const r of recs) {
+      if (r.type === 'attributes' && (r.attributeName === 'data-m' || (r.attributeName === 'style' && r.target.hasAttribute('data-v')))) continue;
+      netDirty(); return;
+    }
+  });
+  const o = {subtree: true, childList: true, attributes: true, characterData: true};
+  [main, $('#pb0'), $('#pb1')].forEach(el => { if (el) NET.mo.observe(el, o); });
+}
+function netDirty(){
+  NET.mutT = performance.now();
+  if (NET.flushQ) return;
+  NET.flushQ = true;
+  if (!NET.mch) { NET.mch = new MessageChannel(); NET.mch.port1.onmessage = () => netFlush(); }
+  NET.mch.port2.postMessage(0);
 }
 function sdiff(a, b){
   const n = Math.min(a.length, b.length);
@@ -5420,18 +5637,29 @@ function netTick(){
     return;
   }
   NET.lastL = '';
-  if (netBusy()) return;
+  netFlush();
+}
+// Spielfeld und Powerup-Leisten schicken (nur was sich geändert hat). hs = Zeitpunkt der letzten Änderung
+function netFlush(){
+  NET.flushQ = false;
+  if (!NET.on || NET.role !== 'host' || !NET.open) return;
+  if (mode === 'menu') { NET.mutT = 0; return; }
+  if (netBusy()) return;   // der Takt versucht es gleich nochmal
+  const hs = Math.round((NET.mutT || performance.now())*10)/10;
+  NET.mutT = 0;
+  netFlushG();
   const html = netMainHTML();
-  if (NET.lastMain == null) netSend({t:'M', h: html, s: NET.scr});
-  else if (html !== NET.lastMain) { const d = sdiff(NET.lastMain, html); netSend({t:'m', p: d.p, q: d.q, d: d.d, l: NET.lastMain.length, s: NET.scr}); }
+  if (NET.lastMain == null) netSend({t:'M', h: html, s: NET.scr, hs});
+  else if (html !== NET.lastMain) { const d = sdiff(NET.lastMain, html); netSend({t:'m', p: d.p, q: d.q, d: d.d, l: NET.lastMain.length, s: NET.scr, hs}); }
   NET.lastMain = html;
   [0,1].forEach(i => {
     const el = $('#pb'+i); netStamp(el);
     const s = el.className + '|' + el.innerHTML;
-    if (s !== NET.pbLast[i]) { NET.pbLast[i] = s; netSend({t:'pb', i, c: el.className, h: el.innerHTML}); }
+    if (s !== NET.pbLast[i]) { NET.pbLast[i] = s; netSend({t:'pb', i, c: el.className, h: el.innerHTML, hs}); }
   });
+  if (NET.mo) NET.mo.takeRecords();
 }
-function netEv(e, a){ if (NET.on && NET.role === 'host' && NET.open) { netFlushG(); netSend({t:'e', e, a}); } }
+function netEv(e, a){ if (NET.on && NET.role === 'host' && NET.open) { netFlushG(); netSend({t:'e', e, a, hs: Math.round(performance.now()*10)/10}); } }
 
 // Was nicht im Spielfeld steht, geht als Ereignis mit: Figuren, Meldungen, Töne, Feuerwerk
 ['to','reset','relayout','shout','gift','cheer','slip'].forEach(f => {
@@ -5445,22 +5673,22 @@ function netEv(e, a){ if (NET.on && NET.role === 'host' && NET.open) { netFlushG
   let depth = 0;
   ['buzz','tick','go','good','bad','hit','jump','crash','senso','win','tone'].forEach(f => {
     const o = Snd[f];
-    Snd[f] = function(...a){ depth++; try { return o.apply(this, a); } finally { depth--; if (!depth && !NET.mute) netEv('snd', [f, a]); } };
+    Snd[f] = function(...a){ depth++; try { return o.apply(this, a); } finally { depth--; if (!depth && !NET.mute && !NET.noEv) netEv('snd', [f, a]); } };
   });
 }
-// Neon-Sprint wird gezeichnet statt gespiegelt: der Gast bekommt die Positionen und malt selbst
-function netSprint(S){
+// Neon-Sprint wird gezeichnet statt gespiegelt: der Gast bekommt den Stand mit Uhrzeit (ht) und rechnet bis zu seinem Bild weiter
+function netSprint(S, X){
   if (!NET.on || NET.role !== 'host' || !NET.open) return;
   const now = performance.now();
   if (!S.over && S.label === NET.spLabel && now - NET.spT < 30) return;
   if (netBusy() && !S.over) return;
   NET.spT = now; NET.spLabel = S.label;
   const r1 = v => Math.round(v*10)/10;
-  netSend({t:'sp', W: S.W, H: S.H, LH: S.LH, RX: S.RX, RW: S.RW, RH: S.RH, d: r1(S.dist), sp: r1(S.speed), v0: S.v0, st: S.started ? 1 : 0, ov: S.over ? 1 : 0,
-    lb: S.label, ls: S.lsize, tt: r1(S.t), wa: S.warn.map(r1),
-    o: S.obs.map(o => [r1(o.x), o.w, o.h, o.b, o.fly ? 1 : 0, o.lane == null ? -1 : o.lane]),
-    it: S.items.map(it => [r1(it.x), it.y, it.taken[0] ? 1 : 0, it.taken[1] ? 1 : 0]),
-    rn: S.rn.map(r => [r1(r.y), r.dead ? 1 : 0])});
+  netSend({t:'sp', ht: r1(X.ht), W: S.W, H: S.H, LH: S.LH, RX: S.RX, RW: S.RW, RH: S.RH, g: X.g, jv: X.jv, d: r1(S.dist), sp: r1(S.speed), ac: r1(X.ac), v0: S.v0,
+    st: S.started ? 1 : 0, ov: S.over ? 1 : 0, fz: X.fz ? 1 : 0, lb: S.label, ls: S.lsize, tt: Math.round(S.t*1000)/1000, wa: S.warn.map(r1),
+    o: S.obs.filter(o => o.x + o.w > -30).map(o => [r1(o.x), o.w, o.h, o.b, o.fly ? 1 : 0, o.lane == null ? -1 : o.lane]),
+    it: S.items.filter(it => it.x > -30).map(it => [r1(it.x), it.y, it.taken[0] ? 1 : 0, it.taken[1] ? 1 : 0]),
+    rn: X.rn.map(r => [r1(r.y), r1(r.vy), r.deadT != null ? 1 : 0, r1(r.buf || 0)]), dt1: X.rn[1].deadT != null ? r1(X.rn[1].deadT) : 0, ja: r1(X.ja)});
 }
 
 /* ---------- Gast: Spielfeld übernehmen ---------- */
@@ -5480,7 +5708,7 @@ function netSanitize(root){
 }
 const netSame = (d, s) => d.nodeType === s.nodeType && (d.nodeType !== 1 || (d.nodeName === s.nodeName && d.getAttribute('data-m') === s.getAttribute('data-m')));
 function netAttrs(d, s){
-  const keep = d.dataset.net === 'in' || d.dataset.net === 'ok' ? /^(readonly|disabled|style|value|placeholder)$/ : d.nodeName === 'CANVAS' ? /^(width|height|style)$/ : null;
+  const keep = d.dataset.net === 'in' || d.dataset.net === 'ok' ? /^(readonly|disabled|style|value|placeholder)$/ : d.nodeName === 'CANVAS' ? /^(width|height|style)$/ : s.hasAttribute('data-v') ? /^style$/ : null;
   for (const a of [...d.attributes]) if (!s.hasAttribute(a.name) && !(keep && keep.test(a.name))) d.removeAttribute(a.name);
   for (const a of s.attributes) if (!(keep && keep.test(a.name)) && d.getAttribute(a.name) !== a.value) d.setAttribute(a.name, a.value);
 }
@@ -5514,13 +5742,15 @@ function netFix(){
 }
 function netRenderMain(scr){
   netSetHTML(main, NET.html); netFix();
+  // Anker im Bild (Zeitgefühl): ab jetzt sieht der Gast die Uhr laufen
+  const a = main.querySelector('[data-za]'), za = a ? a.getAttribute('data-za') : '';
+  if (za !== NET.za) { NET.za = za; NET.zaG = performance.now(); }
   if (scr !== NET.lastScr) { NET.lastScr = scr; window.scrollTo(0, 0); }
-  if (NET.sp) netSpDraw();
 }
 function netGuestSubmit(){
   const x = main.querySelector('input[data-net="in"]'); if (!x) return;
   const v = x.value.trim(); if (!v) { x.focus(); return; }
-  netSend({t:'in', k:'text', v: v.slice(0, 40)});
+  netIn({k:'text', v: v.slice(0, 40)});
 }
 function netGuestMsg(m){
   switch (m.t) {
@@ -5529,16 +5759,16 @@ function netGuestMsg(m){
     case 'bad': netEnd('Ihr habt verschiedene Versionen des Spiels. Bitte beide die Seite neu laden.'); break;
     case 'g': if (NET.on) netApplyG(m.g); break;
     case 'L': if (NET.on && m.L && typeof m.L === 'object') { NET.lobby = m.L; netLobbyInfo(); } break;
-    case 'M': if (NET.on && NET.mirror && typeof m.h === 'string') { NET.html = m.h; netRenderMain(m.s); } break;
+    case 'M': if (NET.on && NET.mirror && typeof m.h === 'string') { NET.html = m.h; netRenderMain(m.s); netDisp(m.hs); } break;
     case 'need': break;
     case 'm':
       if (!NET.on || !NET.mirror || typeof m.d !== 'string' || !Number.isInteger(m.p) || !Number.isInteger(m.q)) break;
       if (NET.html == null || m.l !== NET.html.length || m.p + m.q > NET.html.length) { netNeed(); break; }
       NET.html = NET.html.slice(0, m.p) + m.d + NET.html.slice(NET.html.length - m.q);
-      netRenderMain(m.s); break;
-    case 'pb': if (NET.on && (m.i === 0 || m.i === 1) && typeof m.h === 'string') { const el = $('#pb'+m.i); el.className = (typeof m.c === 'string' ? m.c : '').replace(/[^\w -]/g, '').slice(0, 60); netSetHTML(el, m.h); } break;
-    case 'e': if (NET.on) netApplyEv(m.e, Array.isArray(m.a) ? m.a : []); break;
-    case 'sp': if (NET.on) { NET.sp = m; if (!NET.spRaf) NET.spRaf = requestAnimationFrame(() => { NET.spRaf = 0; netSpDraw(); }); } break;
+      netRenderMain(m.s); netDisp(m.hs); break;
+    case 'pb': if (NET.on && (m.i === 0 || m.i === 1) && typeof m.h === 'string') { const el = $('#pb'+m.i); el.className = (typeof m.c === 'string' ? m.c : '').replace(/[^\w -]/g, '').slice(0, 60); netSetHTML(el, m.h); netDisp(m.hs); } break;
+    case 'e': if (NET.on) { netDisp(m.hs); netApplyEv(m.e, Array.isArray(m.a) ? m.a : []); } break;
+    case 'sp': if (NET.on) NET.sp = m; break;
   }
 }
 function netNeed(){
@@ -5559,6 +5789,9 @@ function netGuestWelcome(){
   clearTimeout(NET.lostT); netBanner('');
   const ov = $('#netov'); if (ov) ov.remove();
   netStartTimers(); netBadge();
+  // Uhrabgleich: ein paar schnelle Messungen, danach eine pro Sekunde
+  for (let i = 0; i < 5; i++) setTimeout(() => { if (NET.open && NET.role === 'guest') netSend({t:'gp', a: performance.now()}); }, i*150);
+  if (!NET.graf) NET.graf = requestAnimationFrame(netGuestRaf);
   netLobby();
   toast(first ? 'Verbunden!' : 'Wieder verbunden.');
 }
@@ -5612,23 +5845,83 @@ function netApplyEv(e, a){
     Snd[f](...ok);
   }
 }
-// Neon-Sprint beim Gast zeichnen, mit den Maßen des Gastgebers
-function netSpDraw(){
+// Gast: bewegte Teile selbst zeichnen. Bombenzeiger und Noten nach der gemeinsamen Uhr, Zeitbalken passend zum Bild
+function netGuestRaf(){
+  NET.graf = 0;
+  if (!NET.on || NET.role !== 'guest') return;
+  NET.graf = requestAnimationFrame(netGuestRaf);
+  if (!NET.mirror) return;
+  const now = performance.now(), tS = netTS(now), tP = netTP(now);
+  for (const el of main.querySelectorAll('[data-v]')) {
+    const d = el.dataset;
+    if (d.seg) {
+      const [t0, u0, v] = d.seg.split(' ').map(Number);
+      if (!Number.isFinite(t0) || !Number.isFinite(u0) || !Number.isFinite(v)) continue;
+      const u = ((u0 + v*Math.max(0, tS - t0)/1000) % 2 + 2) % 2;
+      el.style.left = (u <= 1 ? u : 2 - u)*100 + '%';
+    } else if (d.bt) {
+      const bt = +d.bt, tr = +d.tr || 1700; if (!Number.isFinite(bt)) continue;
+      const f = 1 - (bt - tS)/tr;
+      el.style.left = (12 + (1 - f)*88) + '%'; el.style.opacity = f < 0 ? 0 : 1;
+      if (!el._tk && tS >= bt) { el._tk = 1; if (tS - bt < 120 && !el.classList.contains('gone')) Snd.tick(); }
+    } else if (d.cd) {
+      const [t0, full] = d.cd.split(' ').map(Number);
+      if (!Number.isFinite(t0) || !(full > 0)) continue;
+      el.style.width = clamp(100 - (tP - t0)/full*100, 0, 100) + '%';
+      if (d.cc && /^(var\(--[\w-]+\)|#[0-9a-f]{3,8})$/i.test(d.cc)) el.style.background = d.cc;
+    }
+  }
+  if (NET.sp && curDisc && curDisc.id === 'sprint') netSpDraw(tS);
+}
+// Neon-Sprint beim Gast: letzter Stand vom Gastgeber, bis jetzt weitergerechnet. Der eigene Läufer springt sofort beim Drücken.
+function netSpDraw(tS){
   const S = NET.sp, cv = main.querySelector('#cv'); if (!S || !cv) return;
   const ctx = cv.getContext && cv.getContext('2d'); if (!ctx) return;
-  const num = v => Number.isFinite(v) ? v : 0;
+  const num = v => Number.isFinite(v) ? v : 0, arr = v => Array.isArray(v) ? v : [];
   const W = clamp(num(S.W), 200, 2000), H = clamp(num(S.H), 100, 600);
-  const cw = cv.clientWidth || W, s = cw/W, dpr = Math.min(2, window.devicePixelRatio || 1);
-  const ch = Math.round(H*s);
+  const pw = (cv.parentElement && cv.parentElement.clientWidth) || W;
+  const s = Math.min(pw/W, 1.15), cw = Math.round(W*s), ch = Math.round(H*s), dpr = Math.min(2, window.devicePixelRatio || 1);
+  if (cv.style.width !== cw + 'px') { cv.style.width = cw + 'px'; cv.style.margin = '0 auto'; }
   if (cv.style.height !== ch + 'px') cv.style.height = ch + 'px';
   if (cv.width !== Math.round(cw*dpr) || cv.height !== Math.round(ch*dpr)) { cv.width = Math.round(cw*dpr); cv.height = Math.round(ch*dpr); }
   ctx.setTransform(dpr*s, 0, 0, dpr*s, 0, 0);
-  const arr = v => Array.isArray(v) ? v : [];
-  sprintPaint(ctx, {W, H, LH: num(S.LH), RX: num(S.RX), RW: num(S.RW), RH: num(S.RH), dist: num(S.d), speed: num(S.sp), v0: num(S.v0) || 1,
-    started: !!S.st, over: !!S.ov, label: typeof S.lb === 'string' ? S.lb.slice(0, 40) : '', lsize: clamp(num(S.ls), 8, 80), t: num(S.tt), warn: arr(S.wa).map(num).slice(0, 2).concat([0,0]).slice(0, 2),
-    obs: arr(S.o).slice(0, 60).map(o => ({x: num(o[0]), w: num(o[1]), h: num(o[2]), b: num(o[3]), fly: !!o[4], lane: o[5] === 0 || o[5] === 1 ? o[5] : null})),
-    items: arr(S.it).slice(0, 20).map(it => ({x: num(it[0]), y: num(it[1]), taken: [!!it[2], !!it[3]]})),
-    rn: [0,1].map(j => { const r = arr(S.rn)[j] || []; return {y: num(r[0]), dead: !!r[1]}; })});
+  const G = clamp(num(S.g), 100, 20000), JV = clamp(num(S.jv), 50, 5000), ht = num(S.ht);
+  const live = !!S.st && !S.ov && !S.fz;
+  const dt = live ? clamp((tS - ht)/1000, 0, .6) : 0;
+  const sp = num(S.sp), ac = num(S.ac), dx = sp*dt + ac*dt*dt/2;
+  const rn = [0,1].map(j => { const r = arr(S.rn)[j] || []; return {y: num(r[0]), vy: num(r[1]), dead: !!r[2], buf: num(r[3])}; });
+  // Gegner: laufenden Sprungbogen weiterrechnen
+  const arc = (y, vy, d) => { if (y <= 0 && vy <= 0) return 0; const yy = y + vy*d - G*d*d/2; return yy > 0 ? yy : 0; };
+  // Eigener Läufer: Stand des Gastgebers plus eigene Sprünge, die er noch nicht kennt
+  const ja = num(S.ja), dt1 = num(S.dt1), me = rn[1];
+  NET.lrP = NET.lrP.filter(c => c > ja && c > tS - 2000);
+  const sim = (y, vy, buf, from, to, ps) => {
+    let ti = from, k = 0;
+    for (let i = 0; ti < to && i < 120; i++) {
+      const st = Math.min(to, ti + 8), h = (st - ti)/1000;
+      while (k < ps.length && ps[k] <= st) buf = ps[k++];
+      let hj = h;
+      if (y === 0 && buf && st >= buf && st - buf < 150) { vy = JV; hj = Math.min(h, (st - buf)/1000); buf = 0; }
+      if (y > 0 || vy > 0) { vy -= G*hj; y += vy*hj; if (y <= 0 && vy <= 0) { y = 0; vy = 0; } }
+      ti = st;
+    }
+    return y;
+  };
+  let y1 = me.y, dead1 = me.dead;
+  if (live) {
+    if (me.dead) {
+      // Crash beim Gastgeber, aber ein rettender Sprung ist noch unterwegs
+      const rs = NET.lrP.filter(c => c <= dt1);
+      if (rs.length) { dead1 = false; y1 = sim(me.y, 0, 0, rs[0], tS, rs); }
+    } else y1 = sim(me.y, me.vy, me.buf, ht, tS, NET.lrP);
+  }
+  NET.lrY = y1;
+  sprintPaint(ctx, {W, H, LH: num(S.LH), RX: num(S.RX), RW: num(S.RW), RH: num(S.RH), dist: num(S.d) + dx, speed: sp + ac*dt, v0: num(S.v0) || 1,
+    started: !!S.st, over: !!S.ov, label: typeof S.lb === 'string' ? S.lb.slice(0, 40) : '', lsize: clamp(num(S.ls), 8, 80), t: num(S.tt) + dt,
+    warn: arr(S.wa).map(num).slice(0, 2).concat([0,0]).slice(0, 2),
+    obs: arr(S.o).slice(0, 80).map(o => ({x: num(o[0]) - dx, w: num(o[1]), h: num(o[2]), b: num(o[3]), fly: !!o[4], lane: o[5] === 0 || o[5] === 1 ? o[5] : null})),
+    items: arr(S.it).slice(0, 30).map(it => ({x: num(it[0]) - dx, y: num(it[1]), taken: [!!it[2], !!it[3]]})),
+    rn: [{y: rn[0].dead || !live ? rn[0].y : arc(rn[0].y, rn[0].vy, dt), dead: rn[0].dead}, {y: y1, dead: dead1}]});
 }
 
 /* ---------- Gast: Warteraum, solange der Gastgeber im Menü ist ---------- */
@@ -5693,7 +5986,11 @@ function netEnd(msg){
   try { if (NET.conn && NET.open) NET.conn.send(JSON.stringify({t:'bye'})); } catch(e) {}
   const c = NET.conn, p = NET.peer;
   setTimeout(() => { try { c && c.close(); } catch(e) {} try { p && p.destroy(); } catch(e) {} }, 300);
-  Object.assign(NET, {on: false, open: false, conn: null, peer: null, role: '', code: '', mirror: false, html: null, text: null, lastMain: null, lastG: '', lastL: '', pbLast: ['',''], sp: null, ping: 0, rtts: [], hostPing: 0, lobby: null});
+  if (NET.mo) { NET.mo.disconnect(); NET.mo = null; }
+  if (NET.graf) { cancelAnimationFrame(NET.graf); NET.graf = 0; }
+  Object.assign(NET, {on: false, open: false, conn: null, peer: null, role: '', code: '', mirror: false, html: null, text: null, lastMain: null, lastG: '', lastL: '', pbLast: ['',''], sp: null, ping: 0, rtts: [], hostPing: 0, lobby: null,
+    off: 0, offOk: false, offS: [], offT: 0, dispH: 0, dispG: 0, mutT: 0, flushQ: false, hold: 150, lags: [], vt: null, lrP: [], lrY: 0, za: '', zaG: 0});
+  netSeqRun();   // was noch in der Warteschlange steckt, gilt jetzt sofort
   document.body.classList.remove('net', 'net-host', 'net-guest');
   netBanner('');
   const ov = $('#netov'); if (ov) ov.remove();
@@ -5805,7 +6102,7 @@ function netBanner(t){
 const netLocalUI = t => t.closest('#netov, #helpov, .vic, #avov, header.hud, .netlobby, #netw, .toast');
 function netGuestPointer(e, kind){
   const t = e.target; if (!t || !t.closest || netLocalUI(t)) return;
-  if (t.closest('#pad1')) { if (kind === 'pd') { e.preventDefault(); netSend({t:'in', k:'buzz'}); const p = $('#pad1'); p.classList.add('hit'); setTimeout(() => p.classList.remove('hit'), 90); } return; }
+  if (t.closest('#pad1')) { if (kind === 'pd') { e.preventDefault(); netGuestBuzz(); } return; }
   if (t.closest('#pad0')) { e.preventDefault(); return; }
   if (!NET.mirror || !t.closest('#main, #pb0, #pb1')) return;
   if (t.closest('input[data-net="in"]')) return;
@@ -5813,7 +6110,17 @@ function netGuestPointer(e, kind){
   e.preventDefault(); e.stopPropagation();
   if (ok) { if (kind === 'ck') netGuestSubmit(); return; }
   const el = t.closest('[data-m]');
-  if (el) netSend({t:'in', k: kind, m: +el.getAttribute('data-m')});
+  if (el) netIn({k: kind, m: +el.getAttribute('data-m')});
+}
+function netGuestBuzz(){
+  const o = netIn({k:'buzz'});
+  const p = $('#pad1'); p.classList.add('hit'); setTimeout(() => p.classList.remove('hit'), 90);
+  // Neon-Sprint: der eigene Läufer springt sofort, der Gastgeber rechnet den Sprung auf diesen Moment zurück
+  const S = NET.sp;
+  if (S && curDisc && curDisc.id === 'sprint' && main.querySelector('#cv')) {
+    NET.lrP.push(Number.isFinite(o.ct) ? o.ct : netTS(performance.now()));
+    if (S.st && !S.ov && !S.fz && NET.lrY === 0) Snd.jump(1);
+  }
 }
 addEventListener('pointerdown', e => { if (NET.on && NET.role === 'guest') netGuestPointer(e, 'pd'); }, true);
 addEventListener('click', e => { if (NET.on && NET.role === 'guest') netGuestPointer(e, 'ck'); }, true);
@@ -5824,10 +6131,10 @@ function netGuestKey(e){
   if ($('.vic')) { if (cur && cur.key) cur.key(k); return; }
   if (e.target.tagName === 'INPUT') return;
   if (e.ctrlKey || e.metaKey || e.altKey) return;
-  if (buzzOf(e) >= 0) { e.preventDefault(); netSend({t:'in', k:'buzz'}); const p = $('#pad1'); p.classList.add('hit'); setTimeout(() => p.classList.remove('hit'), 90); return; }
+  if (buzzOf(e) >= 0) { e.preventDefault(); netGuestBuzz(); return; }
   const r = rowOf(e);
-  if (r) { e.preventDefault(); netSend({t:'in', k:'row', i: r[1]}); return; }
-  if (k === 'enter' || k === ' ') { e.preventDefault(); netSend({t:'in', k:'key', n: k}); }
+  if (r) { e.preventDefault(); netIn({k:'row', i: r[1]}); return; }
+  if (k === 'enter' || k === ' ') { e.preventDefault(); netIn({k:'key', n: k}); }
 }
 // Wer den Link mit Raum-Code öffnet, landet direkt beim Beitreten
 function netFromLink(){

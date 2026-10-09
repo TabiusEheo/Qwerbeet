@@ -7,4 +7,6 @@ Partyspiel für zwei: 22 Mini-Games von Reaktion bis Quiz, dazu Powerups, Bot-Ge
 - **Am selben Gerät:** Namen eintragen, „Duell starten“.
 - **Online:** „🌐 Online“ → „Raum erstellen“ → Link an den Gegner schicken. Wer den Link öffnet, ist verbunden.
 
+Online wird die Verzögerung ausgeglichen: Es zählt der Moment, in dem gedrückt wurde, und bewegte Teile (Bombenzeiger, Noten, Neon-Sprint) laufen auf beiden Geräten nach derselben Uhr.
+
 Die Online-Verbindung läuft direkt zwischen den Geräten (WebRTC). Zum Finden des Gegners nutzt das Spiel den freien Vermittlungsserver von [PeerJS](https://peerjs.com) (MIT-Lizenz, siehe `peerjs-LICENSE.txt`).
