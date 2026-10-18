@@ -1,6 +1,6 @@
 # Duell der Disziplinen
 
-Partyspiel für zwei: 22 Mini-Games von Reaktion bis Quiz, dazu Powerups, Bot-Gegner und drei Spielmodi.
+Partyspiel für zwei: 36 Mini-Games von Reaktion bis Lichtrad, dazu Powerups, Bot-Gegner und drei Spielmodi. Jeder spielt mit einem eigenen Helden, den man im Editor zusammenbaut.
 
 **Spielen:** https://tabiuseheo.github.io/duell/
 
