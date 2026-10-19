@@ -14007,7 +14007,7 @@ const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:
    Die Verbindung läuft direkt zwischen den Geräten (WebRTC über PeerJS).
    ===================================================================== */
 const NET_PREFIX = 'duelldd-', NET_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-const NET_SITE = 'https://tabiuseheo.github.io/duell/';   // Adresse der Webseite, für den Hinweis in Kopien ohne Online-Funktion
+const NET_SITE = 'https://tabiuseheo.github.io/qwerbeet/';   // Adresse der Webseite, für den Hinweis in Kopien ohne Online-Funktion
 const isRemote = p => NET.on && NET.role === 'host' && p === 1;
 // Darf diese Eingabe für Spieler p zählen? Offline wie bisher, online nur die eigene Seite
 const mayAct = p => !isBot(p) && (!NET.on || NET.role !== 'host' || NET.from === p);
