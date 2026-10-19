@@ -2,7 +2,7 @@
 
 Partyspiel für zwei: 53 Mini-Games in fünf Kategorien (Reaktion & Geschick, Arcade, Kopf, Wissen, Taktik & Bluff), dazu Powerups, Bot-Gegner und drei Spielmodi. Jeder spielt mit einem eigenen Helden, den man im Editor zusammenbaut.
 
-**Spielen:** https://tabiuseheo.github.io/qwerbeet/
+**Spielen:** https://tabiuseheo.github.io/Qwerbeet/
 
 - **Am selben Gerät:** „Duell einrichten“ → „Duell starten“.
 - **Online:** „Duell einrichten“ → „Online“ → „Raum erstellen“ → Link an den Gegner schicken. Wer den Link öffnet, ist verbunden.
