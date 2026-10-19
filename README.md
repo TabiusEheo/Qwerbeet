@@ -1,6 +1,6 @@
 # Qwerbeet
 
-Partyspiel für zwei: 53 Mini-Games in fünf Kategorien (Reaktion & Geschick, Arcade, Kopf, Wissen, Taktik & Bluff), dazu Powerups, Bot-Gegner und drei Spielmodi. Jeder spielt mit einem eigenen Helden, den man im Editor zusammenbaut.
+Partyspiel für zwei: 55 Mini-Games in fünf Kategorien (Reaktion & Geschick, Arcade, Kopf, Wissen, Taktik & Bluff), dazu Powerups, Bot-Gegner und drei Spielmodi. Jeder spielt mit einem eigenen Helden, den man im Editor zusammenbaut.
 
 **Spielen:** https://tabiuseheo.github.io/Qwerbeet/
 
