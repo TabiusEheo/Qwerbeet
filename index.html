@@ -1753,6 +1753,9 @@ body.inmenu .mhome .mlogo{margin:0 0 14px}
 .mcatbar[hidden]{display:none}.mcatbar span{flex:1;min-width:150px}.mcatbar .btn{margin:0;padding:6px 12px;font-size:13px}.mcatbar .btn:disabled{opacity:.4}
 .mconf{max-width:440px;text-align:left}.mconf p{line-height:1.45}
 .edname{display:flex;align-items:center;gap:10px;margin:4px 0 8px}.edname span{font-weight:900}.edname input{flex:1;max-width:320px;border:0;background:var(--track);color:var(--ink);border-radius:12px;box-shadow:var(--in);padding:9px 12px;font:900 17px Nunito}
+.choices.many{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.chs{margin:10px 0 4px}.allch .choice[hidden],.allch[hidden],h2.cat[hidden]{display:none}
+.mspw{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.mspd{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}.msg{width:100%;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px}.msg .mcard{font-size:22px}
+@media (max-width:560px){.mspw{gap:8px}.msg{grid-template-columns:repeat(4,1fr);gap:4px}.msg .mcard{font-size:18px}}
 </style>
 </head>
 <body>
@@ -2595,6 +2598,13 @@ async function runQ(){
   }
   if (gen === AQgen) { AQbusy = false; }
 }
+// Aufräumen: hängengebliebene Lauf-/Angriffsbewegungen (fill: forwards) zurücksetzen, sobald gerade nichts läuft
+setInterval(() => { try {
+  if (AQbusy || afkOn || document.querySelector('.hxvic') || document.querySelector('#scene .hero.wem-jubel, #scene .hero[class*="wem-"]')) return;
+  document.querySelectorAll('#scene .hero').forEach(h => { let fixed = false;
+    h.getAnimations({subtree: true}).forEach(a => { if (window.CSSAnimation && a instanceof CSSAnimation || window.CSSTransition && a instanceof CSSTransition) return; if (a.playState === 'finished' || a.playState === 'paused') { a.cancel(); fixed = true; } });
+    if (fixed) { h.classList.remove('run', 'kcrouch', 'kfinish', 'kland'); h.style.transform = ''; h.classList.add('idle'); } });
+} catch(e) {} }, 700);
 function resetQ(){ AQ = []; AQgen++; AQbusy = false; DMG = [0, 0]; pendDmg = -1; document.body.classList.remove('atk'); }
 
 // ---------- Punkteleiste: Befehle des Spiels (to, cheer, shout, gift …) ----------
@@ -5447,7 +5457,7 @@ let cur = null, mode = 'menu', order = [], ri = 0, stechen = false, rounds = 7, 
 let enabled = {};
 
 /* ---------- Modi: Klassisch, Late Game, Endlos, jeweils mit oder ohne Powerups ---------- */
-const MODE = {kind:'classic', pu:true};
+const MODE = {kind:'classic', pu:true, nch:3};   // nch: Spiele zur Wahl pro Runde, 0 = alle
 const isLate = () => MODE.kind === 'late', isEndless = () => MODE.kind === 'endless';
 const roundLabel = () => isEndless() ? `Runde ${ri+1}` : `Runde ${ri+1} von ${rounds}`;
 const valTxt = () => isLate() ? `, zählt ${ri+1} ${ri ? 'Punkte' : 'Punkt'}` : '';
@@ -5677,6 +5687,7 @@ function loadSettings(){
       if (typeof s.sound === 'boolean') Snd.on = s.sound;
       if (['classic','late','endless'].includes(s.mode)) MODE.kind = s.mode;
       if (typeof s.pu === 'boolean') MODE.pu = s.pu;
+      if (Number.isInteger(s.nch) && s.nch >= 0 && s.nch <= 6) MODE.nch = s.nch;
       if (typeof s.blvl === 'number') BOT.lvl = clamp(s.blvl | 0, 0, 2);
       if (s.bot) setBot(true, BOT.lvl);
       if (Array.isArray(s.av)) { HERO = [0,1].map(i => heroFix(s.av[i], i)); drawFigures(); }
@@ -5686,7 +5697,7 @@ function loadSettings(){
 function saveSettings(){
   if (NET.on && NET.role === 'guest') return;
   const sv = NET.on && NET.saved ? NET.saved : null;
-  try { localStorage.setItem(SET_KEY, JSON.stringify({names:[P[0].name, BOT.on ? BOT.human : sv ? sv.n : P[1].name], rounds, enabled, sound:Snd.on, mode:MODE.kind, pu:MODE.pu, bot:BOT.on || !!(sv && sv.bot), blvl:BOT.lvl, av: sv ? [HERO[0], sv.av] : HERO})); } catch(e) {}
+  try { localStorage.setItem(SET_KEY, JSON.stringify({names:[P[0].name, BOT.on ? BOT.human : sv ? sv.n : P[1].name], rounds, enabled, sound:Snd.on, mode:MODE.kind, pu:MODE.pu, nch:MODE.nch, bot:BOT.on || !!(sv && sv.bot), blvl:BOT.lvl, av: sv ? [HERO[0], sv.av] : HERO})); } catch(e) {}
 }
 let used = {};
 try { used = JSON.parse(localStorage.getItem(USED_KEY)) || {}; } catch(e) { used = {}; }
@@ -7043,6 +7054,9 @@ const BS = {
     {n: 'Klippen', w: 9, h: 10, rows: [[1,4],[1,5],[1,9],[1,9],[1,9],[1,9],[1,7],[1,7],[1,5],[1,5]]},
     {n: 'Hafen', w: 10, h: 9, rows: [[1,6],[1,7],[1,10],[1,10],[2,10],[2,10],[4,10],[4,8],[4,8]]},
     {n: 'Riff', w: 9, h: 10, rows: [[4,9],[3,9],[1,9],[1,9],[1,7],[1,7],[1,9],[2,9],[2,6],[2,6]]},
+    {n: 'Atoll', w: 10, h: 10, rows: [[4,7],[3,8],[2,9],[1,10],[1,10],[1,10],[1,10],[2,9],[3,8],[4,7]]},
+    {n: 'Kanal', w: 7, h: 10},
+    {n: 'Bucht', w: 10, h: 8, rows: [[1,10],[1,10],[1,10],[1,7],[1,5],[1,5],[1,8],[1,10]]},
   ],
   mask(k){ const m = this.MAPS[k]; return Array.from({length: 100}, (_, i) => { const r = Math.floor(i/10), c = i % 10; if (r >= m.h || c >= m.w) return false; if (!m.rows) return true; const [a, b] = m.rows[r]; return c + 1 >= a && c + 1 <= b; }); },
   cells(a, n, h){ const r = Math.floor(a/10), c = a % 10, out = []; for (let k = 0; k < n; k++) { const rr = r + (h ? 0 : k), cc = c + (h ? k : 0); if (rr > 9 || cc > 9) return null; out.push(rr*10 + cc); } return out; },
@@ -7266,6 +7280,9 @@ const KK_MAPS = [
   {n: 'Brücke', m: ['####..####', '##########', '##########', '####..####']},
   {n: 'Donut', m: ['#######', '#######', '##...##', '##...##', '##...##', '#######', '#######']},
   {n: 'Diamant', m: ['...#...', '..###..', '.#####.', '#######', '.#####.', '..###..', '...#...']},
+  {n: 'Kreuz', m: ['..###..', '..###..', '#######', '#######', '#######', '..###..', '..###..']},
+  {n: 'Herz', m: ['.##.##.', '#######', '#######', '#######', '.#####.', '..###..', '...#...']},
+  {n: 'Treppe', m: ['###.....', '#####...', '#######.', '########', '.#######', '...#####', '.....###']},
 ];
 const KK = {
   // Kästchen außerhalb der Karte gibt es nicht; Linien nur an echten Kästchen
@@ -7338,7 +7355,7 @@ function kaese(done){
 
 /* ---------- Mastermind-Duell ---------- */
 const MM_COL = ['#e5484d', '#f28c28', '#f5c518', '#3fbf5a', '#3b6fe0', '#a05ad8', '#ff7ab6', '#6b4a2f'];
-const MM_LV = [{n: 'Einfach', len: 4, cols: 6, dup: false, pos: true}, {n: 'Leicht', len: 4, cols: 6, dup: false}, {n: 'Normal', len: 4, cols: 6, dup: true}, {n: 'Schwer', len: 5, cols: 8, dup: true}];
+const MM_LV = [{n: 'Mit Hilfe', len: 4, cols: 6, dup: false, pos: true}, {n: 'Leicht', len: 4, cols: 6, dup: false}, {n: 'Normal', len: 4, cols: 6, dup: true}, {n: 'Schwer', len: 5, cols: 8, dup: true}];
 const MM = {
   score(code, g){ let b = 0, w = 0; const c1 = [], c2 = []; code.forEach((v, i) => { if (g[i] === v) b++; else { c1.push(v); c2.push(g[i]); } }); for (const v of c2) { const k = c1.indexOf(v); if (k >= 0) { w++; c1.splice(k, 1); } } return [b, w]; },
   rand(cfg){ const out = []; const pool = [...Array(cfg.cols).keys()]; for (let i = 0; i < cfg.len; i++) { const k = cfg.dup ? R0(cfg.cols) : pool.splice(R0(pool.length), 1)[0]; out.push(k); } return out; },
@@ -7745,7 +7762,7 @@ function bluff(done){
     pads(false);
     gameView({info: `Runde ${r+1}`, field: '<div class="vsbig"><b id="bv0">?</b><span>:</span><b id="bv1">?</b></div>',
       panel: p => obRow(p, [1,2,3,4,5], 'bl'),
-      status: 'Wählt gleichzeitig und verdeckt. Die höhere Zahl gewinnt, außer die andere liegt genau 1 darunter.'});
+      status: 'Wählt gleichzeitig und verdeckt. Die höhere Zahl gewinnt. Ist die niedrigere genau 1 kleiner, gewinnt die niedrigere.'});
     const reveal = () => {
       over = true; cur = null;
       const [a,b] = pick;
@@ -8050,6 +8067,7 @@ function sprint(done){
 
 /* ---------- Memory ---------- */
 function memory(done){
+  if (VARSEL.memory === 1) return memorySpeed(done);
   const SYM = ['⚡','🔥','💎','🚀','🎧','👾','🌙','⭐','🍀','🎲','🔮','🛸','🦊','🐙'];
   const pairs = LEN.mem*2 - 1, s = G.start.slice();
   const deck = shuffle(shuffle(SYM.slice()).slice(0, pairs).flatMap(x => [x, x]));
@@ -8117,6 +8135,51 @@ function memory(done){
   turn();
 }
 
+
+/* Pairs Speed: jeder hat sein eigenes Feld (gleiche Karten), beide gleichzeitig. Wer zuerst alle Paare hat, gewinnt. */
+function memorySpeed(done){
+  const SYM = ['⚡','🔥','💎','🚀','🎧','👾','🌙','⭐','🍀','🎲','🔮','🛸','🦊','🐙'];
+  const pairs = LEN.mem*2 - 1;
+  const deck = shuffle(shuffle(SYM.slice()).slice(0, pairs).flatMap(x => [x, x]));
+  const st = [0, 1].map(() => ({open: [], lock: false, found: 0, mem: {}, tries: 0}));
+  let over = false;
+  pads(false);
+  const grid = q => `<div class="mspd"><div class="bst c${q + 1}">${esc(P[q].name)}</div><div class="mgrid msg" data-q="${q}">${deck.map((x, i) => `<button class="mcard" data-q="${q}" data-i="${i}"><span>${x}</span></button>`).join('')}</div></div>`;
+  gameView({info: `Pairs Speed · ${pairs} Paare`, fcls: 'mspdf', field: `<div class="mspw">${grid(0)}${grid(1)}</div>`,
+    res: q => `<span id="mp${q}">0 von ${pairs} Paaren</span>`,
+    status: 'Gleichzeitig: jeder deckt auf seinem Feld auf. Wer zuerst alle Paare hat, gewinnt.'});
+  const cards = [0, 1].map(q => [...main.querySelectorAll(`.mcard[data-q="${q}"]`)]);
+  const upd = q => { const e = $('#mp' + q); if (e) e.textContent = `${st[q].found} von ${pairs} Paaren`; };
+  const flip = (q, i) => {
+    const S = st[q], c = cards[q];
+    if (over || S.lock || S.open.includes(i) || c[i].classList.contains('done')) return;
+    c[i].classList.add('up'); S.open.push(i); Snd.tick(); if (isBot(q) && Math.random() < bv(BOTP.memo) + .1) S.mem[i] = deck[i];
+    if (S.open.length < 2) return;
+    S.lock = true; S.tries++;
+    const [a, b] = S.open;
+    if (deck[a] === deck[b]) {
+      later(() => { S.open = []; S.lock = false; S.found++; c[a].classList.add('done', 'm' + q); c[b].classList.add('done', 'm' + q); Snd.good(); upd(q);
+        if (S.found === pairs && !over) { over = true; cur = null; gturn(-1);
+          gstat(`${nm(q)} hat zuerst alle Paare (${S.tries} Versuche)!`); ptPause(() => done(q, [st[0].found, st[1].found])); }
+        else if (isBot(q)) bot(q); }, 280);
+    } else later(() => { c[a].classList.remove('up'); c[b].classList.remove('up'); S.open = []; S.lock = false; if (isBot(q)) bot(q); }, 650);
+  };
+  const bot = q => {
+    const S = st[q], c = cards[q], live = i => !c[i].classList.contains('done'), all = deck.map((_, i) => i);
+    const known = () => Object.keys(S.mem).map(Number).filter(live), unknown = () => all.filter(i => live(i) && !(i in S.mem) && !S.open.includes(i));
+    const pace = [[900, 1400], [650, 1000], [420, 700]][BOT.lvl];
+    later(() => { if (over || S.lock || S.open.length) return;
+      let pr = null; const k = known(); for (const a of k) for (const b of k) if (!pr && a < b && S.mem[a] === S.mem[b]) pr = [a, b];
+      const u = unknown(), first = pr ? pr[0] : pickOne(u.length ? u : all.filter(live)); flip(q, first);
+      later(() => { if (over || S.open.length !== 1) return;
+        let second = pr ? pr[1] : known().find(i => i !== first && S.mem[i] === deck[first]);
+        if (second == null) { const u2 = unknown().filter(i => i !== first); second = u2.length ? pickOne(u2) : all.find(i => i !== first && live(i)); }
+        if (second != null) flip(q, second); }, brnd(pace[0]*.6, pace[1]*.6)); }, brnd(pace[0], pace[1]));
+  };
+  [0, 1].forEach(q => cards[q].forEach(b => b.onclick = () => { if (mayAct(q)) flip(q, +b.dataset.i); }));
+  gturn(-1);
+  if (isBot(1)) bot(1);
+}
 /* ---------- Echtzeit-Spiele: Air Hockey und Blobby Volley ----------
    Jedes Gerät steuert die eigene Figur ohne Verzögerung. Den Ball rechnet das Gerät, auf dessen Seite er gerade ist,
    mit der eigenen Figur, und schickt den Stand mit Uhrzeit. Fliegt er über die Mitte, gibt es ihn ab (Übergabe).
@@ -8759,9 +8822,22 @@ const KA = {
       {n: 'Schräge Kante', P: [[130, 130], [880, 130], [690, 470], [130, 470]], s: [205, 300]},
       {n: 'Zunge', P: [[130, 165], [600, 165], [600, 250], [885, 250], [885, 350], [600, 350], [600, 435], [130, 435]], s: [205, 300]},
       {n: 'Sechseck', P: circ(520, 300, 262, 6).map(([x, y]) => [x, y]), s: [330, 300]},
+      {n: 'Raute', P: [[150, 300], [500, 80], [870, 300], [500, 520]], s: [260, 300]},
+      {n: 'Trichter', P: [[130, 120], [880, 230], [880, 370], [130, 480]], s: [205, 300]},
+      {n: 'L-Form', P: [[130, 120], [430, 120], [430, 330], [880, 330], [880, 480], [130, 480]], s: [230, 200]},
     ];
   })(),
-  SURF: {holz: {n: 'Holz', v: 925, mu: 150, k: .5, c: ['#8a5a2b', '#5e3a18']}, eis: {n: 'Eis', v: 510, mu: 60, k: .22, c: ['#cfefff', '#78b6d6']}, teppich: {n: 'Teppich', v: 1780, mu: 430, k: 1.1, c: ['#7a1f3d', '#4a0f24']}},
+  SURF: {holz: {n: 'Holz', v: 925, mu: 150, k: .5, c: ['#8a5a2b', '#5e3a18']}, eis: {n: 'Eis', v: 510, mu: 60, k: .22, c: ['#cfefff', '#78b6d6']}, teppich: {n: 'Teppich', v: 1780, mu: 430, k: 1.1, c: ['#7a1f3d', '#4a0f24']}, mix: {n: 'Gemischt', v: 1150, mu: 150, k: .5, c: ['#8a5a2b', '#5e3a18']}},
+  // gemischter Tisch: Holz mit Eis- und Teppichflächen (Rechtecke), nicht direkt am Start
+  zones(t){ const T = this.TABLES[t], xs = T.P.map(p => p[0]), ys = T.P.map(p => p[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), out = [];
+    const kinds = shuffle(['eis', 'teppich', pickOne(['eis', 'teppich'])]).slice(0, 2 + R0(2));
+    for (const sf of kinds) for (let k = 0; k < 40; k++) { const vert = Math.random() < .5, w = vert ? 70 + Math.random()*110 : (x1 - x0)*(.3 + Math.random()*.4), h = vert ? (y1 - y0)*(.5 + Math.random()*.5) : 60 + Math.random()*90;
+      const x = x0 + Math.random()*(x1 - x0 - w), y = y0 + Math.random()*(y1 - y0 - h), cx = x + w/2, cy = y + h/2;
+      if (Math.hypot(cx - T.s[0], cy - T.s[1]) < 140 && x < T.s[0] + 30 && x + w > T.s[0] - 30) continue;
+      if (out.some(z => x < z.x + z.w && x + w > z.x && y < z.y + z.h && y + h > z.y)) continue;
+      out.push({sf, x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h)}); break; }
+    return out; },
+  sfAt(S, x, y){ if (S.zn) for (const z of S.zn) if (x >= z.x && x <= z.x + z.w && y >= z.y && y <= z.y + z.h) return this.SURF[z.sf]; return this.SURF[S.sf]; },
   pip(x, y, P){ let c = false; for (let i = 0, j = P.length - 1; i < P.length; j = i++) { const xi = P[i][0], yi = P[i][1], xj = P[j][0], yj = P[j][1]; if ((yi > y) !== (yj > y) && x < (xj - xi)*(y - yi)/(yj - yi) + xi) c = !c; } return c; },
   edge(x, y, P){ let m = 1e9; for (let i = 0; i < P.length; i++) { const a = P[i], b = P[(i + 1) % P.length], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex*ex + ey*ey; let t = ((x - a[0])*ex + (y - a[1])*ey)/L2; t = t < 0 ? 0 : t > 1 ? 1 : t; const dx = x - a[0] - ex*t, dy = y - a[1] - ey*t, d2 = dx*dx + dy*dy; if (d2 < m) m = d2; } return Math.sqrt(m); },
   // Abstand der Kugel zur Kante: vom äußersten Punkt der Kugel; negativ heißt, sie hängt schon drüber
@@ -8798,7 +8874,7 @@ const KA = {
       let moving = false;
       for (const b of B) {
         if (b.f || (!b.vx && !b.vy)) continue;
-        const s = Math.sqrt(b.vx*b.vx + b.vy*b.vy), ns = s - (sf.mu + sf.k*s)*DT;
+        const zf = S.zn && S.zn.length ? this.sfAt(S, b.x, b.y) : sf, s = Math.sqrt(b.vx*b.vx + b.vy*b.vy), ns = s - (zf.mu + zf.k*s)*DT;
         if (ns <= 3) { b.vx = b.vy = 0; continue; }
         b.vx *= ns/s; b.vy *= ns/s; b.x += b.vx*DT; b.y += b.vy*DT; moving = true;
         for (const [ox, oy, orr] of S.ob) { const dx = b.x - ox, dy = b.y - oy, d2 = dx*dx + dy*dy, rr = orr + R; if (d2 < rr*rr) { const d = Math.sqrt(d2) || 1e-6, nx = dx/d, ny = dy/d; b.x = ox + nx*rr; b.y = oy + ny*rr; const vn = b.vx*nx + b.vy*ny; if (vn < 0) { b.vx -= 1.75*vn*nx; b.vy -= 1.75*vn*ny; if (i - lastS > 12) { lastS = i; ev.push([i, 'o']); } } } }
@@ -8829,8 +8905,8 @@ const KA = {
   },
 };
 const kaFmt = g => g === Infinity ? '–' : `${g < 10 ? (Math.floor(g*10)/10).toFixed(1).replace('.', ',') : Math.round(g)} mm`;
-function kaSession(rid, st){ return {rid, t: st.t, tg: st.tg.slice(), sf: st.sf, ob: st.ob.map(o => o.slice()), b: st.b.map(b => ({...b})), left: st.left.slice(), p: st.p, ph: st.ph, nid: st.nid, rec: null, evI: 0, aim: null, plan: null, layer: null, lab: '', labT: 0}; }
-const kaState = S => ({t: S.t, tg: S.tg, sf: S.sf, ob: S.ob, b: S.b.map(b => ({...b})), left: S.left.slice(), p: S.p, ph: S.ph, nid: S.nid});
+function kaSession(rid, st){ return {rid, t: st.t, tg: st.tg.slice(), sf: st.sf, zn: Array.isArray(st.zn) ? st.zn.filter(z => z && KA.SURF[z.sf] && [z.x, z.y, z.w, z.h].every(Number.isFinite)).slice(0, 4) : [], ob: st.ob.map(o => o.slice()), b: st.b.map(b => ({...b})), left: st.left.slice(), p: st.p, ph: st.ph, nid: st.nid, rec: null, evI: 0, aim: null, plan: null, layer: null, lab: '', labT: 0}; }
+const kaState = S => ({t: S.t, tg: S.tg, sf: S.sf, zn: S.zn, ob: S.ob, b: S.b.map(b => ({...b})), left: S.left.slice(), p: S.p, ph: S.ph, nid: S.nid});
 const kaMine = S => NET.on ? (NET.role === 'host' ? 0 : 1) : S.p;
 const kaAuto = p => isBot(p) || (RT.auto && (!NET.on || p === (NET.role === 'host' ? 0 : 1)));
 
@@ -8856,6 +8932,13 @@ function kaDraw(cv, S, now){
     if (S.sf === 'holz') { c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1.5; for (let y = 120; y < 490; y += 26) { c.beginPath(); c.moveTo(100, y); for (let x = 100; x < 900; x += 40) c.lineTo(x, y + Math.sin(x/60 + y)*3); c.stroke(); } }
     if (S.sf === 'eis') { c.strokeStyle = 'rgba(255,255,255,.45)'; c.lineWidth = 1.5; for (let i = 0; i < 14; i++) { const x = 150 + (i*173) % 700, y = 150 + (i*97) % 300; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 40 + (i*13) % 60, y + 12 - (i*7) % 24); c.stroke(); } }
     if (S.sf === 'teppich') { c.fillStyle = 'rgba(255,255,255,.05)'; for (let y = 120; y < 490; y += 6) for (let x = 100 + (y/6 % 2)*3; x < 900; x += 6) c.fillRect(x, y, 2, 2); }
+    if (S.sf === 'mix') { c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1.5; for (let y = 80; y < 530; y += 26) { c.beginPath(); c.moveTo(100, y); for (let x = 100; x < 900; x += 40) c.lineTo(x, y + Math.sin(x/60 + y)*3); c.stroke(); } }
+    for (const z of S.zn || []) { const zf = KA.SURF[z.sf], gz = c.createLinearGradient(0, z.y, 0, z.y + z.h); gz.addColorStop(0, zf.c[0]); gz.addColorStop(1, zf.c[1]); c.fillStyle = gz; c.beginPath(); c.roundRect(z.x, z.y, z.w, z.h, 10); c.fill();
+      c.save(); c.beginPath(); c.roundRect(z.x, z.y, z.w, z.h, 10); c.clip();
+      if (z.sf === 'eis') { c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.5; for (let i = 0; i < 6; i++) { const x = z.x + (i*53) % z.w, y = z.y + (i*37) % z.h; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 30, y + 10); c.stroke(); } }
+      else { c.fillStyle = 'rgba(255,255,255,.06)'; for (let y = z.y; y < z.y + z.h; y += 6) for (let x = z.x + (y/6 % 2)*3; x < z.x + z.w; x += 6) c.fillRect(x, y, 2, 2); }
+      c.restore(); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 2; c.setLineDash([6, 5]); c.beginPath(); c.roundRect(z.x, z.y, z.w, z.h, 10); c.stroke(); c.setLineDash([]);
+      c.font = '900 12px Nunito'; c.textAlign = 'left'; c.fillStyle = z.sf === 'eis' ? 'rgba(20,60,90,.8)' : 'rgba(255,255,255,.7)'; c.fillText(zf.n, z.x + 8, z.y + 16); }
     c.restore();
     const seg = i => { const a = T.P[i], b = T.P[(i + 1) % T.P.length]; c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); }, tg = new Set(S.tg);
     // Banden
@@ -8956,7 +9039,7 @@ function kaAutoTick(S){
 // Gastgeber und offline: eine Runde, bis alle Kugeln gestoßen sind
 function kaBegin(t, sf, n, starter, ui, onEnd){
   const rid = ++RT.rid;
-  const tg = KA.target(t), S = kaSession(rid, {t, tg, sf, ob: KA.obstacles(t, tg), b: [], left: [n, n], p: starter, ph: 'aim', nid: 1}); S.tot = n; RT.ka = S;
+  const tg = KA.target(t), S = kaSession(rid, {t, tg, sf, zn: sf === 'mix' ? KA.zones(t) : [], ob: KA.obstacles(t, tg), b: [], left: [n, n], p: starter, ph: 'aim', nid: 1}); S.tot = n; RT.ka = S;
   S.b.push(KA.spawn(S, starter)); S.left[starter]--;
   if (NET.on) netSend({t: 'rt', k: 'kab', rid, st: kaState(S), tot: n});
   ui(S);
@@ -9012,7 +9095,7 @@ function kante(done){
   let lastT = -1;
   function round(){
     let t; do t = R0(KA.TABLES.length); while (t === lastT); lastT = t;
-    const sf = pickOne(['holz', 'holz', 'eis', 'teppich']);
+    const sf = pickOne(['holz', 'eis', 'teppich', 'mix', 'mix']);
     pads(false);
     gameView({fcls: 'cvf', info: `${KA.TABLES[t].n}, ${KA.SURF[sf].n}`, field: '<canvas id="rtc" class="rtc kac" data-v=""></canvas>',
       panel: () => '<div class="obz"><span>ziehen und loslassen</span></div>', res: () => '',
@@ -9036,22 +9119,29 @@ function kante(done){
    Der Gastgeber rechnet den Zug komplett durch und schickt den Verlauf, beide spielen ihn ab. */
 const SU = {
   W: 1000, H: 640, C: [500, 322], R0: 296, RMIN: 180, SHRINK: 16, BR: 27, VMAX: 900, PULL: 220, AIM: 7000, DT: 1/240,
-  VARS: [{id: 'rund', n: 'Runder Ring'}, {id: 'eckig', n: 'Eckiger Ring'}, {id: 'saeule', n: 'Ring mit Säule'}, {id: 'eis', n: 'Eis-Ring'}],
+  // sq: eckig, ice: ganze Fläche Eis, pil: Säulen [x, y, r], pat: Flecken [x, y, r, 'eis'|'sand'] (Abstand zur Mitte)
+  VARS: [{id: 'rund', n: 'Runder Ring'}, {id: 'eckig', n: 'Eckiger Ring', sq: 1}, {id: 'saeule', n: 'Ring mit Säule', pil: [[0, 0, 34]]}, {id: 'eis', n: 'Eis-Ring', ice: 1},
+    {id: 'eiseck', n: 'Eckiger Eis-Ring', sq: 1, ice: 1}, {id: 'eissaeule', n: 'Eis-Ring mit Säule', ice: 1, pil: [[0, 0, 34]]},
+    {id: 'flecken', n: 'Ring mit Eis und Sand', pat: [[0, -120, 70, 'eis'], [0, 120, 70, 'eis'], [-175, 0, 60, 'sand'], [175, 0, 60, 'sand']]},
+    {id: 'doppel', n: 'Zwei Säulen', pil: [[0, -95, 26], [0, 95, 26]]}, {id: 'eisrand', n: 'Eis mit Sandmitte', sq: 1, pat: [[0, 0, 140, 'sand']], ice: 1}],
+  F(v){ return this.VARS.find(x => x.id === v) || this.VARS[0]; },
+  // Reibung an einer Stelle: Flecken vor Grundfläche
+  fr(f, x, y){ if (f.pat) for (const [px, py, pr, k] of f.pat) { const dx = x - this.C[0] - px, dy = y - this.C[1] - py; if (dx*dx + dy*dy < pr*pr) return k === 'eis' ? [60, .2] : [560, 1.7]; } return f.ice ? [60, .2] : [300, .9]; },
   mass: w => 1 + 1.4*(1 - w),
-  out(v, r, x, y){ const dx = x - this.C[0], dy = y - this.C[1]; return v === 'eckig' ? Math.max(Math.abs(dx), Math.abs(dy)) > r*.9 : dx*dx + dy*dy > r*r; },
-  starts(v){ const d = v === 'saeule' ? 155 : 130; return [[this.C[0] - d, this.C[1]], [this.C[0] + d, this.C[1]]]; },
+  out(v, r, x, y){ const dx = x - this.C[0], dy = y - this.C[1]; return this.F(v).sq ? Math.max(Math.abs(dx), Math.abs(dy)) > r*.9 : dx*dx + dy*dy > r*r; },
+  starts(v){ const d = this.F(v).pil ? 155 : 130; return [[this.C[0] - d, this.C[1]], [this.C[0] + d, this.C[1]]]; },
   // Zug durchrechnen. aims: [{a, w}] (w = 0: stehen bleiben)
   sim(v, r, pos, aims, rec = true){
-    const DT = this.DT, ice = v === 'eis', B = pos.map(([x, y], j) => { const a = aims[j] || {a: 0, w: 0}, w = clamp(+a.w || 0, 0, 1); return {x, y, vx: Math.cos(a.a)*w*this.VMAX, vy: Math.sin(a.a)*w*this.VMAX, m: this.mass(w), out: -1}; });
+    const DT = this.DT, f = this.F(v), B = pos.map(([x, y], j) => { const a = aims[j] || {a: 0, w: 0}, w = clamp(+a.w || 0, 0, 1); return {x, y, vx: Math.cos(a.a)*w*this.VMAX, vy: Math.sin(a.a)*w*this.VMAX, m: this.mass(w), out: -1}; });
     const fr = [], ev = []; let hitT = -1e9;
     for (let i = 0; i < 240*8; i++) {
       let moving = false;
       for (const b of B) {
         if (b.out >= 0) { b.vx *= .9; b.vy *= .9; b.x += b.vx*DT; b.y += b.vy*DT; continue; }
         const s = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
-        if (s > 0) { const mu = (ice ? 60 : 300)*(.8 + .25*b.m), k = ice ? .2 : .9, ns = s - (mu + k*s)*DT; if (ns <= 2) { b.vx = b.vy = 0; } else { b.vx *= ns/s; b.vy *= ns/s; moving = true; } }
+        if (s > 0) { const [m0, k] = this.fr(f, b.x, b.y), mu = m0*(.8 + .25*b.m), ns = s - (mu + k*s)*DT; if (ns <= 2) { b.vx = b.vy = 0; } else { b.vx *= ns/s; b.vy *= ns/s; moving = true; } }
         b.x += b.vx*DT; b.y += b.vy*DT;
-        if (v === 'saeule') { const dx = b.x - this.C[0], dy = b.y - this.C[1], d = Math.sqrt(dx*dx + dy*dy), R = 34 + this.BR; if (d < R && d > 0) { const nx = dx/d, ny = dy/d; b.x = this.C[0] + nx*R; b.y = this.C[1] + ny*R; const vn = b.vx*nx + b.vy*ny; if (vn < 0) { b.vx -= 1.6*vn*nx; b.vy -= 1.6*vn*ny; if (i - hitT > 30) { hitT = i; ev.push([i, 'p']); } } } }
+        if (f.pil) for (const [px, py, pr] of f.pil) { const dx = b.x - this.C[0] - px, dy = b.y - this.C[1] - py, d = Math.sqrt(dx*dx + dy*dy), R = pr + this.BR; if (d < R && d > 0) { const nx = dx/d, ny = dy/d; b.x = this.C[0] + px + nx*R; b.y = this.C[1] + py + ny*R; const vn = b.vx*nx + b.vy*ny; if (vn < 0) { b.vx -= 1.6*vn*nx; b.vy -= 1.6*vn*ny; if (i - hitT > 30) { hitT = i; ev.push([i, 'p']); } } } }
       }
       // Zusammenstoß, schwer gegen leicht
       const a = B[0], c = B[1], dx = c.x - a.x, dy = c.y - a.y, d2 = dx*dx + dy*dy, RR = 2*this.BR;
@@ -9090,18 +9180,25 @@ function suDraw(cv, S, now){
   const k = cw/W; ctx.setTransform(k, 0, 0, k, 0, 0);
   ctx.fillStyle = PAL.field; ctx.fillRect(0, 0, W, H);
   // Ring: Podest, Fläche, Rand. Der Rand zeigt, wohin er beim nächsten Zug schrumpft.
-  const ice = S.v === 'eis', sq = S.v === 'eckig', shape = (r) => { ctx.beginPath(); if (sq) ctx.rect(C[0] - r*.9, C[1] - r*.9, r*1.8, r*1.8); else ctx.arc(C[0], C[1], r, 0, 7); };
+  const F = SU.F(S.v), ice = !!F.ice, sq = !!F.sq, shape = (r) => { ctx.beginPath(); if (sq) ctx.rect(C[0] - r*.9, C[1] - r*.9, r*1.8, r*1.8); else ctx.arc(C[0], C[1], r, 0, 7); };
   ctx.fillStyle = PAL.line; shape(SU.R0 + 16); ctx.fill();
   const g = ctx.createRadialGradient(C[0], C[1], 20, C[0], C[1], SU.R0);
   if (ice) { g.addColorStop(0, '#cfefff'); g.addColorStop(1, '#7fbfe0'); } else { g.addColorStop(0, '#d9b98a'); g.addColorStop(1, '#a9875a'); }
   shape(S.r); ctx.fillStyle = g; ctx.fill();
   if (ice) { ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; for (let i = 0; i < 9; i++) { const a = i*.7, l = 40 + (i*37) % 90; ctx.beginPath(); ctx.moveTo(C[0] + Math.cos(a)*30*i/3, C[1] + Math.sin(a*1.3)*25*i/3); ctx.lineTo(C[0] + Math.cos(a)*30*i/3 + l, C[1] + Math.sin(a*1.3)*25*i/3 + l*.3); ctx.stroke(); } }
+  // Flecken (Eis / Sand), auf die Ringfläche begrenzt
+  if (F.pat) { ctx.save(); shape(S.r); ctx.clip(); for (const [px, py, pr, kk] of F.pat) { const x = C[0] + px, y = C[1] + py, gg = ctx.createRadialGradient(x, y, 4, x, y, pr);
+      if (kk === 'eis') { gg.addColorStop(0, '#e6f7ff'); gg.addColorStop(1, '#8cc8e6'); } else { gg.addColorStop(0, '#f1d98f'); gg.addColorStop(1, '#c9a24f'); }
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, pr, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.setLineDash([6, 5]); ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]);
+      if (kk === 'sand') { ctx.fillStyle = 'rgba(120,80,30,.35)'; for (let i = 0; i < 30; i++) ctx.fillRect(x + Math.cos(i*2.4)*pr*.8*((i*37 % 10)/10), y + Math.sin(i*2.4)*pr*.8*((i*53 % 10)/10), 2, 2); }
+      else { ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1.5; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x - pr*.5 + i*12, y - 10 + i*6); ctx.lineTo(x - pr*.1 + i*12, y + i*6); ctx.stroke(); } } }
+    ctx.restore(); }
   // Startlinien (Shikiri-sen)
   const st = SU.starts(S.v); ctx.strokeStyle = ice ? 'rgba(20,60,90,.5)' : 'rgba(255,255,255,.6)'; ctx.lineWidth = 4;
   for (const [x, y] of st) { const dx = x < C[0] ? 34 : -34; ctx.beginPath(); ctx.moveTo(x + dx, y - 22); ctx.lineTo(x + dx, y + 22); ctx.stroke(); }
 ctx.strokeStyle = PAL.sun; ctx.lineWidth = 6; shape(S.r); ctx.stroke();
   if (S.ph === 'aim' && S.r - SU.SHRINK >= SU.RMIN) { ctx.setLineDash([8, 8]); ctx.strokeStyle = PAL.a('bad', .55); ctx.lineWidth = 2; shape(S.r - SU.SHRINK); ctx.stroke(); ctx.setLineDash([]); }
-  if (S.v === 'saeule') { ctx.fillStyle = '#3a2a1a'; ctx.beginPath(); ctx.arc(C[0], C[1], 34, 0, 7); ctx.fill(); ctx.strokeStyle = PAL.p2; ctx.lineWidth = 4;ctx.stroke();}
+  if (F.pil) for (const [px, py, pr] of F.pil) { ctx.fillStyle = '#3a2a1a'; ctx.beginPath(); ctx.arc(C[0] + px, C[1] + py, pr, 0, 7); ctx.fill(); ctx.strokeStyle = PAL.p2; ctx.lineWidth = 4;ctx.stroke();}
   // Positionen
   let pos = S.b.map(([x, y]) => [x, y, 0]);
   const r = S.rec;
@@ -9224,7 +9321,7 @@ function suBegin(v, onEnd){
         onEnd(l, S);
       } else {
         // nächster Zug: Ring wird enger, wer jetzt draußen stünde, wird hineingeschoben
-        S.n++; S.r = Math.max(SU.RMIN, S.r - SU.SHRINK); S.b = r.fin.map(([x, y]) => { const dx = x - SU.C[0], dy = y - SU.C[1], d = Math.hypot(dx, dy), m = S.v === 'eckig' ? Math.max(Math.abs(dx), Math.abs(dy))/(S.r*.9) : d/S.r, lim = .86; return m > lim ? [SU.C[0] + dx*lim/m, SU.C[1] + dy*lim/m] : [x, y]; });
+        S.n++; S.r = Math.max(SU.RMIN, S.r - SU.SHRINK); S.b = r.fin.map(([x, y]) => { const dx = x - SU.C[0], dy = y - SU.C[1], d = Math.hypot(dx, dy), m = SU.F(S.v).sq ? Math.max(Math.abs(dx), Math.abs(dy))/(S.r*.9) : d/S.r, lim = .86; return m > lim ? [SU.C[0] + dx*lim/m, SU.C[1] + dy*lim/m] : [x, y]; });
         if (Math.hypot(S.b[0][0] - S.b[1][0], S.b[0][1] - S.b[1][1]) < 2*SU.BR + 2) { const dx = S.b[1][0] - S.b[0][0], dy = S.b[1][1] - S.b[0][1], d = Math.hypot(dx, dy) || 1; S.b[0] = [S.b[0][0] - dx/d*12, S.b[0][1] - dy/d*12]; S.b[1] = [S.b[1][0] + dx/d*12, S.b[1][1] + dy/d*12]; }
         S.b = S.b.map(([x, y]) => [Math.round(x*100)/100, Math.round(y*100)/100]);
         S.rec = null; S.aim = [null, null]; S.plan = [null, null]; gFin = false; S.T = now + SU.AIM; S.ph = 'aim';
@@ -9727,6 +9824,18 @@ function mgRound(P, r, steps = 4){
 // Ausrundung in einer Innenecke (cx,cy), die Bahn liegt in Richtung (sx,sy)
 const mgFillet = (cx, cy, r, sx, sy) => { const C = [cx + sx*r, cy + sy*r], a1 = Math.atan2(-sy, 0), a2 = Math.atan2(0, -sx), P = [[cx, cy]]; let d = a2 - a1; while (d > Math.PI) d -= 2*Math.PI; while (d < -Math.PI) d += 2*Math.PI; for (let k = 0; k <= 5; k++) { const a = a1 + d*k/5; P.push([C[0] + Math.cos(a)*r, C[1] + Math.sin(a)*r]); } return P; };
 const MG_HOLES = [
+  // neu: Eisbahn, glatt bis kurz vorm Loch, dann bremst ein Sandstreifen
+  {n: 'Eisbahn', par: 2, tip: 'Auf dem Eis rollt er weit, der Sand davor bremst.', o: mgRound(mgRect(110, 210, 890, 390), 40),
+    ice: [mgRect(250, 210, 680, 390)], sand: [mgRound(mgRect(700, 210, 745, 390), 10)], tee: [170, 300], cup: [820, 300]},
+  // neu: Schachbrett aus Eis und Sand, um den Pfosten herum
+  {n: 'Schachbrett', par: 3, tip: 'Eis rutscht, Sand bremst, den Weg dazwischen suchen.', o: mgRound(mgRect(110, 90, 890, 510), 40),
+    ice: [mgRect(300, 90, 450, 230), mgRect(450, 230, 600, 370), mgRect(600, 370, 750, 510), mgRect(600, 90, 750, 230), mgRect(300, 370, 450, 510)],
+    sand: [mgRound(mgRect(450, 90, 600, 230), 14), mgRound(mgRect(300, 230, 450, 370), 14), mgRound(mgRect(450, 370, 600, 510), 14), mgRound(mgRect(600, 230, 750, 370), 14)],
+    blk: [mgRound(mgRect(505, 285, 545, 315), 10)], tee: [180, 300], cup: [820, 300]},
+  // neu: Gletscher, Eis am Hang, unten wartet der Teich
+  {n: 'Gletscher', par: 3, tip: 'Das Eis am Hang zieht nach unten zum Wasser, oben bleiben.', o: mgRound(mgRect(110, 80, 890, 520), 50),
+    ice: [mgRect(330, 80, 700, 400)], slope: [{P: mgRect(330, 80, 700, 400), f: [0, 140]}], water: [mgRound(mgRect(330, 430, 700, 520), [40, 40, 0, 0])],
+    sand: [mgRound(mgRect(760, 80, 890, 170), [0, 50, 0, 20])], tee: [180, 160], cup: [810, 330]},
   // leicht: eine Neigung lenkt den Ball nach unten ab, also höher zielen
   {n: 'Auftakt', par: 2, tip: 'Die Mitte hängt nach unten, höher zielen.', o: mgRound(mgRect(110, 190, 890, 410), 40),
     slope: [{P: mgRect(360, 190, 640, 410), f: [0, 230]}], tee: [175, 300], cup: [820, 250]},
@@ -9851,7 +9960,7 @@ const MG = {
         if (h.slope || h.rad) { const [fx, fy] = this.force(h, b.x, b.y); if (b.vx || b.vy || fx*fx + fy*fy > 130*130) { b.vx += fx*DT; b.vy += fy*DT; } }
         let s = Math.hypot(b.vx, b.vy);
         if (s > 0) {
-          const sand = this.inAny(b.x, b.y, h.sand), mu = sand ? 950 : 95, kk = sand ? 2.6 : .62;
+          const sand = this.inAny(b.x, b.y, h.sand), ice = !sand && this.inAny(b.x, b.y, h.ice), mu = sand ? 950 : ice ? 22 : 95, kk = sand ? 2.6 : ice ? .18 : .62;
           const ns = s - (mu + kk*s)*DT;
           if (ns <= 0) { b.vx = b.vy = 0; s = 0; } else { b.vx *= ns/s; b.vy *= ns/s; s = ns; }
         }
@@ -9958,6 +10067,7 @@ function mgDraw(cv, S, now){
       const al = clamp(Math.abs(z.f)/900, .14, .4), rm = (Math.max(z.r1, 10) + z.r2)/2, n = Math.max(6, Math.round(rm/14));
       for (let i = 0; i < n; i++) { const a = i/n*2*Math.PI; chev(z.c[0] + Math.cos(a)*rm, z.c[1] + Math.sin(a)*rm, hill ? a : a + Math.PI, al); }
     }
+    for (const P of h.ice || []) { path(P); c.fillStyle = '#bfe6f7'; c.fill(); c.save(); c.clip(); c.strokeStyle = 'rgba(255,255,255,.7)'; c.lineWidth = 2; for (let i = 0; i < 40; i++) { const x = (i*131.7) % W, y = (i*71.3) % H; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 26, y + 9); c.stroke(); } c.restore(); c.strokeStyle = 'rgba(40,90,120,.5)'; c.lineWidth = 2; c.stroke(); }
     for (const P of h.sand || []) { path(P); c.fillStyle = '#5c4a22'; c.fill(); c.save(); c.clip(); c.fillStyle = PAL.a('sun', .16); for (let i = 0; i < 900; i++) { const x = (i*97.3) % W, y = (i*57.7 + (i*i % 13)*7) % H; c.fillRect(x, y, 2, 2); } c.restore(); }
     for (const P of h.water || []) { const xs = P.map(p => p[0]), ys = P.map(p => p[1]), g = c.createLinearGradient(0, Math.min(...ys), 0, Math.max(...ys)); g.addColorStop(0, '#1456a8'); g.addColorStop(1, '#0b3a78'); path(P); c.fillStyle = g; c.fill(); }
     for (const P of h.dry || []) { c.save(); path(P); c.clip(); grass(); c.restore(); }
@@ -10128,6 +10238,8 @@ function mgBegin(hi, starter, ui, onEnd){
       // Schlag fertig: Stand übernehmen, wer zu oft geschlagen hat, ist raus
       S.b = S.fin.map(b => ({...b})); S.rec = null; S.evI = 0;
       for (const j of [0, 1]) if (!S.b[j].f && S.sk[j] >= MG.MAXS) { S.b[j].f = 2; S.lab = `${P[j].name.slice(0, 12)}: 7`; S.labT = now; }
+      // entschieden: einer ist drin, der andere kann ihn nicht mehr einholen (schon so viele Schläge, wie der andere insgesamt brauchte)
+      for (const j of [0, 1]) if (S.b[j].f === 1 && !S.b[1 - j].f && S.sk[1 - j] >= S.sk[j]) { S.b[1 - j].f = 2; S.lab = `${P[1 - j].name.slice(0, 12)}: nicht mehr einholbar`; S.labT = now; }
       if (S.b[0].f && S.b[1].f) { S.ph = 'done'; if (NET.on) netSend({t: 'rt', k: 'mgt', rid, st: mgState(S)}); ui(S); onEnd(S); }
       else {
         const o = 1 - S.p; if (!S.b[o].f) S.p = o;
@@ -10177,11 +10289,11 @@ function minigolf(done){
       status: `${esc(h.tip || '')} Vom Ball weg ziehen und loslassen, je weiter, desto fester. Höchstens 6 Schläge, dann zählt das Loch 7.`});
     cur = {};
     const ui = S => {
-      for (const j of [0, 1]) { const f = S.b[j].f; gres(j, `${S.sk[j]} ${S.sk[j] === 1 ? 'Schlag' : 'Schläge'}${f === 1 ? ', im Loch ✓' : f === 2 ? ', raus: zählt 7' : S.ph === 'aim' && S.p === j ? ', ist dran' : ''}`); }
+      for (const j of [0, 1]) { const f = S.b[j].f; gres(j, `${S.sk[j]} ${S.sk[j] === 1 ? 'Schlag' : 'Schläge'}${f === 1 ? ', im Loch ✓' : f === 2 ? (S.b[1 - j].f === 1 && S.sk[j] < MG.MAXS ? ', nicht mehr einholbar' : ', raus: zählt 7') : S.ph === 'aim' && S.p === j ? ', ist dran' : ''}`); }
       gturn(S.ph === 'done' ? -1 : S.p);
     };
     mgBegin(hi, nextStarter(), ui, S => {
-      const sc = [0, 1].map(j => S.b[j].f === 1 ? S.sk[j] : 7);
+      const sc = [0, 1].map(j => S.b[j].f === 1 ? S.sk[j] : S.sk[j] >= MG.MAXS ? 7 : S.sk[j] + 1);
       if (sc[0] === sc[1]) { gstat(noPt(`beide mit ${sc[0]} Schlägen`)); return ptPause(hole, 700); }
       const w = sc[0] < sc[1] ? 0 : 1;
       point(s, w, `${sc[w]} gegen ${sc[1-w]} Schläge`);
@@ -10206,6 +10318,13 @@ function rtSim(E, rb, now){
   const b = {...rb.b}, ev = {};
   let t = rb.tm; const end = Math.min(now, rb.tm + 350);
   while (t < end) { const h = Math.min(4, end - t); E.step(b, h/1000, null, ev, t); t += h; }
+  return b;
+}
+// wie rtSim, aber mit den eigenen Schlägern (für Übergaben, die verspätet ankommen)
+function rtSimP(E, rb, now, avs){
+  const b = {...rb.b}, ev = {};
+  let t = rb.tm; const end = Math.min(now, rb.tm + 350);
+  while (t < end) { const h = Math.min(4, end - t); E.step(b, h/1000, avs, ev, t); t += h; }
   return b;
 }
 function rtInput(s, p){
@@ -10268,7 +10387,7 @@ function rtTick(s){
     const n = Math.ceil(dt*1000/4), h = dt/n, avs = [s.local[0] ? s.av[0] : null, s.local[1] ? s.av[1] : null];
     let t = now - dt*1000;
     for (let i = 0; i < n; i++) {
-      t += h*1000; E.step(s.ball, h, avs, ev, t);
+      t += h*1000; E.step(s.ball, h, avs, ev, t); if (ev.hit && s.pred) s.pred.hit = true;
       if (ev.goal != null || ev.fault != null) break;
       const side = s.ball.x < E.mid ? 0 : 1;
       if (!s.local[side]) { s.own = false; s.rb = {b: {...s.ball}, tm: t}; rtSend(s, 1, t); s.sendT = now; break; }
@@ -10276,6 +10395,13 @@ function rtTick(s){
     if (s.own) E.idle(s, s.ball, dt);
   }
   s.disp = !s.own && s.rb ? (live ? rtSim(E, s.rb, now) : s.over ? s.disp || s.rb.b : s.rb.b) : s.ball;
+  // Air Hockey online: kommt der Puck (laut Vorausrechnung) auf die eigene Seite, sofort selbst übernehmen,
+  // statt auf die Übergabe zu warten, sonst rutscht er in der Wartezeit durch den eigenen Schläger
+  if (NET.on && s.kind === 'hk' && live && !s.own && s.rb) { const sd = s.disp.x < E.mid ? 0 : 1; if (s.local[sd] && Math.abs(s.disp.x - E.mid) > 10) { s.own = true; s.ball = {...s.disp}; s.pred = {t: now, hit: false}; } }
+  if (s.pred && now - s.pred.t > 600) s.pred = null;
+  // Puck weich nachführen statt springen (nur fürs Bild)
+  { const db = s.disp, pd = s.pdraw; if (pd && db && !s.over) { const ex = pd.x - db.x, ey = pd.y - db.y; if (Math.hypot(ex, ey) > 4 && Math.hypot(ex, ey) < 160) { s.poff = [ex, ey]; } }
+    if (s.poff) { const f = Math.exp(-dt*14); s.poff = [s.poff[0]*f, s.poff[1]*f]; if (Math.hypot(...s.poff) < .5) s.poff = null; } }
   if (ev.item != null) { const who = (s.ball.n || 0) - 1; if (NET.on && NET.role === 'guest') netSend({t: 'rt', k: 'pgh', rid: s.rid, id: ev.item, w: who}); else PG.took(s, ev.item, who); rtTone(880, .08); }
   if (ev.hit) rtTone(620, .04); else if (ev.wall) rtTone(330, .03, .02);
   if (ev.goal != null) rtPoint(s, 1 - ev.goal, 'goal');
@@ -10285,6 +10411,9 @@ function rtTick(s){
   // Zeichnen: eigene Figuren so, wie sie sind, die des anderen Geräts kurz weitergerechnet
   const av = [0,1].map(p => {
     if (s.local[p] || !s.ra) return s.av[p];
+    if (s.kind === 'hk' && s.rah && s.rah.length > 1) { const T = now - 70, H = s.rah; let i = H.length - 1; while (i > 0 && H[i - 1].tm > T) i--;
+      const a0 = H[Math.max(0, i - 1)], a1 = H[i];
+      if (T <= a1.tm && a1.tm > a0.tm) { const f = clamp((T - a0.tm)/(a1.tm - a0.tm), 0, 1), a = {x: a0.x + (a1.x - a0.x)*f, y: a0.y + (a1.y - a0.y)*f, vx: 0, vy: 0}; E.clampAv(a, p); return a; } }
     const age = clamp((now - s.ra.tm)/1000, 0, .06), a = {x: s.ra.x + s.ra.vx*age, y: s.ra.y + s.ra.vy*age, vx: 0, vy: 0};
     if (s.kind === 'bv') a.y = Math.min(E.GY - E.RB, a.y + E.G*age*age);
     E.clampAv(a, p); return a;
@@ -10305,7 +10434,7 @@ function rtTick(s){
   if (!rot) ctx.setTransform(k, 0, 0, k, 0, 0);
   else if (s.rot === 0) ctx.setTransform(0, -k, k, 0, 0, E.W*k);
   else ctx.setTransform(0, k, -k, 0, E.H*k, 0);
-  const b = s.disp || s.ball;
+  const b0 = s.disp || s.ball, b = s.poff ? {...b0, x: b0.x + s.poff[0], y: b0.y + s.poff[1]} : b0; s.pdraw = b;
   E.draw(ctx, {av, ball: b, n: s.kind === 'bv' && b.n ? b.n : 0, nside: b.x < E.mid ? 0 : 1});
   const lb = !live && !s.over ? String(Math.max(1, Math.ceil((s.ts - now)/400))) : s.label;
   if (lb) {
@@ -10361,10 +10490,15 @@ function rtNet(m){
   if (m.k !== 'f' || !Number.isFinite(m.tm)) return;
   const ok = (a, n) => Array.isArray(a) && a.length >= n && a.slice(0, n).every(Number.isFinite);
   const tm = clamp(m.tm, rtNow() - 1000, rtNow());
-  if (ok(m.a, 4)) s.ra = {x: m.a[0], y: m.a[1], vx: clamp(m.a[2], -3000, 3000), vy: clamp(m.a[3], -3000, 3000), tm};
+  if (ok(m.a, 4)) { s.ra = {x: m.a[0], y: m.a[1], vx: clamp(m.a[2], -3000, 3000), vy: clamp(m.a[3], -3000, 3000), tm}; s.rah = (s.rah || []).concat({x: m.a[0], y: m.a[1], tm}).filter(q => q.tm > tm - 500).sort((u, v) => u.tm - v.tm); }
   if (ok(m.b, 4) && !s.own && !s.over) {
     s.rb = {b: {x: m.b[0], y: m.b[1], vx: m.b[2], vy: m.b[3], n: m.b[4] | 0, lt: Number.isFinite(m.b[5]) ? m.b[5] : -1e9, sd: m.b[0] < s.E.mid ? 0 : 1}, tm};
-    if (m.h) { s.own = true; s.ball = rtSim(s.E, s.rb, rtNow()); }
+    if (m.h) { const me = [s.local[0] ? s.av[0] : null, s.local[1] ? s.av[1] : null]; s.own = true; s.ball = s.kind === 'hk' ? rtSimP(s.E, s.rb, rtNow(), me) : rtSim(s.E, s.rb, rtNow()); s.pred = null; }
+  }
+  else if (ok(m.b, 4) && m.h && s.own && s.pred && !s.pred.hit && !s.over) {
+    // schon vorab übernommen, noch nicht getroffen: genaue Übergabe übernehmen (mit eigenen Schlägern nachgerechnet)
+    const me = [s.local[0] ? s.av[0] : null, s.local[1] ? s.av[1] : null], rb = {b: {x: m.b[0], y: m.b[1], vx: m.b[2], vy: m.b[3], n: m.b[4] | 0, lt: Number.isFinite(m.b[5]) ? m.b[5] : -1e9, sd: m.b[0] < s.E.mid ? 0 : 1}, tm};
+    s.ball = rtSimP(s.E, rb, rtNow(), me); s.pred = null;
   }
 }
 function rtGame(done, kind, need){
@@ -11414,7 +11548,7 @@ function crBegin(onEnd){
       view.label = '';
       acc += Math.min(.25, last ? (now - last)/1000 : 0);
       while (acc >= CR.DT && !S.over) { acc -= CR.DT; for (const o of [0, 1]) if (isBot(o) || (RT.auto && S.local[o])) crBot(S, o, isBot(o) ? BOT.lvl : (RT.lvl != null ? RT.lvl : 2)); crStep(S); }
-      if (S.over) { view.label = S.res < 0 ? 'UNENTSCHIEDEN' : 'SIEG!'; if (NET.on) netSend({t: 'rt', k: 'crf', rid, st: crPack(S), res: S.res}); onEnd(S.res, S.why); }
+      if (S.over) { view.label = S.res < 0 ? 'UNENTSCHIEDEN' : `${P[S.res].name.slice(0, 14)} gewinnt!`; if (NET.on) netSend({t: 'rt', k: 'crf', rid, st: crPack(S), res: S.res}); onEnd(S.res, S.why); }
     }
     last = now;
     if (NET.on && NET.open && now - sendT > 100 && !netBusy()) { sendT = now; netSend({t: 'rt', k: 'crb', rid, st: crPack(S)}); }
@@ -11431,7 +11565,7 @@ function crNet(m){
       canPlay: o => o === 1 && !S.over && S.t > 0, cardOf: (o, i) => S.side[o].hand[i], okAt: (o, c, x, y) => CR.okPlace(S, o, c, x, y) && S.side[o].el >= CR.CARDS[c].c};
     const loop = () => { if (RT.cr !== S || !NET.on) return;
       if (RT.auto && !S.over && S.t > 0) { const B = S.bot[1]; B.t -= 1/60; if (B.t <= 0) { B.t = 2; const sd = S.side[1], i = sd.hand.findIndex(c => CR.CARDS[c].c <= sd.el && !CR.CARDS[c].spell); if (i >= 0) netSend({t: 'rt', k: 'crp', rid: S.rid, i, x: CR.BR[R0(2)], y: 12.5}); } }
-      view.label = S.over ? (S.res < 0 ? 'UNENTSCHIEDEN' : S.res === 1 ? 'SIEG!' : 'NIEDERLAGE') : S.t <= 0 ? '…' : '';
+      view.label = S.over ? (S.res < 0 ? 'UNENTSCHIEDEN' : S.res === 1 ? 'SIEG!' : `${P[0].name.slice(0, 14)} gewinnt!`) : S.t <= 0 ? '…' : '';
       if (curDisc && curDisc.id === 'royale') { const cv = main.querySelector('#rtc'); if (cv) { crBind(cv, view, (o, hi, x, y) => { netSend({t: 'rt', k: 'crp', rid: S.rid, i: hi, x: Math.round(x*100)/100, y: Math.round(y*100)/100}); Snd.buzz(1); }); crDraw(cv, S, performance.now(), view); } }
       requestAnimationFrame(loop); };
     requestAnimationFrame(loop); return;
@@ -12133,12 +12267,15 @@ function bombe(done){
   function round(){
     let holder = nextStarter(), over = false, lockUntil = 0, speed = 1.1, zone, pen = 0, botAt = null;
     const fuse = 9000 + Math.random()*10000, t0 = performance.now();
-    const newZone = () => { const w = .22, a = .06 + Math.random()*(.88 - w); zone = [a, a + w]; };
+    // Grünes Feld: startet breit (34 %) und schrumpft, je länger man die Bombe hält (bis 8 %)
+    const W0 = .34, WMIN = .08, SHR = .045; let zc = .5, holdT = t0;
+    const zoneAt = t => { const w = Math.max(WMIN, W0 - SHR*Math.max(0, t - holdT)/1000); return [clamp(zc - w/2, 0, 1), clamp(zc + w/2, 0, 1)]; };
+    const newZone = () => { zc = .06 + W0/2 + Math.random()*(.88 - W0); holdT = performance.now(); zone = zoneAt(holdT); };
     newZone();
     pads(true);
     gameView({field: '<div class="bombrow"><div class="bomb" id="bomb">💣</div></div><div class="bbar"><i class="bzone" id="bz"></i><i class="bptr" id="bp" data-v=""></i></div>',
       panel: p => bzHint(p, 'im grünen Feld'),
-      status: 'Wer die Bombe hat, drückt, wenn der Zeiger im grünen Feld ist. Daneben: kurz gesperrt, der Zeiger wird schneller.'});
+      status: 'Wer die Bombe hat, drückt, wenn der Zeiger im grünen Feld ist. Je länger du sie hältst, desto schmaler wird das Feld. Daneben: kurz gesperrt, der Zeiger wird schneller.'});
     const bomb = $('#bomb'), bz = $('#bz'), bp = $('#bp');
     // Der Zeiger läuft auf einer Zickzack-Bahn: ab Zeitpunkt t von Stelle u (0 bis 2, ab 1 geht es zurück) mit Tempo v.
     // Daraus rechnen Gastgeber und Online-Gast dieselbe Position, und ein verspäteter Druck zählt an der Stelle von damals.
@@ -12156,7 +12293,7 @@ function bombe(done){
       if (over || p !== holder) return;
       const now = inT();
       if (now < seg.t || now < lockUntil || now - t0 >= fuse) return;
-      const [pos] = segAt(now);
+      const [pos] = segAt(now); zone = zoneAt(now);
       if (pos >= zone[0] && pos <= zone[1]) { holder = 1-holder; newZone(); speed = Math.min(2.6, speed + .12); pen = 0; setSeg(now); bp.classList.remove('fast'); Snd.buzz(p); gstat(`Weitergegeben! Jetzt hat ${nm(holder)} die Bombe.`); showHolder(); }
       else { lockUntil = now + 450; pen = Math.min(BOMB_PEN_MAX, pen + BOMB_PEN); setSeg(now); bp.classList.add('fast'); Snd.bad(); gres(p, '💣 daneben, gesperrt'); gstat(`${nm(p)}: daneben, kurz gesperrt, der Zeiger wird schneller.`); }
     }};
@@ -12173,9 +12310,10 @@ function bombe(done){
       const now = performance.now();
       const [pos, dir] = segAt(now);
       bp.style.left = pos*100 + '%';
+      zone = zoneAt(now); bz.style.left = zone[0]*100 + '%'; bz.style.width = (zone[1] - zone[0])*100 + '%';
       if (isBot(holder)) {
         if (botAt == null && now >= lockUntil) {
-          const [sd, react] = bv(BOTP.bomb), c = (zone[0] + zone[1])/2, v = speed + pen;
+          const [sd, react] = bv(BOTP.bomb), c = zc, v = speed + pen;
           let x = pos, d = dir, tt = 0;
           while (tt < 4) { x += d*v*.005; if (x > 1) { x = 1; d = -1; } if (x < 0) { x = 0; d = 1; } tt += .005; if (tt >= react && Math.abs(x - c) < .015) break; }
           botAt = now + Math.max(.05, tt + gauss()*sd)*1000;
@@ -12245,8 +12383,17 @@ function auktion(done){
 const KAN = {
   W: 900, H: 500, R: 34, G: 420, DT: 1/120, CX: [80, 820],
   rng(seed){ let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; }; },
-  terrain(seed){ const r = this.rng(seed), h = new Float32Array(this.W + 1), p1 = r()*6, p2 = r()*6, hh = 150 + r()*90, hx = 450 + (r() - .5)*120;
-    for (let x = 0; x <= this.W; x++) h[x] = 400 - hh*Math.exp(-Math.pow((x - hx)/130, 2)) - 22*Math.sin(x/70 + p1) - 12*Math.sin(x/31 + p2);
+  // Geländeformen: Hügel, Tal, Doppelhügel, Tafelberg, Stufe (aus dem Startwert, online gleich)
+  SHAPES: ['Hügel', 'Tal', 'Doppelhügel', 'Tafelberg', 'Stufe'],
+  terrain(seed){ const r = this.rng(seed), h = new Float32Array(this.W + 1), p1 = r()*6, p2 = r()*6, hh = 150 + r()*90, hx = 450 + (r() - .5)*120, sh = ((seed | 0) >>> 4) % this.SHAPES.length, flip = ((seed | 0) >>> 7) & 1;
+    const g = (x, c, w) => Math.exp(-Math.pow((x - c)/w, 2));
+    for (let x = 0; x <= this.W; x++) { const u = flip ? this.W - x : x; let base;
+      if (sh === 0) base = 400 - hh*g(x, hx, 130);
+      else if (sh === 1) base = 290 + 150*g(x, 450, 150) - 40*g(x, 150, 120) - 40*g(x, 750, 120);
+      else if (sh === 2) base = 410 - (hh*.8)*g(x, 330, 80) - (hh*.8)*g(x, 570, 80);
+      else if (sh === 3) base = 410 - 190/(1 + Math.exp((Math.abs(x - 450) - 110)/18));
+      else base = 420 - 120/(1 + Math.exp(-(u - 450)/40)) - 90*g(u, 450, 60);
+      h[x] = base - 22*Math.sin(x/70 + p1) - 12*Math.sin(x/31 + p2); }
     for (const cx of this.CX) for (let x = cx - 30; x <= cx + 30; x++) h[x] = h[cx];   // flache Stelle für die Kanone
     return h; },
   gy(h, x){ return h[clamp(Math.round(x), 0, this.W)]; },
@@ -12265,7 +12412,7 @@ const KAN = {
   boom(h, ex, ey){ const R = this.R; for (let x = Math.max(0, Math.floor(ex - R)); x <= Math.min(this.W, Math.ceil(ex + R)); x++) { const dy = Math.sqrt(Math.max(0, R*R - (x - ex)**2)); if (h[x] < ey + dy && h[x] > ey - dy - 400) h[x] = Math.max(h[x], ey + dy); } },
   dmg(ex, ey, cx, cy, direct){ const d = Math.hypot(ex - cx, ey - (cy - 10)); if (d > this.R + 16) return 0; return Math.round(42*(1 - Math.max(0, d - 14)/this.R)) + (direct ? 18 : 0); },
 };
-function knState(seed){ const h = KAN.terrain(seed); return {th: seed % KN_TH.length, seedF: (seed % 1000)/100, h, x: KAN.CX.slice(), fuel: 100, hp: [100, 100], cy: KAN.CX.map(x => KAN.gy(h, x)), aim: [{a: .8, pw: 60}, {a: .8, pw: 60}], wind: 0, p: 0, ph: 'aim', shot: null, boomAt: null}; }
+function knState(seed){ const h = KAN.terrain(seed); return {seed, th: seed % KN_TH.length, seedF: (seed % 1000)/100, h, x: KAN.CX.slice(), fuel: 100, hp: [100, 100], cy: KAN.CX.map(x => KAN.gy(h, x)), aim: [{a: .8, pw: 60}, {a: .8, pw: 60}], wind: 0, p: 0, ph: 'aim', shot: null, boomAt: null}; }
 function knApply(S, res){
   if (!res.hit) return [0, 0];
   const [ex, ey] = res.hit; KAN.boom(S.h, ex, ey);
@@ -12278,6 +12425,8 @@ const KN_TH = [
   {n: 'Wiese', sky: ['#6ec2f0', '#d6f0fb'], far: '#9cc7a4', mid: '#7fb36f', top: '#4caf50', top2: '#7ed36a', dirt: ['#9a6a3e', '#6e4626'], rock: '#5b4030', sun: '#ffe27a'},
   {n: 'Wüste', sky: ['#f6b26b', '#fde6c4'], far: '#e9b97a', mid: '#d99a5a', top: '#e8c170', top2: '#f6dc98', dirt: ['#c98a4c', '#9a5e2e'], rock: '#7a4a28', sun: '#fff1b8'},
   {n: 'Schnee', sky: ['#8fb8de', '#e8f2fb'], far: '#c9d8ea', mid: '#a9bdd6', top: '#f4f8fc', top2: '#ffffff', dirt: ['#7d8aa0', '#545f74'], rock: '#3f4859', sun: '#fff7d6'},
+  {n: 'Vulkan', sky: ['#3a1410', '#a8442a'], far: '#5a2a24', mid: '#4a201c', top: '#5a4a44', top2: '#7a6660', dirt: ['#3a2a28', '#1f1514'], rock: '#ff6a2a', sun: '#ffb070'},
+  {n: 'Mars', sky: ['#d98a5a', '#f6caa0'], far: '#c97a4c', mid: '#b5653a', top: '#c8643a', top2: '#e08a5a', dirt: ['#9a4a2a', '#6a2e18'], rock: '#4a2414', sun: '#fff0d8'},
   {n: 'Nacht', sky: ['#141a3a', '#3a3f74'], far: '#2a2f5a', mid: '#222748', top: '#3f8f5a', top2: '#5fbf7a', dirt: ['#3c2e3a', '#241a24'], rock: '#18121a', sun: '#f2f0d8', night: 1},
 ];
 function knDraw(cv, S, now, me){
@@ -12337,8 +12486,8 @@ function knDraw(cv, S, now, me){
       ctx.font = '900 12px Nunito'; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,.6)'; const tx = `${Math.round(A.a*180/Math.PI)}° · ${Math.round(A.pw)}% · ⛽${Math.round(S.fuel)}`; ctx.strokeText(tx, x, y + 34); ctx.fillStyle = '#fff'; ctx.fillText(tx, x, y + 34); }
   }
   // Wind
-  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.roundRect(W/2 - 90, 10, 180, 46, 12); ctx.fill();
-  ctx.fillStyle = '#fff'; ctx.font = '900 12px Nunito'; ctx.fillText(`WIND · ${T.n.toUpperCase()}`, W/2, 26);
+  ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.roundRect(W/2 - 130, 10, 260, 46, 12); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = '900 12px Nunito'; ctx.fillText(`WIND · ${T.n.toUpperCase()} · ${(KAN.SHAPES[((S.seed | 0) >>> 4) % KAN.SHAPES.length] || '').toUpperCase()}`, W/2, 26);
   const wl = S.wind*70; ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(W/2 - wl, 42); ctx.lineTo(W/2 + wl, 42); ctx.stroke();
   if (Math.abs(wl) > 3) { const sgn = Math.sign(wl); ctx.beginPath(); ctx.moveTo(W/2 + wl + sgn*10, 42); ctx.lineTo(W/2 + wl - sgn*2, 35); ctx.lineTo(W/2 + wl - sgn*2, 49); ctx.closePath(); ctx.fill(); } else ctx.fillText('still', W/2, 47);
   // Kugel mit Schweif
@@ -12872,7 +13021,7 @@ function mines(done){
   }
   round();
 }
-/* ---------- Air-Drift: zwei Autos von oben, 3 Runden, beste Zeit gewinnt ----------
+/* ---------- Air-Drift: zwei Autos von oben, 3 Runden, wer zuerst im Ziel ist, gewinnt ----------
    Autos fahren griffig (immer in Blickrichtung), berühren sich nicht. Neben der Strecke bremst das Gras.
    Fortschritt: nächster Punkt auf der Mittellinie, nur in der Nähe des letzten gesucht (so klappt auch die Acht).
    Online fährt jedes Gerät sein Auto selbst, schickt den Stand ('drf') und am Ende die Zeit ('drd'). Den Sieger bestimmt der Gastgeber. */
@@ -12882,6 +13031,9 @@ const DR = {W: 1200, H: 700, HW: 40, LAPS: 3, VMAX: 340, VOFF: 120, ACC: 420, BR
     {n: 'Stadion', p: [[200, 350], [250, 160], [600, 115], [950, 160], [1000, 350], [950, 540], [600, 585], [250, 540]]},
     {n: 'Bohne', p: [[170, 330], [280, 140], [540, 140], [690, 290], [850, 140], [1050, 190], [1070, 450], [880, 590], [560, 560], [300, 600], [160, 480]]},
     {n: 'Acht', p: [[600, 350], [780, 175], [1010, 165], [1090, 350], [1010, 535], [780, 525], [600, 350], [420, 175], [190, 165], [110, 350], [190, 535], [420, 525]]},
+    {n: 'Haarnadel', p: [[150, 130], [1050, 130], [1100, 195], [1000, 255], [430, 250], [350, 345], [430, 440], [1000, 440], [1100, 500], [1050, 580], [150, 580], [90, 355]]},
+    {n: 'Schlange', p: [[130, 130], [330, 120], [420, 300], [500, 460], [660, 460], [740, 300], [810, 130], [1010, 130], [1090, 340], [1010, 590], [140, 590], [85, 360]]},
+    {n: 'Wirbel', p: [[600, 110], [1000, 150], [1100, 360], [960, 570], [600, 600], [250, 560], [120, 360], [260, 210], [600, 260], [820, 360], [600, 450], [380, 380]]},
     {n: 'Bergpass', p: [[140, 600], [140, 130], [420, 110], [440, 400], [620, 420], [650, 130], [1060, 120], [1070, 360], [830, 390], [830, 600]]},
   ],
 };
@@ -13068,7 +13220,7 @@ const ML = {W: 1000, H: 620, G: 52, TH: 132, SIDE: 46, FUEL: 100, BURN: 11, VY: 
   bot: [{err: 10, k: 1.0}, {err: 5, k: 1.25}, {err: 2, k: 1.5}]};
 const mlRng = seed => () => { seed = (seed*1664525 + 1013904223) >>> 0; return seed/4294967296; };
 // Gelände einer Hälfte (Breite 500): Start-Plattform A, Ziel-Plattform B, dazwischen je nach Karte Berg, Schlucht, Turm, Höhle oder Stufen
-const ML_MAPS = ['Berg', 'Schlucht', 'Turm', 'Höhle', 'Stufen'];
+const ML_MAPS = ['Berg', 'Schlucht', 'Turm', 'Höhle', 'Stufen', 'Krater', 'Tunnel', 'Doppelgipfel'];
 function mlLand(seed){
   const r = mlRng(seed), w = ML.W/2, H = ML.H, type = seed % ML_MAPS.length, flip = (seed >> 3) & 1, pw = 84;
   let ctrl, A, B, rocks = [];
@@ -13077,6 +13229,10 @@ function mlLand(seed){
   else if (type === 2) { A = {x: 30, y: H - 80}; B = {x: 300, y: H - 360 - r()*60}; ctrl = [[0, H - 80], [140, H - 80], [200, H - 120], [280, H - 120], [295, B.y], [400, B.y], [415, H - 120], [w, H - 90]]; }
   else if (type === 3) { A = {x: 30, y: H - 90}; B = {x: 390, y: H - 90}; ctrl = [[0, H - 90], [130, H - 90], [220, H - 150 - r()*40], [300, H - 120], [370, H - 90], [w, H - 90]];
     rocks = [{x: 150, y: 0, w: 70, h: 250 + r()*60}, {x: 270, y: 0, w: 80, h: 300 + r()*50}, {x: 0, y: 0, w: w, h: 26}]; }
+  else if (type === 5) { A = {x: 20, y: H - 220}; B = {x: 290, y: H - 50}; ctrl = [[0, H - 220], [110, H - 220], [170, H - 170], [230, H - 300 - r()*40], [275, H - 50], [380, H - 50], [415, H - 310 - r()*40], [460, H - 200], [w, H - 180]]; }
+  else if (type === 6) { A = {x: 20, y: H - 80}; B = {x: 395, y: H - 80}; ctrl = [[0, H - 80], [110, H - 80], [190, H - 110], [240, H - 190], [300, H - 190], [350, H - 110], [385, H - 80], [w, H - 80]];
+    rocks = [{x: 170, y: 0, w: 200, h: H - 340 - r()*30}, {x: 0, y: 0, w: w, h: 22}]; }
+  else if (type === 7) { A = {x: 20, y: H - 90}; B = {x: 200, y: H - 110}; ctrl = [[0, H - 90], [110, H - 90], [150, H - 330 - r()*60], [190, H - 110], [290, H - 110], [340, H - 360 - r()*50], [400, H - 180], [w, H - 160]]; }
   else { A = {x: 20, y: H - 70}; B = {x: 400, y: H - 420}; ctrl = [[0, H - 70], [110, H - 70], [130, H - 170], [210, H - 170], [230, H - 270], [300, H - 270], [320, H - 370], [380, H - 380], [395, B.y], [w, B.y]]; }
   const pts = [];
   for (let x = 0; x <= w; x += 10) {
@@ -13281,7 +13437,7 @@ function rakete(done){
    Die Hühner sind aus einem Startwert berechnet (Zeitpunkt, Ebene, Richtung, Tempo), auf beiden Geräten gleich.
    Ob ein Schuss trifft, entscheidet das Gerät des Schützen; den Treffer vergibt der Gastgeber (wer zuerst kommt).
    Ferne Hühner sind klein und geben mehr Punkte. Goldhuhn = Bonus, Vogelscheuche = Abzug. 8 Schuss, dann nachladen. */
-const HJ = {W: 1000, H: 560, DUR: 60000, MAG: 8, RELOAD: 1300, CV: 720,
+const HJ = {W: 1000, H: 560, DUR: 30000, MAG: 8, RELOAD: 1300, CV: 720,
   LAY: [{s: .42, v: 85, y: [150, 230], pts: 25}, {s: .66, v: 135, y: [220, 330], pts: 10}, {s: 1, v: 200, y: [270, 420], pts: 5}],
   bot: [{rt: 520, err: 22, aim: 420}, {rt: 360, err: 12, aim: 620}, {rt: 230, err: 6, aim: 820}]};
 function hjSpawn(seed){
@@ -13290,8 +13446,8 @@ function hjSpawn(seed){
   while (t < HJ.DUR - 1200) { const d = r() < .3 ? 0 : r() < .55 ? 1 : 2, Ly = HJ.LAY[d], dir = r() < .5 ? 1 : -1;
     L.push({id: id++, k: 'h', d, t0: t, dir, y: Ly.y[0] + r()*(Ly.y[1] - Ly.y[0]), v: Ly.v*(.85 + r()*.4), ph: r()*6, amp: 10 + r()*22, s: Ly.s, pts: Ly.pts});
     t += 330 + r()*420; }
-  for (let i = 0; i < 3; i++) L.push({id: id++, k: 'g', d: 1, t0: 6000 + i*17000 + r()*6000, dir: r() < .5 ? 1 : -1, y: 160 + r()*120, v: 330, ph: r()*6, amp: 30, s: .6, pts: 50});
-  for (let i = 0; i < 5; i++) L.push({id: id++, k: 's', d: 2, t0: 4000 + i*11000 + r()*5000, x: 120 + r()*760, y: 470, s: 1, pts: -25, life: 2600});
+  for (let i = 0; i < 3; i++) L.push({id: id++, k: 'g', d: 1, t0: 3000 + i*(HJ.DUR/3.3) + r()*3000, dir: r() < .5 ? 1 : -1, y: 160 + r()*120, v: 330, ph: r()*6, amp: 30, s: .6, pts: 50});
+  for (let i = 0; i < 3; i++) L.push({id: id++, k: 's', d: 2, t0: 3000 + i*(HJ.DUR/3.3) + r()*3500, x: 120 + r()*760, y: 470, s: 1, pts: -25, life: 2600});
   return L;
 }
 // Position eines Ziels zur Spielzeit t (ms seit Start); null = nicht im Bild
@@ -13518,7 +13674,7 @@ const DISC = [
     ctl:{t:'keys', note:'Mit Maus oder Finger geht es auch: Der Blob läuft zum Zeiger, Klicken oder Tippen springt. Am Touchscreen spielt jeder in seiner Hälfte.'},
     more:'Pro Seite höchstens drei Berührungen. Wer den Ballwechsel gewinnt, hat Aufschlag.'},
   {id:'panzer', key:'tank', cat:'Arcade', name:'Panzer-Duell', icon:'🛡️', play:panzer, lens:[3, 4, 5], rt:1, vars:[{lab:'Leben', opts:['1 Treffer','3 Treffer']}, {lab:'Steuerung', opts:['Direkt','Klassisch']}], short:'Labyrinth, Abpraller, ein Schuss entscheidet.',
-    rule: n => `Ihr fahrt durch ein Labyrinth und schießt aufeinander. Schüsse prallen von den Wänden ab, auch auf euch selbst. Wer zuerst ${n} Runden gewinnt, gewinnt.`,
+    rule: n => `Ihr fahrt durch ein Labyrinth und schießt aufeinander. Schüsse prallen von den Wänden ab, auch auf euch selbst. Wer zuerst ${n} Runden holt, gewinnt.`,
     ctl:{t:'keys', note:'Steuerung „Direkt“: die Tasten zeigen die Richtung, der Panzer dreht sich selbst. „Klassisch“: drehen und vor/zurück. Mit der Maus zielen und klicken geht immer (Spieler 1, online jeder). Am Touchscreen: ziehen fährt, kurz tippen schießt dorthin.'},
     more:'Jede Runde ein neues Labyrinth. Höchstens 5 eigene Schüsse gleichzeitig. Online zählt, was der Schütze gesehen hat.'},
   {id:'royale', key:'cr', cat:'Arcade', name:'Türmeschlacht', icon:'🏰', play:royale, lens:[1, 2, 3], rt:1, short:'Karten ausspielen, Türme stürmen.',
@@ -13530,15 +13686,15 @@ const DISC = [
     ctl:{t:'keys', note:'Fahren geht pro Zug ein Stück (⛽), nur auf der eigenen Seite. Mit der Maus oder am Touchscreen: von der eigenen Kanone weg in Schussrichtung ziehen, loslassen schießt; zum Fahren die Knöpfe ◀ ▶.'},
     more:'Jeder hat 100 Lebenspunkte. Je näher die Explosion, desto mehr Schaden, ein Volltreffer zieht extra ab. Der Wind ändert sich jeden Zug, der Pfeil oben zeigt Richtung und Stärke. Fällt der Boden unter der Kanone weg, rutscht sie mit nach unten.'},
   {id:'huhn', key:'hj', cat:'Arcade', name:'Hühnerjagd', icon:'🐔', play:huhn, lens:[1, 2, 3], rt:1, short:'Hühner abschießen, ferne zählen mehr.',
-    rule: n => 'Hühner flattern durchs Bild, beide schießen gleichzeitig mit dem eigenen Fadenkreuz. Kleine Hühner weit hinten geben 25 Punkte, mittlere 10, nahe 5. Das seltene Goldhuhn bringt 50, wer die Vogelscheuche trifft, verliert 25. Nach 8 Schuss wird automatisch nachgeladen, das dauert gut eine Sekunde. Nach 60 Sekunden gewinnt, wer mehr Punkte hat.',
+    rule: n => 'Hühner flattern durchs Bild, ihr schießt gleichzeitig mit dem eigenen Fadenkreuz, ferne Hühner zählen mehr. Nach 30 Sekunden holt den Punkt, wer mehr Punkte hat.',
     ctl:{t:'keys', note:'Mit der Maus zielen und klicken geht für Spieler 1, online für jeden. Am Touchscreen: antippen schießt dorthin. Wer ein Huhn zuerst trifft, bekommt es.'},
-    more:'Liegen zwei Hühner übereinander, trifft der Schuss das vordere. Online entscheidet bei gleichzeitigen Treffern, wessen Schuss zuerst beim Gastgeber ankommt.'},
+    more:'Kleine Hühner weit hinten geben 25 Punkte, mittlere 10, nahe 5. Das seltene Goldhuhn bringt 50, wer die Vogelscheuche trifft, verliert 25. Nach 8 Schuss wird automatisch nachgeladen, das dauert gut eine Sekunde. Liegen zwei Hühner übereinander, trifft der Schuss das vordere. Online entscheidet bei gleichzeitigen Treffern, wessen Schuss zuerst beim Gastgeber ankommt.'},
   {id:'rakete', key:'ml', cat:'Arcade', name:'Raketen-Landung', icon:'🚀', play:rakete, lens:[2, 3, 4], rt:1, short:'Triebwerk dosieren, sanft landen, wer zuerst.',
-    rule: n => 'Beide steuern gleichzeitig eine Rakete, die Schwerkraft zieht sie nach unten. Ihr startet auf der Plattform START und müsst über das Gelände zum ZIEL fliegen. Mit dem Triebwerk steigst und bremst du, mit den Seitendüsen steuerst du. Wer zu schnell aufkommt, woanders aufsetzt oder Felsen rammt, explodiert. Wer zuerst sicher im Ziel landet, gewinnt.',
+    rule: n => 'Beide steuern gleichzeitig eine Rakete, die Schwerkraft zieht sie nach unten. Ihr startet auf der Start-Plattform und müsst über das Gelände zum Ziel fliegen. Mit dem Triebwerk steigt und bremst ihr, mit den Seitendüsen steuert ihr. Wer zu schnell aufkommt, woanders aufsetzt oder Felsen rammt, explodiert. Wer zuerst sicher im Ziel landet, gewinnt.',
     ctl:{t:'keys', note:'Am Touchscreen: Finger auf die eigene Hälfte halten zündet das Triebwerk, liegt der Finger links oder rechts neben der Rakete, steuert sie dorthin.'},
-    more:`Sicher ist die Landung, wenn du langsamer als ${ML.VY} nach unten und kaum seitlich fliegst. Die Zahl ⬇ oben zeigt dein Tempo, sie wird rot, wenn es zu schnell ist. Der Treibstoff ist begrenzt. Jede Runde eine andere Karte: Berg, Schlucht, Turm, Höhle oder Stufen, mal von links, mal von rechts. Beide haben dasselbe Gelände. Explodieren beide, gibt es keinen Punkt.`},
-  {id:'drift', key:'dr', cat:'Arcade', name:'Air-Drift', icon:'🏎️', play:drift, lens:[1, 2, 3], rt:1, vars:[{lab:'Strecke', opts:['Stadion', 'Bohne', 'Acht', 'Bergpass']}], short:'Zwei Autos, Rundstrecke, 3 Runden, beste Zeit.',
-    rule: n => 'Zwei Autos von oben auf einer Rundstrecke. Beide fahren gleichzeitig 3 Runden, die Autos fahren durcheinander durch. Wer zuerst im Ziel ist, gewinnt, dann ist das Rennen sofort vorbei.',
+    more:`Sicher landest du, solange die Zahl ⬇ oben grün ist und du kaum seitlich fliegst. Wird sie rot, bist du zu schnell. Der Treibstoff ist begrenzt. Jede Runde eine andere Karte: Berg, Schlucht, Turm, Höhle, Stufen, Krater, Tunnel oder Doppelgipfel, mal von links, mal von rechts. Beide haben dasselbe Gelände. Explodieren beide, gibt es keinen Punkt.`},
+  {id:'drift', key:'dr', cat:'Arcade', name:'Air-Drift', icon:'🏎️', play:drift, lens:[1, 2, 3], rt:1, vars:[{lab:'Strecke', opts:['Stadion', 'Bohne', 'Acht', 'Haarnadel', 'Schlange', 'Wirbel', 'Bergpass']}], short:'Zwei Autos, 3 Runden, wer zuerst im Ziel ist.',
+    rule: n => 'Zwei Autos von oben auf einer Rundstrecke. Beide fahren gleichzeitig 3 Runden, die Autos können sich nicht rammen. Wer zuerst im Ziel ist, gewinnt, dann ist das Rennen sofort vorbei.',
     ctl:{t:'keys', note:'Am Touchscreen: Finger aufs Feld halten, das Auto fährt dorthin (zwei Spieler: jeder auf seiner Bildschirmhälfte).'},
     more:'Neben der Strecke bremst das Gras stark. Rückwärts fahren zählt nicht als Fortschritt. Nach dem Rennen stehen die Rundenzeiten im eigenen Feld.'},
   {id:'mines', key:'ms', cat:'Kopf', name:'Minesweeper-Duell', icon:'💣', play:mines, lens:[2, 3, 4], short:'Dieselben Minen für beide, mehr aufgedeckt gewinnt.',
@@ -13570,37 +13726,37 @@ const DISC = [
     ctl:{t:'keys', note:'Am Touchscreen: auf dem eigenen Feld den Finger halten, das Schiff folgt und schießt von selbst.'},
     more:'Jede neue Welle ist schneller als die letzte. Nach einem Treffer ist man kurz unverwundbar. Verlieren beide gleichzeitig, wird die Runde wiederholt.'},
   {id:'tetris', key:'tg', cat:'Arcade', name:'Tetris-Duell', icon:'🧱', play:tetris, lens:[1, 2, 3], rt:1, short:'Reihen räumen, Müll rüberschicken.',
-    rule: n => 'Ihr spielt gleichzeitig Tetris nebeneinander. Wer zwei oder mehr Reihen auf einmal räumt, schickt dem anderen Müllreihen von unten. Wer oben anstößt, verliert die Runde.',
+    rule: n => 'Ihr spielt gleichzeitig Tetris nebeneinander. Wer zwei oder mehr Reihen auf einmal räumt, schickt dem anderen Müllreihen von unten. Wer oben anstößt, verliert.',
     ctl:{t:'keys', note:'Gedrückt halten wiederholt. Am Touchscreen auf dem eigenen Feld: wischen bewegt, nach unten wischen lässt schneller fallen, tippen dreht.'},
     more:'2 Reihen auf einmal schicken 1 Müllreihe, 3 schicken 2, ein Tetris (4 Reihen) schickt 4. Müll, der unterwegs ist, wird mit eigenen geräumten Reihen zuerst verrechnet. Mit der Zeit fallen die Steine schneller. Stoßen beide gleichzeitig an, wird die Runde wiederholt.'},
   {id:'lichtrad', key:'lr', cat:'Arcade', name:'Lichtrad', icon:'🏍️', play:lichtrad, lens:[3, 4, 5], rt:1, short:'Abschneiden, nicht crashen.',
-    rule: n => 'Euer Lichtrad fährt immer weiter und zieht eine Spur hinter sich her. Ihr lenkt nur nach links oder rechts. Wer in eine Spur fährt, auch in die eigene, verliert die Runde.',
+    rule: n => 'Euer Lichtrad fährt immer weiter und zieht eine Spur hinter sich her. Ihr lenkt nur nach links oder rechts. Wer in eine Spur fährt, auch in die eigene, verliert.',
     ctl:{t:'keys', note:'Gedrückt halten lenkt. Am Touchscreen auf der eigenen Seite gedrückt halten: außen lenkt nach links, innen nach rechts (online: linke oder rechte Hälfte).'},
     more:'Die Spur hat immer wieder kurze Lücken, durch die man durchfahren kann. Am Rand geht es auf der anderen Seite weiter. Das Tempo steigt. Crashen beide gleichzeitig, wird die Runde wiederholt.'},
   {id:'doodle', key:'dj', cat:'Arcade', name:'Sprung-Duell', icon:'🦘', play:doodle, lens:[2,3,5], rt:1, short:'Doodle-Jump nebeneinander, wer fällt, verliert.', vars:{lab:'Zielhöhe', opts:['400 m', '750 m', '1000 m']},
-    rule: n => 'Jeder springt in seiner Hälfte automatisch von Plattform zu Plattform nach oben, ihr lenkt nur nach links und rechts. Beide haben dieselben Plattformen. Wer zuerst runterfällt, verliert die Runde. Erreichen beide die Zielhöhe, ist es unentschieden.',
+    rule: n => 'Jeder springt in seiner Hälfte automatisch von Plattform zu Plattform nach oben, ihr lenkt nur nach links und rechts. Beide haben dieselben Plattformen. Wer zuerst runterfällt, verliert. Erreichen beide die Zielhöhe, ist es unentschieden.',
     ctl:{t:'keys', note:'Am Touchscreen in der eigenen Hälfte links oder rechts halten. Wer seitlich rausläuft, kommt auf der anderen Seite wieder rein.'},
     more:'Wer die Zielhöhe erreicht, ist sicher, der andere spielt weiter: fällt er, gibt es den Punkt, schafft er es auch, zählt die Runde nicht. Grün normal, cyan beweglich, braun zerbricht nach einem Sprung, lila blinkt und verschwindet zeitweise, die Feder schleudert hoch. Mit der Höhe werden die Abstände größer und die Plattformen gemeiner. Items treffen den Gegner: 💥 alle seine Plattformen zerbrechen kurz, 🔄 seine Steuerung ist vertauscht, 🌫️ er sieht im Nebel nur wenig.'},
   {id:'kante', key:'ka', cat:'Arcade', name:'Kantenstoß', icon:'🎯', play:kante, lens:[2,3,5], rt:1, short:'So nah wie möglich an die Kante, nicht runterfallen.', vars:{lab:'Kugeln pro Spieler', opts:['1', '2', '3']},
     rule: n => 'Abwechselnd stoßt ihr eure Kugeln vom Startpunkt über den Tisch. Jede Runde gibt es eine rote Zielkante. Wer am Ende die Kugel am nächsten an ihr liegen hat, ohne dass sie runterfällt, holt den Punkt.',
     ctl:{t:'mouse', txt:'Mit Maus oder Finger ziehen und loslassen, wie beim Minigolf'},
-    more:'Nur über die rote Kante kann man runterfallen, die übrigen Seiten sind Banden, an denen die Kugel abprallt. Die Kugeln bleiben liegen, man darf gegnerische Kugeln wegstoßen oder runterschubsen. Gemessen wird von der Mitte der Kugel bis zur Kante: bei 0 fällt sie runter, je kleiner die Zahl, desto besser. Jede Runde ein anderer Tisch (eckig, rund, schräge Kante, Zunge, Sechseck), ein anderer Belag (Holz, Eis, Teppich) und ein paar kleine Pfosten.'},
+    more:'Nur über die rote Kante kann man runterfallen, die übrigen Seiten sind Banden, an denen die Kugel abprallt. Die Kugeln bleiben liegen, man darf gegnerische Kugeln wegstoßen oder runterschubsen. Gemessen wird von der Mitte der Kugel bis zur Kante: bei 0 fällt sie runter, je kleiner die Zahl, desto besser. Jede Runde ein anderer Tisch (eckig, rund, schräge Kante, Zunge, Sechseck, Raute, Trichter, L-Form), mit wechselndem Belag, teils gemischt: Auf Eis rollt die Kugel weit, Teppich bremst stark. Dazu ein paar kleine Pfosten.'},
   {id:'sumo', key:'su', cat:'Arcade', name:'Sumo', icon:'🤼', play:sumo, lens:[2,3,5], rt:1, short:'Gleichzeitig zielen, auf los prallen beide los.',
-    rule: n => 'Beide zielen gleichzeitig und verdeckt, wohin und wie fest sie sich abstoßen. Nach 7 Sekunden geht es auf 3-2-1 los, beide prallen aufeinander. Wer zuerst aus dem Ring fliegt, verliert die Runde.',
+    rule: n => 'Beide zielen gleichzeitig und verdeckt, wohin und wie fest sie sich abstoßen. Nach 7 Sekunden geht es auf 3-2-1 los, beide prallen aufeinander. Wer zuerst aus dem Ring fliegt, verliert.',
     ctl:{t:'keys', note:'Mit Maus oder Finger vom eigenen Ringer weg ziehen wie eine Schleuder. Oder per Tasten drehen und die Kraft einstellen.'},
-    more:'Mehr Kraft heißt weniger Stand: wer kaum zieht, ist schwer und schwer zu verschieben. Der Ring wird mit jedem Zug enger. Jede Runde ein anderer Ring: rund, eckig, mit Säule in der Mitte oder aus glattem Eis. Fliegen beide gleichzeitig raus, zählt die Runde nicht.'},
+    more:'Mehr Kraft heißt weniger Stand: wer wenig Kraft nimmt, steht fester. Der Ring wird mit jedem Zug enger. Jede Runde ein anderer Ring: rund, eckig, mit einer oder zwei Säulen, aus glattem Eis oder gemischt mit Eis- und Sandflecken. Auf Eis rutscht man weit, Sand bremst stark. Fliegen beide gleichzeitig raus, zählt die Runde nicht.'},
   {id:'billard', key:'bi', cat:'Arcade', name:'Billard', icon:'🎱', play:billard, lens:[1, 2, 3], rt:1, short:'9-Ball oder 8-Ball, ziehen und loslassen.', vars:{lab:'Variante', opts:['9-Ball', '8-Ball']},
-    rule: n => 'Abwechselnd stoßt ihr die Weiße. Wer versenkt und keinen Foul macht, bleibt dran. 9-Ball: immer zuerst die niedrigste Kugel treffen, die 9 gewinnt. 8-Ball: Volle gegen Halbe, zum Schluss die 8.',
+    rule: n => 'Abwechselnd stoßt ihr die Weiße. Wer versenkt und kein Foul macht, bleibt dran. 9-Ball: immer zuerst die niedrigste Kugel treffen, die 9 gewinnt. 8-Ball: Volle gegen Halbe, zum Schluss die 8.',
     ctl:{t:'mouse', txt:'Mit Maus oder Finger ziehen und loslassen, wie beim Minigolf. Bei Ball in Hand die Weiße antippen und verschieben.'},
     more:'Foul (falsche Kugel zuerst, nichts getroffen, Weiße versenkt, keine Kugel an der Bande): der Gegner bekommt Ball in Hand. Die Zielhilfe zeigt, welche Kugel getroffen wird und wohin beide laufen. 8-Ball: die erste versenkte Kugel nach dem Anstoß legt die Gruppen fest, die 8 zu früh oder mit Foul versenkt verliert. Jedes Rack ist ein Punkt.'},
   {id:'minigolf', key:'mg', cat:'Arcade', name:'Minigolf', icon:'⛳', play:minigolf, lens:[2,3,5], rt:1, short:'Abwechselnd putten, Windmühle und Wasser.',
     rule: n => 'Beide Bälle liegen auf derselben Bahn, ihr schlagt abwechselnd. Wer weniger Schläge fürs Loch braucht, holt den Punkt.',
     ctl:{t:'mouse', txt:'Mit Maus oder Finger vom Ball weg ziehen und loslassen, wie eine Schleuder'},
     more:'Wände und Ecken lassen den Ball abprallen, Sand bremst, Wasser kostet einen Strafschlag und der Ball kommt zurück. Windmühlen und Schieber bewegen sich ständig. Die Bälle können sich wegstoßen. Höchstens 6 Schläge, dann zählt das Loch 7. Gleich viele Schläge: kein Punkt.'},
-  {id:'pong', key:'pong', cat:'Arcade', name:'Pong', icon:'🏓', play:pong, lens:[2, 3, 5], rt:1, short:'Pong mit ein paar Powerups.',
-    rule: n => `Haltet den Ball mit eurem Schläger im Spiel. Kommt er an dir vorbei, punktet der Gegner. Wer zuerst ${n} Punkte hat, gewinnt.`,
+  {id:'pong', key:'pong', cat:'Arcade', name:'Pong', icon:'🏓', play:pong, lens:[2, 3, 5], rt:1, short:'Pong mit ein paar Extras.',
+    rule: n => `Haltet den Ball mit eurem Schläger im Spiel. Kommt er an euch vorbei, punktet der Gegner. Wer zuerst ${n} Punkte hat, gewinnt.`,
     ctl:{t:'keys', note:'Oder mit der Maus: der Schläger folgt dem Zeiger. Am Touchscreen auf der eigenen Seite ziehen.'},
-    more:'Der Ball wird mit jedem Treffer schneller. In der Mitte erscheinen ab und zu Powerups: großer Schläger, kleiner Gegner oder Turbo-Ball. Es bekommt, wer den Ball zuletzt berührt hat.'},
+    more:'Der Ball wird mit jedem Treffer schneller. In der Mitte erscheinen ab und zu Extras: großer Schläger, kleiner Gegner oder Turbo-Ball. Es bekommt, wer den Ball zuletzt berührt hat.'},
   {id:'sprint', key:'sprint', cat:'Arcade', name:'Neon-Lauf', icon:'🏃', play:sprint, lens:[3, 4, 5], short:'Springen, ausweichen, Tempo ohne Ende.',
     rule: n => 'Springt über Blöcke und lauft unter den gelben Drohnen durch, das Tempo steigt ohne Ende. Wer zuerst crasht, verliert den Lauf.',
     ctl:{t:'buzz', v:'springen'},
@@ -13610,17 +13766,17 @@ const DISC = [
     ctl:{t:'buzz', v:'im Takt'},
     more:'Fehlklicks ziehen für den Gegner, Spammen lohnt sich also nicht. Der Takt wechselt und wird von Runde zu Runde schneller. Steht das Seil am Ende in der Mitte, entscheidet eine goldene Note.'},
   {id:'haemmern', key:'ham', cat:'Reaktion & Geschick', name:'Hämmern', icon:'🔨', play:tippen, lens:[3, 4, 5], short:'3 bis 5 Sekunden Dauerfeuer.',
-    rule: n => 'So oft wie möglich drücken. Jede Runde dauert 3 bis 5 Sekunden, das Ende kommt überraschend.',
+    rule: n => 'So oft wie möglich drücken, wer öfter gedrückt hat, holt den Punkt. Jede Runde dauert 3 bis 5 Sekunden, das Ende kommt überraschend.',
     ctl:{t:'buzz', v:'hämmern'},
-    more:'Wer öfter gedrückt hat, gewinnt die Runde. Bei Gleichstand wird sie wiederholt.'},
+    more:'Bei Gleichstand wird die Runde wiederholt.'},
   {id:'zeit', key:'zeit', cat:'Reaktion & Geschick', name:'Zeitgefühl', icon:'⏱️', play:zeitgefuehl, lens:[2,3,4], short:'Nach exakt X Sekunden drücken.',
-    rule: n => 'Drückt genau nach der angesagten Zeit. Die Uhr verschwindet nach 2 Sekunden, wer näher dran ist, gewinnt die Runde.',
+    rule: n => 'Drückt genau nach der angesagten Zeit. Die Uhr verschwindet nach 2 Sekunden, wer näher dran ist, holt den Punkt.',
     ctl:{t:'buzz', v:'einmal'},
     more:'Jeder drückt nur einmal. Sind beide exakt gleich gut, wird die Runde wiederholt.'},
   {id:'bombe', key:'bomb', cat:'Reaktion & Geschick', name:'Heiße Kartoffel', icon:'💣', play:bombe, lens:[2,3,4], short:'Bombe weitergeben, bevor sie platzt.',
-    rule: n => 'Wer die Bombe hat, drückt, wenn der Zeiger im grünen Feld steht, dann wandert sie rüber. Wer sie beim Knall hat, verliert die Runde.',
+    rule: n => 'Wer die Bombe hat, drückt, wenn der Zeiger im grünen Feld steht, dann wandert sie rüber. Wer sie beim Knall hat, verliert.',
     ctl:{t:'buzz', v:'im grünen Feld'},
-    more:'Die Zündschnur ist geheim. Wer daneben drückt, ist kurz gesperrt und der Zeiger wird schneller, bis die Bombe weitergegeben ist (höchstens dreimal). Mit jeder Übergabe wird er außerdem etwas schneller.'},
+    more:'Die Zündschnur ist geheim. Wer daneben drückt, ist kurz gesperrt und der Zeiger wird schneller, bis die Bombe weitergegeben ist (höchstens dreimal). Mit jeder Übergabe wird er außerdem etwas schneller. Das grüne Feld ist am Anfang breit und wird schmaler, je länger du die Bombe hältst, wer zögert, macht es sich schwerer.'},
   {id:'farbfalle', key:'farb', cat:'Kopf', name:'Farbfalle', icon:'🎨', play:farbfalle, lens:[4, 5, 7], short:'Passen Wort und Farbe zusammen?',
     rule: n => 'Buzzert, wenn ein Wort in seiner eigenen Farbe erscheint, etwa ROT in Rot. Ein falscher Buzzer gibt dem Gegner den Punkt.',
     ctl:{t:'buzz', v:'bei passender Farbe'},
@@ -13641,10 +13797,10 @@ const DISC = [
     rule: n => 'Die Buchstaben eines Wortes sind durcheinander. Wer es erkennt, buzzert und tippt es ein.',
     ctl:{t:'type'},
     more:'Mit der Zeit gibt es Tipps. Wer buzzert, bevor „Buzzern!“ erscheint, ist kurz gesperrt. Falsch oder zu langsam: der andere bekommt eine Konter-Chance.'},
-  {id:'memory', key:'mem', cat:'Kopf', name:'Memory', icon:'🃏', play:memory, lens:[3,5,6], short:'Paare finden, abwechselnd.',
-    rule: n => `${2*n-1} Kartenpaare, abwechselnd deckt ihr zwei Karten auf. Wer ein Paar findet, darf nochmal.`,
+  {id:'memory', key:'mem', cat:'Kopf', name:'Memory', icon:'🃏', play:memory, lens:[3,5,6], vars:[{lab:'Modus', opts:['Abwechselnd', 'Pairs Speed']}], short:'Paare finden, abwechselnd oder gleichzeitig.',
+    rule: n => VARSEL.memory === 1 ? 'Pairs Speed: Jeder hat ein eigenes Feld mit denselben Karten, ihr deckt gleichzeitig auf. Wer zuerst alle Paare hat, holt den Punkt.' : `${2*n-1} Kartenpaare, abwechselnd deckt ihr zwei Karten auf. Wer ein Paar findet, darf nochmal. Wer zuerst die Mehrheit der Paare hat, holt den Punkt.`,
     ctl:{t:'mouse'},
-    more:'10 Sekunden pro Zug. Wer zuerst die Mehrheit der Paare hat, gewinnt.'},
+    more:'Abwechselnd: 10 Sekunden pro Zug. Pairs Speed: falsche Paare drehen sich kurz danach wieder um.'},
   {id:'quiz', key:'quiz', cat:'Wissen', name:'Quiz', icon:'❓', play:quiz, lens:[3,4,6], short:'Beide antworten gleichzeitig.',
     rule: n => `Fragen aus ${new Set(MC.map(q => q[3])).size} Themen, ihr antwortet gleichzeitig und verdeckt. Wer schneller richtig liegt, holt den Punkt.`,
     ctl:{t:'row', n:4, note:'Die vier Tasten sind die vier Antworten, von links nach rechts.'},
@@ -13670,7 +13826,7 @@ const DISC = [
     ctl:{t:'mouse', txt:'Mit Maus oder Finger auf die Karte tippen'},
     more:'Der andere schaut weg, der erste Tipp bleibt verdeckt. 15 Sekunden pro Tipp, wer anfängt, wechselt.'},
   {id:'schaetzen', key:'est', cat:'Wissen', name:'Schätzen', icon:'🎯', play:schaetzen, lens:[2,3,4], short:'Geheim tippen, näher gewinnt.',
-    rule: n => 'Ihr tippt nacheinander geheim eine Zahl. Wer näher an der richtigen Antwort liegt, gewinnt die Runde.',
+    rule: n => 'Ihr tippt nacheinander geheim eine Zahl. Wer näher an der richtigen Antwort liegt, holt den Punkt.',
     ctl:{t:'input'},
     more:'Wer zuerst tippt, wechselt mit jeder Frage, der andere schaut dabei weg. Liegen beide gleich nah, zählt die Frage nicht.'},
   {id:'emoji', key:'emo', cat:'Wissen', name:'Emoji-Rätsel', icon:'😎', play:emoji, lens:[3,4,6], short:'Emojis erscheinen nacheinander.',
@@ -13682,39 +13838,39 @@ const DISC = [
     ctl:{t:'row', n:4, bz:'Stapel wechseln', note:'Die Tasten nehmen von links nach rechts so viele Hölzer, wie auf den Knöpfen steht. Der Buzzer wechselt bei zwei Stapeln den Stapel. Es zählen nur die Tasten von dem, der dran ist.'},
     more:'Mal nehmt ihr 1 bis 3, mal bis zu 4, mal nur 1, 2 oder 4, mal gibt es zwei Stapel. 10 Sekunden pro Zug, sonst wird automatisch 1 genommen.'},
   {id:'kniffel', key:'kn', cat:'Taktik & Bluff', name:'Kniffel', icon:'🎲', play:kniffel, lens:[1, 2, 3], short:'Abwechselnd würfeln, Felder füllen.', vars:{lab:'Modus', opts: ['Normal', 'Extreme']},
-    rule: n => 'Abwechselnd würfelt ihr bis zu dreimal, haltet Würfel fest und tragt dann in ein freies Feld ein. Gespielt werden zufällig gezogene Felder, oben und unten gemischt, oder ein ganzer Kniffel-Block. Wer am Ende mehr Punkte hat, gewinnt die Partie.',
+    rule: n => 'Abwechselnd würfelt ihr bis zu dreimal, haltet Würfel fest und tragt dann in ein freies Feld ein. ' + (VARSEL.kniffel === 1 ? 'Extreme: 5 Würfel plus ein Zehner-Würfel, 22 Felder, und je 3 Chips für einen vierten Wurf.' : 'Gespielt werden zufällig gezogene Felder, oben und unten gemischt, oder ein ganzer Kniffel-Block.') + ' Wer am Ende mehr Punkte hat, holt den Punkt.',
     ctl:{t:'mouse', txt:'Würfel und Felder anklicken oder antippen', note:'Mit Tastatur: der Buzzer würfelt, die fünf Tasten der eigenen Reihe halten die Würfel.'},
-    more:'Bonus oben: +35, wenn man im Schnitt drei von jeder gespielten Zahl hat, beim ganzen Block also ab 63. Jeder weitere Kniffel bringt +50, wenn im Kniffel-Feld schon 50 stehen, und zählt dann auch als Full House oder Straße. Der Bot hat nur eine Stärke.'},
+    more:'Bonus oben: +35, wenn man im Schnitt drei von jeder gespielten Zahl hat, beim ganzen Block also ab 63. Jeder weitere Kniffel bringt +50, wenn im Kniffel-Feld schon 50 stehen, und zählt dann auch als Full House oder Straße.'},
   {id:'schiffe', key:'bs', cat:'Taktik & Bluff', name:'Schiffe versenken', icon:'🚢', play:schiffe, lens:[1, 2, 3], short:'Flotte verstecken, die andere versenken.', vars:{lab:'Karte', opts: BS.MAPS.map(m => m.n).concat('Zufall')},
-    rule: n => 'Jeder versteckt seine Flotte, dann schießt ihr abwechselnd aufs Meer des anderen. Wer trifft, darf nochmal. Wer zuerst die ganze gegnerische Flotte versenkt, gewinnt die Partie.',
+    rule: n => 'Jeder versteckt seine Flotte, dann schießt ihr abwechselnd aufs Meer des anderen. Wer trifft, darf nochmal. Wer zuerst die ganze gegnerische Flotte versenkt, holt den Punkt.',
     ctl:{t:'mouse', txt:'Schiffe aufs Meer ziehen, dann aufs gegnerische Meer tippen', note:'Die Flotte liegt erst zufällig. Ziehen verschiebt ein Schiff, ↻ an seiner Ecke dreht es.'},
-    more:'Die Flotte: ein Fünfer, ein Vierer, zwei Dreier und ein Zweier. Schiffe liegen gerade und dürfen sich nicht berühren, auch nicht über Eck. Ist ein Schiff versenkt, werden die Felder drumherum automatisch als leer markiert. Neben dem klassischen Meer gibt es die Karten Seefort, Klippen, Hafen und Riff mit anderen Umrissen. Zu zweit an einem Gerät schaut beim Setzen der andere weg, danach sieht keiner mehr die eigenen Schiffe.'},
+    more:`Die Flotte: ein Fünfer, ein Vierer, zwei Dreier und ein Zweier. Schiffe liegen gerade und dürfen sich nicht berühren, auch nicht über Eck. Ist ein Schiff versenkt, werden die Felder drumherum automatisch als leer markiert. Neben dem klassischen Meer gibt es die Karten ${BS.MAPS.slice(1).map(m => m.n).join(', ').replace(/, ([^,]*)$/, ' und $1')} mit anderen Umrissen. Zu zweit an einem Gerät schaut beim Setzen der andere weg, danach sieht keiner mehr die eigenen Schiffe.`},
   {id:'kaese', key:'kk', cat:'Taktik & Bluff', name:'Käsekästchen', icon:'🧀', play:kaese, lens:[1, 2, 3], short:'Linien ziehen, Kästchen schließen.', vars:{lab:'Karte', opts: KK_MAPS.map(m => m.n)},
     rule: n => 'Ihr zieht abwechselnd eine Linie zwischen zwei Punkten. Wer die vierte Seite eines Kästchens zieht, bekommt es und ist gleich nochmal dran. Wer am Ende mehr Kästchen hat, gewinnt.',
     ctl:{t:'mouse', txt:'Linie zwischen zwei Punkten antippen'},
     more:'Vorsicht mit der dritten Seite: Die vierte holt sich sonst der andere. Gleich viele Kästchen zählen nicht, dann wird neu gespielt. Wer anfängt, wechselt jede Partie.'},
   {id:'mastermind', key:'mm', cat:'Kopf', name:'Mastermind', icon:'🔐', play:mastermind, lens:[1, 2, 3], short:'Farbcode verstecken, den anderen knacken.', vars:{lab:'Stufe', opts: MM_LV.map(l => l.n)},
-    rule: n => 'Jeder versteckt einen Farbcode. Dann ratet ihr abwechselnd den Code des anderen. Nach jedem Versuch gibt es Stifte: schwarz = eine Farbe am richtigen Platz, weiß = eine Farbe am falschen Platz (welche, verraten die Stifte nicht). Auf „Einfach“ steht unter jedem Feld direkt: grün = stimmt, gelb = Farbe kommt woanders vor. Wer den Code zuerst knackt, gewinnt.',
+    rule: n => 'Jeder versteckt einen Farbcode. Dann ratet ihr abwechselnd den Code des anderen. Nach jedem Versuch gibt es Stifte: schwarz = eine Farbe am richtigen Platz, weiß = eine Farbe am falschen Platz (welche, verraten die Stifte nicht). Auf „Mit Hilfe“ steht unter jedem Feld direkt: grün = stimmt, gelb = Farbe kommt woanders vor. Wer den Code zuerst knackt, gewinnt.',
     ctl:{t:'mouse', txt:'Farben antippen, dann „Raten“'},
     more:'Wer anfängt, hat einen Versuch Vorsprung. Knackt er den Code, bekommt der andere noch seinen Versuch in derselben Runde. Knacken beide in derselben Runde, oder schafft es keiner in 10 Runden, wird neu gespielt. Zu zweit an einem Gerät schaut beim Verstecken der andere weg.'},
   {id:'maexchen', key:'mx', cat:'Taktik & Bluff', name:'Mäxchen', icon:'🎲', play:maexchen, lens:[2, 3, 4], short:'Verdeckt würfeln, ansagen, bluffen.',
-    rule: n => 'Du würfelst verdeckt mit zwei Würfeln und sagst einen Wurf an, der höher sein muss als der letzte. Du darfst lügen. Der andere glaubt dir und muss selbst höher kommen, oder er zweifelt an. Beim Anzweifeln wird aufgedeckt: Hast du gelogen, verlierst du die Runde, sonst der Zweifler.',
+    rule: n => 'Du würfelst verdeckt mit zwei Würfeln und sagst einen Wurf an, der höher sein muss als der letzte. Du darfst lügen. Der andere glaubt dir und muss selbst höher kommen, oder er zweifelt an. Beim Anzweifeln wird aufgedeckt: Hast du gelogen, geht der Punkt an den Zweifler, sonst an dich.',
     ctl:{t:'mouse', txt:'Würfeln, Würfel ansehen, Wert ansagen'},
     more:'Reihenfolge von niedrig nach hoch: 31, 32, 41 … 65, dann die Päsche 11 bis 66, ganz oben das Mäxchen (21). Die größere Zahl steht immer vorne. Wird ein Mäxchen angesagt, kann man es nur noch anzweifeln. Zu zweit an einem Gerät: Würfel nur ansehen, solange du den Knopf hältst, der andere schaut weg.'},
   {id:'vier', key:'c4', cat:'Taktik & Bluff', name:'Vier gewinnt', icon:'🔴', play:vier, lens:[1, 2, 3], short:'Steine einwerfen, vier in einer Reihe.',
-    rule: n => 'Ihr werft abwechselnd Steine in die Spalten, sie fallen nach unten. Wer zuerst vier in einer Reihe hat, waagrecht, senkrecht oder schräg, gewinnt die Partie.',
+    rule: n => 'Ihr werft abwechselnd Steine in die Spalten, sie fallen nach unten. Wer zuerst vier in einer Reihe hat, waagrecht, senkrecht oder schräg, holt den Punkt.',
     ctl:{t:'mouse', txt:'Spalte anklicken oder antippen', note:'Der Stein fällt in der Spalte nach unten.'},
     more:'Das Brett hat 7 Spalten und 6 Reihen. Ist es voll ohne vier in einer Reihe, zählt die Partie nicht und wird neu gespielt. Wer anfängt, wechselt jede Partie.'},
   {id:'bauern', key:'bw', cat:'Taktik & Bluff', name:'Bauernschach', icon:'♟️', play:bauern, lens:[1, 2, 3], short:'Nur Bauern: wer zuerst hinten ankommt, gewinnt.',
-    rule: n => 'Schach nur mit Bauern, Spieler 1 hat Weiß. Online spielt jeder mit Weiß von unten. Wer als Erster einen Bauern auf die gegnerische Grundreihe bringt, gewinnt die Partie. Wer nicht mehr ziehen kann oder keine Bauern mehr hat, verliert.',
+    rule: n => `Schach nur mit Bauern, ${esc(P[0].name)} hat Weiß. Online spielt jeder mit Weiß von unten. Wer als Erster einen Bauern auf die gegnerische Grundreihe bringt, holt den Punkt. Wer nicht mehr ziehen kann oder keine Bauern mehr hat, verliert.`,
     ctl:{t:'mouse', txt:'eigenen Bauern antippen, dann ein grünes Feld', note:'Die Züge sind wie im Schach.'},
     more:'Bauern ziehen ein Feld geradeaus, vom Start aus auch zwei. Geschlagen wird schräg nach vorne. En passant geht auch: Zieht ein Bauer zwei Felder an deinem vorbei, darfst du ihn im nächsten Zug so schlagen, als wäre er nur eins gezogen. Wer anfängt, wechselt jede Partie.'},
   {id:'ultimate', key:'ut', cat:'Taktik & Bluff', name:'Mega-Tic-Tac-Toe', icon:'#️⃣', play:ultimate, lens:[1, 2, 3], short:'9 Felder in einem, jeder Zug schickt den Gegner.',
-    rule: n => 'Neun kleine Tic-Tac-Toe-Felder bilden ein großes. Wo du in einem kleinen Feld setzt, bestimmt, in welchem kleinen Feld der Gegner als Nächstes spielen muss. Wer drei große Felder in einer Reihe gewinnt, holt die Partie.',
+    rule: n => 'Neun kleine Tic-Tac-Toe-Felder bilden ein großes. Wo du in einem kleinen Feld setzt, bestimmt, in welchem kleinen Feld der Gegner als Nächstes spielen muss. Wer drei große Felder in einer Reihe gewinnt, holt den Punkt.',
     ctl:{t:'mouse', txt:'Feld wählen, Kästchen antippen, mit „Zug bestätigen“ setzen', note:'Bestätigen geht auch mit dem Buzzer oder Enter.'},
     more:'Ein Zug geht in drei Schritten: Feld wählen (wenn frei gewählt werden darf), dort groß ein Kästchen antippen, dann bestätigen. Ist das Feld, in das du geschickt wirst, schon entschieden oder voll, darfst du frei wählen. Wer anfängt, spielt ✕ und wechselt jede Partie. Unentschieden zählt nicht.'},
   {id:'bluff', key:'bluff', cat:'Taktik & Bluff', name:'Bluff', icon:'🎭', play:bluff, lens:[3, 4, 5], short:'Gleichzeitig und verdeckt 1–5 wählen.',
-    rule: n => 'Ihr wählt gleichzeitig und verdeckt eine Zahl von 1 bis 5. Die höhere gewinnt, außer die andere liegt genau 1 darunter.',
+    rule: n => 'Ihr wählt gleichzeitig und verdeckt eine Zahl von 1 bis 5. Die höhere Zahl gewinnt. Ist die niedrigere genau 1 kleiner, gewinnt die niedrigere.',
     ctl:{t:'row', n:5, lab:['1','2','3','4','5']},
     more:'Bei gleicher Zahl wird die Runde wiederholt.'},
   {id:'ssp', key:'ssp', cat:'Taktik & Bluff', name:'Schnick Schnack Schnuck', icon:'✂️', play:ssp, lens:[3,5,7], short:'Gleichzeitig, verdeckt, schnell.',
@@ -13722,9 +13878,9 @@ const DISC = [
     ctl:{t:'row', n:3, lab:['✊','✋','✌️']},
     more:'Eure Wahl bleibt bis zur Auflösung verdeckt. Wer zu spät wählt, verliert die Runde. Gleiche Wahl: nochmal.'},
   {id:'auktion', key:'auk', cat:'Taktik & Bluff', name:'Auktion', icon:'💰', play:auktion, lens:[2,3,4], short:'Geheim bieten, Budget einteilen.',
-    rule: n => 'Ihr bietet geheim auf Cyber-Gegenstände, mit 100 Credits für das ganze Spiel. Wer mehr bietet, gewinnt die Runde. Bezahlen müssen beide, auch der Verlierer.',
+    rule: n => 'Ihr bietet geheim auf Gegenstände, mit 100 Credits für das ganze Spiel. Wer mehr bietet, holt den Punkt. Bezahlen müssen beide, auch der Verlierer.',
     ctl:{t:'input'},
-    more:'Auch wer verliert, ist sein Gebot los. Gleich hohe Gebote bringen keinen Punkt, kosten aber trotzdem. Sind beide pleite, gewinnt, wer mehr ersteigert hat. Steht es dann unentschieden, beginnt die Auktion von vorne mit 100 Credits.'},
+    more:'Gleich hohe Gebote bringen keinen Punkt, kosten aber trotzdem. Sind beide pleite, gewinnt, wer mehr ersteigert hat. Steht es dann unentschieden, beginnt die Auktion von vorne mit 100 Credits.'},
 ];
 const isOn = d => enabled[d.id] !== false;
 
@@ -13767,8 +13923,8 @@ function mHome(){
     <div class="mvs">${[0, 1].map(i => `<button class="mpc ${i ? 'b' : 'a'}" data-av="${i}"${isBot(i) ? ' disabled' : ''}><span class="mhd">${heroHead(i)}</span><b>${esc(P[i].name)}</b><small>${isBot(i) ? '🤖 Bot' : NET.on && i ? '🌐 Online' : '✏️ Avatar & Name'}</small></button>`).join('<span class="mvsx">VS</span>')}</div>
     <button class="mbig" id="go">⚔️ <span>Duell einrichten<small>${sub}</small></span>${enterKb()}</button>
     <div class="mgrid">
-      <button class="mhb y" data-go="lib"><span class="e">🎮</span><span><b>Spiele</b><small>Alle ${DISC.length} einzeln spielen · ${n} im Duell</small></span></button>
-      <button class="mhb p" data-go="set"><span class="e">⚙️</span><span><b>Einstellungen</b><small>Aussehen, Ton, Tasten, Hilfe</small></span></button>
+      <button class="mhb y" data-go="lib"><span class="e">🎮</span><span><b>Spiele</b><small>${n === DISC.length ? 'Einzeln spielen & fürs Duell auswählen' : `Einzeln spielen · ${n} von ${DISC.length} im Duell`}</small></span></button>
+      <button class="mhb p" data-go="set"><span class="e">⚙️</span><span><b>Einstellungen</b><small>Steuerung, Ton, Aussehen, Hilfe</small></span></button>
     </div></div>`);
   mWire();
   main.querySelectorAll('[data-av]').forEach(b => b.onclick = () => openAvatar(+b.dataset.av));
@@ -13796,17 +13952,18 @@ function mSetup(){
     </div>
     <div class="mpanel"><h3><span class="n">2</span>Wer spielt?</h3>
       <div class="mpl2">${[0, 1].map(i => `<div class="mplc ${i ? 'b' : 'a'}"><button class="mhd" data-av="${i}"${isBot(i) || (net && i) ? ' disabled' : ''}>${heroHead(i)}</button><div class="mplt">
-        ${i && (BOT.on || net) ? `<b>${esc(P[1].name)}</b><small>${net ? 'kommt über Online und stellt sich selbst ein' : 'spielt automatisch'}</small>` : `<input id="n${i}in" maxlength="14" placeholder="Spieler ${i + 1}" value="${P[i].name === `Spieler ${i + 1}` ? '' : esc(P[i].name)}"><button class="link" data-av="${i}">Avatar bearbeiten</button>`}</div></div>`).join('')}</div>
+        ${i && (BOT.on || net) ? `<b>${esc(P[1].name)}</b><small>${net ? 'spielt am eigenen Gerät, wählt Name und Avatar selbst' : 'spielt automatisch'}</small>` : `<input id="n${i}in" maxlength="14" placeholder="Spieler ${i + 1}" value="${P[i].name === `Spieler ${i + 1}` ? '' : esc(P[i].name)}"><button class="link" data-av="${i}">Avatar bearbeiten</button>`}</div></div>`).join('')}</div>
       ${net ? '' : `<div class="mkv"><span>Gegner</span><div class="seg" id="osel"><button data-v="0" class="${BOT.on ? '' : 'on'}">👤 Mensch</button><button data-v="1" class="${BOT.on ? 'on' : ''}">🤖 Bot</button></div></div>
       ${BOT.on ? `<div class="mkv"><span>Bot-Stärke</span><div class="seg" id="bsel">${BOT_NAMES.map((t, i) => `<button data-v="${i}" class="${BOT.lvl === i ? 'on' : ''}">${t}</button>`).join('')}</div></div>` : ''}`}
     </div>
     <div class="mpanel"><h3><span class="n">3</span>Modus</h3>
       <div class="mmodes" id="msel">${modes.map(([k, e, t, d]) => `<button class="mmode${MODE.kind === k ? ' on' : ''}" data-k="${k}"><span class="e">${e}</span><b>${t}</b><small>${d}</small></button>`).join('')}</div>
       ${isEndless() ? '' : `<div class="mkv"><span>Runden</span><div class="stepper"><button id="rm" aria-label="Weniger Runden">−</button><input id="rn" type="number" min="1" max="50" inputmode="numeric" value="${rounds}"><button id="rp" aria-label="Mehr Runden">+</button></div></div>`}
+      <div class="mkv"><span>Spiele zur Wahl<small>pro Runde, „Alle“ = freie Wahl mit Suche</small></span><div class="seg" id="nsel">${[2, 3, 4, 6, 0].map(v => `<button data-v="${v}" class="${MODE.nch === v ? 'on' : ''}">${v || 'Alle'}</button>`).join('')}</div></div>
       <div class="mkv"><span>Powerups <button class="minfo" id="puv" title="Alle Powerups ansehen" aria-label="Alle Powerups ansehen">i</button><small>${MODE.pu ? '2 zum Start, mehr unterwegs' : 'ohne Powerups'}</small></span><button class="tgl${MODE.pu ? ' on' : ''}" id="psel" aria-label="Powerups an oder aus"></button></div>
     </div>
     <div class="mpanel"><h3><span class="n">4</span>Welche Spiele?</h3>
-      <div class="msum"><span class="big">${n}</span><span class="t">von ${DISC.length} Spielen im Duell${FAV.size ? `<small>★ ${FAV.size} Favoriten</small>` : ''}</span><button class="btn ghost" data-go="lib">Anpassen</button></div>
+      <div class="msum">${n === DISC.length ? '<span class="big">✓</span><span class="t">Alle Spiele dabei' : `<span class="big">${n}</span><span class="t">von ${DISC.length} Spielen im Duell`}${FAV.size ? `<small>★ ${FAV.size} Favoriten</small>` : ''}</span><button class="btn ghost" data-go="lib">Anpassen</button></div>
       <ul class="mrules" id="rinfo"></ul>
     </div>
     <div class="msticky"><button class="mbig" id="go">⚔️ <span>Duell starten</span>${enterKb()}</button></div></div>`);
@@ -13814,7 +13971,7 @@ function mSetup(){
   main.querySelectorAll('[data-av]').forEach(b => b.onclick = () => openAvatar(+b.dataset.av));
   [0, 1].forEach(i => { const x = $('#n' + i + 'in'); if (x) x.addEventListener('input', e => { P[i].name = e.target.value.trim() || `Spieler ${i + 1}`; updateHud(); saveSettings(); }); });
   const info = () => { const r = $('#rinfo'); if (!r) return; r.innerHTML = [
-      `Vor jeder Runde stehen 3 Spiele zur Wahl, wer zurückliegt, wählt. Jedes kommt erst wieder, wenn alle ${n} dran waren.`,
+      MODE.nch ? `Vor jeder Runde stehen ${MODE.nch} Spiele zur Wahl, wer zurückliegt, wählt. Jedes kommt erst wieder, wenn alle ${n} dran waren.` : `Vor jeder Runde wählt, wer zurückliegt, frei aus allen ${n} Spielen.`,
       modeRule(true),
       MODE.pu ? puRule() : 'Ohne Powerups und ohne „Doppelt oder nichts“.',
       MODE.pu ? `Wer ${cbThreshold()} Punkte hinten liegt, kann einmal pro Rückstand „Doppelt oder nichts“ zünden.` : '',
@@ -13825,6 +13982,7 @@ function mSetup(){
     $('#rn').addEventListener('change', e => setR(+e.target.value)); $('#rn').addEventListener('keydown', e => { if (e.key === 'Enter') { setR(+e.target.value); e.target.blur(); } }); }
   const seg = (id, fn) => main.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => { fn(b); saveSettings(); menu(); });
   seg('msel', b => { MODE.kind = b.dataset.k; });
+  seg('nsel', b => { MODE.nch = +b.dataset.v; });
   seg('osel', b => setBot(b.dataset.v === '1', BOT.lvl));
   seg('bsel', b => setBot(true, +b.dataset.v));
   $('#psel').onclick = () => { MODE.pu = !MODE.pu; saveSettings(); menu(); };
@@ -13845,7 +14003,7 @@ function mLib(){
     <div class="gsrow" id="gsrow"><input id="gsearch" type="search" placeholder="Spiel suchen …" autocomplete="off" spellcheck="false" aria-label="Spiel suchen"><span class="gsn" id="gsn"></span></div>
     <div class="mtabs" id="mtabs"></div><div class="mcatbar" id="mcatbar"></div>
     <div class="tiles mtiles" id="mtl"></div><p class="hint gsnone" id="gsnone" hidden>Kein Spiel gefunden.</p>
-    <p class="hint">Antippen: Regel, einzeln spielen, im Duell an/aus. ★ Favorit. Mindestens ein Spiel bleibt im Duell.</p>
+    <p class="hint">Tippe ein Spiel an für Regeln und Einzelspiel. ✓ nimmt es ins Duell, ★ macht es zum Favoriten.</p>
     </div>`);
   mWire();
   const gs = $('#gsearch'); gs.value = gsLast;
@@ -13906,7 +14064,7 @@ function mSet(){
       <div class="mkv"><span>Bot-Stärke<small>gilt, sobald ihr gegen den Bot spielt</small></span><div class="seg" id="bdef">${BOT_NAMES.map((t, i) => `<button data-v="${i}" class="${BOT.lvl === i ? 'on' : ''}">${t}</button>`).join('')}</div></div>
     </div>
     <div class="mpanel"><h3>🔊 Ton</h3>
-      <div class="mkv"><span>Ton</span><button class="tgl${Snd.on ? ' on' : ''}" id="sndt"></button></div>
+      <div class="mkv"><span>Ton an</span><button class="tgl${Snd.on ? ' on' : ''}" id="sndt"></button></div>
       <div class="mkv"><span>Lautstärke<small>gesamt</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" id="mvol" value="${HX.vol()}"><b id="mvolv">${Math.round(HX.vol()*100)}%</b></span></div>
       <div class="mkv"><span>Spiele<small>Töne in den Spielen und im Menü</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" id="mgvol" value="${HX.gvol()}"><b id="mgvolv">${Math.round(HX.gvol()*100)}%</b></span></div>
       <div class="mkv"><span>Emotes<small>Töne der Figuren</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" id="mevol" value="${HX.evol()}"><b id="mevolv">${Math.round(HX.evol()*100)}%</b></span></div>
@@ -13914,7 +14072,7 @@ function mSet(){
     </div>
     <div class="mpanel"><h3>🎨 Aussehen</h3>
       <div class="mkv"><span>Hell / Dunkel<small>Auto folgt der Einstellung von Handy oder PC. Auch oben über ${tm === 'dark' ? '🌙' : tm === 'auto' ? '🌗' : '☀️'}</small></span><div class="seg" id="thsel"><button data-t="light" class="${tm === 'light' ? 'on' : ''}">☀️ Hell</button><button data-t="dark" class="${tm === 'dark' ? 'on' : ''}">🌙 Dunkel</button><button data-t="auto" class="${tm === 'auto' ? 'on' : ''}">🌗 Auto</button></div></div>
-      <div class="mkv"><span>Hintergrund<small>Geht auch jederzeit oben über 🎨</small></span><button class="btn ghost" id="bgo">🎨 Auswählen</button></div>
+      <div class="mkv"><span>Hintergrund<small>Auch oben über 🎨</small></span><button class="btn ghost" id="bgo">🎨 Auswählen</button></div>
     </div>
     <div class="mpanel"><h3>❓ Hilfe & Daten</h3>
       <div class="mkv"><span>Anleitung</span><button class="btn ghost" id="guide">📖 Öffnen</button></div>
@@ -13996,7 +14154,7 @@ function intro(d, go, o = {}){
   cur = null; pads(false); G.active = false; G.practice = false; curDisc = d;
   if (PBS) PBS.paused = false;
   updateHud();
-  let ln = o.len != null ? d.lens[o.len] : (LENSEL[d.id] != null ? LENSEL[d.id] : d.lens[LENDEF[d.id] != null ? LENDEF[d.id] : 1]);
+  let ln = o.ln != null ? o.ln : o.len != null ? d.lens[o.len] : (LENSEL[d.id] != null ? LENSEL[d.id] : d.lens[LENDEF[d.id] != null ? LENDEF[d.id] : 1]);
   const kick = stechen ? 'Gleichstand, es geht ins Stechen' : o.finale ? `Finale, Runde ${ri+1} von ${rounds}: der Sieg zählt doppelt` : mode === 'match' ? roundLabel() + valTxt() : 'Einzelspiel';
   const sel = !!(PBS && PBS.active), inl = sel && (TOUCH || innerWidth < 1000 || NET.on);
   document.body.classList.toggle('pbinl', inl);
@@ -14030,7 +14188,7 @@ function intro(d, go, o = {}){
   if (sel) { PBS.onChange = upd; pbSetNeed(need()); upd(); }
   if (sel && BOT.on) { const poll = () => { if (started || !PBS || !PBS.active) return; botPB(); later(poll, 600); }; later(poll, brnd(700, 1300)); }
   const knBind = () => { const k = $('#knsel'); if (!k) return; k.innerHTML = knBtns(); k.querySelectorAll('button').forEach(b => b.onclick = () => { VARSEL.knN = b.dataset.m ? 13 : clamp(VARSEL.knN + +b.dataset.d, 2, 13); knBind(); }); };
-  main.querySelectorAll('.vsel button').forEach(b => b.onclick = () => { const g = b.parentElement; VARSEL[vkey(+g.dataset.j)] = +b.dataset.i; g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); knBind(); });
+  main.querySelectorAll('.vsel button').forEach(b => b.onclick = () => { const g = b.parentElement; VARSEL[vkey(+g.dataset.j)] = +b.dataset.i; g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); knBind(); const dr = $('#drule'); if (dr) dr.textContent = d.rule(need()); });
   knBind();
   const kkBind = () => { const k = $('#kksel'); if (!k) return; const q = !(VARSEL.kaese || 0);
     k.innerHTML = q ? `<span class="lfree"><button data-d="-1" aria-label="Kleiner">−</button><b>${VARSEL.kkN}×${VARSEL.kkN}<small>${VARSEL.kkN*VARSEL.kkN} Kästchen</small></b><button data-d="1" aria-label="Größer">+</button></span>` : '<span class="lrec" style="margin:0">feste Größe</span>';
@@ -14078,8 +14236,8 @@ function intro(d, go, o = {}){
     [0,1].forEach(renderPB);
     d.play(() => {
       G.active = false; cur = null; pads(false);
-      toast('Proberunde vorbei, jetzt zählt es!');
-      later(() => intro(d, go, {...o, len: li}), 1300);
+      toast('Proberunde vorbei. Mit „Spiel starten“ zählt es.');
+      later(() => intro(d, go, {...o, ln}), 1300);
     });
   };
   $('#go').onclick = start;
@@ -14201,13 +14359,13 @@ function openHelp(){
       <div class="w"><span class="kl">${kb('Enter')} starten und weiter, auch in der Pause nach jedem Punkt</span></div></div>
     <p class="ctlnote">Jede Auswahl liegt im eigenen Feld, von links nach rechts wie die Tasten. Am Touchscreen tippt jeder in seinem Feld.${TOUCH ? '' : ` ${kb('Esc')} schließt die Hilfe.`}</p>
     <h3>Duell</h3>
-    <ul><li>Vor jeder Runde stehen 3 Spiele zur Wahl, wer zurückliegt, wählt.</li>
+    <ul><li>${MODE.nch ? `Vor jeder Runde stehen ${MODE.nch} Spiele zur Wahl` : 'Vor jeder Runde gibt es freie Wahl aus allen Spielen'}, wer zurückliegt, wählt.</li>
       <li>${modeRule(false)}</li>
       ${MODE.pu ? `<li>${puRule()} Höchstens ${MAXINV} passen ins Inventar.</li>` : '<li>Dieses Duell läuft ohne Powerups und ohne „Doppelt oder nichts“.</li>'}
       ${MODE.pu ? '<li>Vor jedem Spiel wählt ihr verdeckt an eurer Figur ein Powerup oder keins.</li>' : ''}</ul>
     <h3>Powerups</h3>
     <ul>${PU_KEYS.map(k => `<li><b>${PU[k].icon} ${PU[k].name}:</b> ${PU[k].desc}</li>`).join('')}<li><b>🔥 Doppelt oder nichts:</b> ${CB_DESC} Bereit ab ${cbThreshold()} Punkten Rückstand.</li></ul>
-    ${d ? '' : `<h3>Menü</h3><ul><li>Unter den Namen stellt ihr eure Avatare ein.</li><li>Eine Spielkachel antippen spielt das Spiel einzeln, der Haken rechts oben legt fest, ob es im Duell vorkommt.</li></ul><h3>Die Spiele</h3><ul class="hgames">${DISC.map(g => `<li><b>${g.icon} ${esc(g.name)}:</b> ${g.rule(g.lens[1])}</li>`).join('')}</ul>`}
+    ${d ? '' : `<h3>Menü</h3><ul><li>Auf eure Figur tippen, um Avatar und Name zu ändern.</li><li>Unter „Spiele“ ein Spiel antippen für Regeln und Einzelspiel. ✓ = im Duell dabei, ★ = Favorit.</li></ul><h3>Die Spiele</h3><ul class="hgames">${DISC.map(g => `<li><b>${g.icon} ${esc(g.name)}:</b> ${g.rule(g.lens[1])}</li>`).join('')}</ul>`}
     <button class="btn hclose" id="hclose">Schließen</button></div>`;
   document.body.appendChild(el);
   el.addEventListener('click', e => { if (e.target === el) closeHelp(); });
@@ -14309,38 +14467,43 @@ function draftOptions(){
   const byCat = {};
   shuffle(cand.slice()).forEach(d => { (byCat[d.cat] = byCat[d.cat] || []).push(d); });
   const cats = shuffle(Object.keys(byCat)).sort((a,b) => (a === lastCat) - (b === lastCat));
-  const out = cats.slice(0,3).map(c => byCat[c][0]);
-  for (const d of shuffle(cand.slice())) { if (out.length >= 3) break; if (!out.includes(d)) out.push(d); }
+  const N = MODE.nch || 3, out = cats.slice(0, N).map(c => byCat[c][0]);
+  for (const d of shuffle(cand.slice())) { if (out.length >= N) break; if (!out.includes(d)) out.push(d); }
   return out;
 }
 function nextRound(){
   if (!isEndless() && ri >= rounds) return finish();
   pu = [null,null]; cbActive = -1;
   const finale = MODE.kind === 'classic' && rounds > 1 && ri === rounds - 1;
-  const opts = draftOptions();
+  const all = !MODE.nch, on = DISC.filter(isOn);
+  const opts = all ? on.filter(d => d !== order[order.length - 1] || on.length === 1) : draftOptions();
   if (opts.length === 1) return startRound(opts[0], finale);
   const c = chooserNow(), chooser = c >= 0 ? c : R0(2);
   cur = null; pads(false); G.active = false; updateHud();
   let taken = false;
   const pick = i => { if (taken || !opts[i]) return; taken = true; cur = null; startRound(opts[i], finale); };
-  const show = () => {
-  view(`<div class="card cut"><div class="kick">${finale ? `Finale, ${roundLabel()}` : roundLabel() + valTxt()}</div>
+  const head = `<div class="kick">${finale ? `Finale, ${roundLabel()}` : roundLabel() + valTxt()}</div>
     <h2 class="who">${nm(chooser)} wählt ${finale ? 'das Finalspiel' : 'das nächste Spiel'}</h2>
-    <p class="hint">${P[0].score !== P[1].score ? 'Wer zurückliegt, wählt.' : c >= 0 ? 'Gleichstand: wer die letzte Runde verloren hat, wählt.' : 'Zum Start ausgelost.'}${finale ? ' Das Finale zählt doppelt.' : ''}</p>
-    <div class="choices">${opts.map((d,i) => `<button class="choice" data-i="${i}"><span class="ti">${d.icon}</span><b>${d.name}</b><small>${d.cat}</small><em>${kbp(chooser, 'r' + i)}</em></button>`).join('')}</div>
-    ${isEndless() ? `<button class="btn ghost" id="allg">🎲 Andere wählen …</button>` : ''}</div>`);
+    <p class="hint">${P[0].score !== P[1].score ? 'Wer zurückliegt, wählt.' : c >= 0 ? 'Gleichstand: wer die letzte Runde verloren hat, wählt.' : 'Zum Start ausgelost.'}${finale ? ' Das Finale zählt doppelt.' : ''}</p>`;
+  if (all) {
+    const cats = [...new Set(opts.map(d => d.cat))];
+    view(`<div class="card cut">${head}
+      <div class="gsrow chs"><input id="chq" type="search" placeholder="Spiel suchen …" autocomplete="off" spellcheck="false" aria-label="Spiel suchen"></div>
+      ${cats.map(cn => `<h2 class="cat" data-c="${cn}">${cn}</h2><div class="choices allch" data-c="${cn}">${opts.map((d, i) => d.cat !== cn ? '' : `<button class="choice" data-i="${i}"><span class="ti">${d.icon}</span><b>${d.name}</b></button>`).join('')}</div>`).join('')}
+      <p class="hint gsnone" id="chnone" hidden>Kein Spiel gefunden.</p></div>`);
+    const q = $('#chq');
+    q.addEventListener('input', () => { const w = gsNorm(q.value).split(' ').filter(Boolean); let hit = 0;
+      main.querySelectorAll('.allch .choice').forEach(b => { const ok = w.every(x => gsHay(opts[+b.dataset.i]).includes(x)); b.hidden = !ok; if (ok) hit++; });
+      main.querySelectorAll('[data-c]').forEach(e => { if (e.tagName === 'H2') { const g = main.querySelector(`.allch[data-c="${e.dataset.c}"]`); const any = g && [...g.children].some(b => !b.hidden); e.hidden = !any; g.hidden = !any; } });
+      $('#chnone').hidden = hit > 0; });
+    q.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = [...main.querySelectorAll('.allch .choice')].find(x => !x.hidden); if (b && mayAct(chooser)) { e.preventDefault(); pick(+b.dataset.i); } } });
+    if (!isBot(chooser) && mayAct(chooser) && !TOUCH) setTimeout(() => q.focus(), 50);
+  } else {
+    view(`<div class="card cut">${head}
+      <div class="choices${opts.length > 3 ? ' many' : ''}">${opts.map((d,i) => `<button class="choice" data-i="${i}"><span class="ti">${d.icon}</span><b>${d.name}</b><small>${d.cat}</small>${i < 5 ? `<em>${kbp(chooser, 'r' + i)}</em>` : ''}</button>`).join('')}</div></div>`);
+  }
   main.querySelectorAll('.choice').forEach(b => b.onclick = () => { if (mayAct(chooser)) pick(+b.dataset.i); });
-  const ag = $('#allg'); if (ag) ag.onclick = () => { if (!mayAct(chooser) || taken) return;
-    const on = DISC.filter(isOn), cats = [...new Set(on.map(d => d.cat))];
-    view(`<div class="card cut"><div class="kick">${roundLabel()}${valTxt()}</div><h2 class="who">${nm(chooser)} wählt aus allen Spielen</h2>
-      ${cats.map(c => `<h2 class="cat">${c}</h2><div class="choices allch">${on.filter(d => d.cat === c).map(d => `<button class="choice" data-g="${d.id}"><span class="ti">${d.icon}</span><b>${d.name}</b></button>`).join('')}</div>`).join('')}
-      <button class="btn ghost" id="allb">← Zurück zu den 3</button></div>`);
-    main.querySelectorAll('[data-g]').forEach(b => b.onclick = () => { if (!mayAct(chooser) || taken) return; taken = true; cur = null; startRound(on.find(d => d.id === b.dataset.g), finale); });
-    $('#allb').onclick = () => { if (mayAct(chooser) && !taken) show(); };
-    cur = null; };
-  cur = { row: (p, i) => { if (p === chooser && i < opts.length) pick(i); } };
-  };
-  show();
+  cur = all ? null : { row: (p, i) => { if (p === chooser && i < opts.length) pick(i); } };
   if (isBot(chooser)) later(() => pick(R0(opts.length)), brnd(1300, 2300));
 }
 function startRound(d, finale){
@@ -14398,7 +14561,7 @@ function roundDone(w, sc){
     nxt = `${MODE.pu ? `<p class="hint">🎁 Nächstes Geschenk-Dach: ${np.join(', ')}.</p>` : ''}<p class="hint">Als Nächstes wählt ${c >= 0 ? nm(c) : 'das Los'}${MODE.kind === 'classic' && ri === rounds - 1 ? ' das Finalspiel' : ''}${isLate() ? `, Runde ${ri+1} zählt ${ri+1} Punkte` : ''}.</p>`;
   }
   const favBtn = d ? `<button class="mfav${isFav(d) ? ' on' : ''}" id="rfav">${isFav(d) ? '★ Favorit' : '☆ Favorit'}</button>` : '';
-  view(`<div class="card cut rdone"><div class="kick">${isEndless() ? `${ri} gespielt` : `${ri} von ${rounds} gespielt`}${curFinale ? ', Finale' : ''}</div>
+  view(`<div class="card cut rdone"><div class="kick">${isEndless() ? `Runde ${ri}` : `Runde ${ri} von ${rounds}`}${curFinale ? ', Finale' : ''}</div>
     <h1 class="big-h">${w >= 0 ? nm(w) + (pts > 1 ? ` holt ${pts} Punkte` : ' holt den Punkt') : 'Kein Punkt'}</h1>
     <p class="rline">„${esc(line)}“</p>
     <div class="rscore"><span class="rs a${w === 0 ? ' w' : ''}"><small>${esc(P[0].name)}</small><b>${P[0].score}</b></span><span class="rsx">:</span><span class="rs b${w === 1 ? ' w' : ''}"><small>${esc(P[1].name)}</small><b>${P[1].score}</b></span></div>
@@ -14464,7 +14627,7 @@ function statsScreen(w){
   view(`<div class="card cut"><div class="icon">🏆</div>
     <h1 class="big-h">${nm(w)} gewinnt das Duell</h1>
     <p>Endstand ${sub([P[0].score, P[1].score])}</p>
-    <p class="hint">Disziplinen gewonnen: ${nm(0)} ${wins[0]} : ${wins[1]} ${nm(1)}${draws ? `, ${draws} unentschieden` : ''}</p>
+    <p class="hint">Spiele gewonnen: ${nm(0)} ${wins[0]} : ${wins[1]} ${nm(1)}${draws ? `, ${draws} unentschieden` : ''}</p>
     ${histTable()}
     ${highlights(stats, 'Highlights des Duells')}
     <button class="btn" id="again">Revanche${enterKb()}</button><br>
