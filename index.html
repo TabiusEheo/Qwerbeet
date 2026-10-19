@@ -1756,6 +1756,8 @@ body.inmenu .mhome .mlogo{margin:0 0 14px}
 .choices.many{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.chs{margin:10px 0 4px}.allch .choice[hidden],.allch[hidden],h2.cat[hidden]{display:none}
 .mspw{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%}.mspd{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}.msg{width:100%;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px}.msg .mcard{font-size:22px}
 @media (max-width:560px){.mspw{gap:8px}.msg{grid-template-columns:repeat(4,1fr);gap:4px}.msg .mcard{font-size:18px}}
+
+.mnch{border-top:0;padding-top:0;margin-bottom:6px}.mnch .mkr{display:flex;gap:8px;align-items:center}.mnch .btn.on{background:var(--p1,#3aa0ff);color:#fff}.stepper button:disabled,.stepper input:disabled{opacity:.4}
 </style>
 </head>
 <body>
@@ -1788,7 +1790,7 @@ const PAL = (() => {
   const hex = h => { h = String(h).replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
   T.refresh = () => {
-    const dk = document.documentElement.dataset.theme === 'dark';
+    const dk = document.documentElement.dataset.theme === 'dark'; T.ver = (T.ver || 0) + 1;
     Object.assign(T, {dark: dk, p1: css('--p1') || '#ff5a36', p2: css('--p2') || '#16b8c9',
       ol: dk ? '#0c0a12' : '#1d1a16', ink: dk ? '#fff6e8' : '#1d1a16',
       field: dk ? '#332d47' : '#f3e7cf', field2: dk ? '#2b263c' : '#ead9b9', line: dk ? '#5a5274' : '#d6c29c',
@@ -5687,7 +5689,7 @@ function loadSettings(){
       if (typeof s.sound === 'boolean') Snd.on = s.sound;
       if (['classic','late','endless'].includes(s.mode)) MODE.kind = s.mode;
       if (typeof s.pu === 'boolean') MODE.pu = s.pu;
-      if (Number.isInteger(s.nch) && s.nch >= 0 && s.nch <= 6) MODE.nch = s.nch;
+      if (Number.isInteger(s.nch) && s.nch >= 0 && s.nch <= 99) MODE.nch = s.nch;
       if (typeof s.blvl === 'number') BOT.lvl = clamp(s.blvl | 0, 0, 2);
       if (s.bot) setBot(true, BOT.lvl);
       if (Array.isArray(s.av)) { HERO = [0,1].map(i => heroFix(s.av[i], i)); drawFigures(); }
@@ -8919,6 +8921,7 @@ function kaDraw(cv, S, now){
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
   const ctx = cv.getContext('2d'); if (!ctx) return;
   const k = cw/W;
+  if (S.layerV !== PAL.ver) { S.layer = null; S.layerV = PAL.ver; }
   if (!S.layer) {
     const L = document.createElement('canvas'); L.width = cw; L.height = ch; const c = L.getContext('2d'); c.setTransform(k, 0, 0, k, 0, 0);
     // Abgrund
@@ -9053,7 +9056,7 @@ function kaBegin(t, sf, n, starter, ui, onEnd){
       if (!S.left[0] && !S.left[1]) {
         S.ph = 'done';
         const g = [KA.best(S, S.b, 0), KA.best(S, S.b, 1)];
-        if (NET.on) netSend({t: 'rt', k: 'kat', rid, st: kaState(S), lab: S.lab});
+        if (NET.on) netSend({t: 'rt', k: 'kat', rid, st: kaState(S), lab: fell.length ? S.lab : ''});
         ui(S); onEnd(g);
       } else {
         const o = 1 - S.p; S.p = S.left[o] ? o : S.p;
@@ -9549,6 +9552,7 @@ function bdDraw(cv, S, now){
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
   const ctx = cv.getContext('2d'); if (!ctx) return;
   const k = cw/W;
+  if (S.layerV !== PAL.ver) { S.layer = null; S.layerV = PAL.ver; }
   if (!S.layer) {
     const Lc = document.createElement('canvas'); Lc.width = cw; Lc.height = ch; const c = Lc.getContext('2d'); c.setTransform(k, 0, 0, k, 0, 0);
     c.fillStyle = PAL.field; c.fillRect(0, 0, W, H);
@@ -9584,6 +9588,7 @@ c.strokeStyle = PAL.p2; c.lineWidth = 4; c.lineCap = 'round';
   }
   const tgt = S.mode === '9' && S.ph !== 'done' && S.ph !== 'roll' ? BD.low(S.b) : -1;
   for (const [id, x, y, f] of pos) if (!f && id === tgt) { const k = .5 + .5*Math.sin(now/180); ctx.fillStyle = PAL.a('sun', .25 + .2*k); ctx.beginPath(); ctx.arc(x, y, R*(1.9 + .25*k), 0, 7); ctx.fill(); ctx.strokeStyle = PAL.sun; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, R*(1.55 + .25*k), 0, 7); ctx.stroke(); }
+  if (S.mode === '8' && S.g[S.p] && S.ph === 'aim' && !r) { const col = S.p ? PAL.p2 : PAL.p1; ctx.strokeStyle = col; ctx.lineWidth = 3; for (const [id, x, y, f] of pos) if (!f && id && bdLegal(S, id)) { ctx.beginPath(); ctx.arc(x, y, R + 4, 0, 7); ctx.stroke(); } }
   for (const [id, x, y, f] of pos) if (!f) { ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.arc(x + 2.5, y + 3, R, 0, 7); ctx.fill(); bdBall(ctx, id, x, y, R); }
   // Zielhilfe und Queue
   const A = S.aim, cue = S.b.find(b => b.id === 0);
@@ -9610,7 +9615,23 @@ c.strokeStyle = PAL.p2; c.lineWidth = 4; c.lineCap = 'round';
   // versenkte Kugeln unten am Rand, Gruppen oben
   let x0 = W/2 - S.pot.length*12; for (const id of S.pot) { bdBall(ctx, id, x0 + 12, H - 22, 9); x0 += 24; }
   ctx.font = '900 18px Nunito, sans-serif';
-  for (const j of [0, 1]) { ctx.textAlign = j ? 'right' : 'left'; ctx.fillStyle = j ? PAL.p2 : PAL.p1; const gtx = S.mode === '8' && S.g[j] ? (S.g[j] === 's' ? ', Volle' : ', Halbe') : '', me = S.p === j && S.ph !== 'done' ? '● ' : ''; ctx.fillText(j ? `${P[j].name.slice(0, 14)}${gtx} ${me}` : `${me}${P[j].name.slice(0, 14)}${gtx}`, j ? W - 18 : 18, 34); }
+  for (const j of [0, 1]) {
+    const me = S.p === j && S.ph !== 'done' ? '● ' : '', nmT = j ? `${P[j].name.slice(0, 14)} ${me}` : `${me}${P[j].name.slice(0, 14)}`;
+    ctx.textAlign = j ? 'right' : 'left'; ctx.fillStyle = j ? PAL.p2 : PAL.p1; ctx.font = '900 18px Nunito, sans-serif'; ctx.fillText(nmT, j ? W - 18 : 18, 34);
+    if (S.mode !== '8') continue;
+    const tw = ctx.measureText(nmT).width, gx = j ? W - 18 - tw - 12 : 18 + tw + 12;
+    if (!S.g[j]) { ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = PAL.a('ink', .6); ctx.fillText('offener Tisch', gx, 33); continue; }
+    // eigene Gruppe als Kugelreihe: übrige voll, versenkte blass, danach die 8
+    const ids = S.g[j] === 's' ? [1, 2, 3, 4, 5, 6, 7] : [9, 10, 11, 12, 13, 14, 15], left = ids.filter(id => S.b.some(b => b.id === id && !b.f));
+    ctx.font = '900 13px Nunito, sans-serif'; ctx.fillStyle = j ? PAL.p2 : PAL.p1;
+    const lab = S.g[j] === 's' ? 'VOLLE' : 'HALBE', lw = ctx.measureText(lab).width;
+    ctx.fillText(lab, gx, 33);
+    const list = [...ids, 8], dir = j ? -1 : 1; let x = gx + dir*(lw + 17);
+    for (const id of (j ? list.slice().reverse() : list)) {
+      const on = id === 8 ? !left.length : left.includes(id);
+      ctx.globalAlpha = on ? 1 : .22; bdBall(ctx, id, x, 28, 10.5); ctx.globalAlpha = 1; x += dir*24;
+    }
+  }
   ctx.textAlign = 'center'; ctx.fillStyle = PAL.a('ink', .7); ctx.font = '900 15px Nunito, sans-serif';
   ctx.fillText(S.ph === 'done' ? '' : S.bih ? (S.bih === 1 ? 'Ball in Hand hinter der Linie' : 'Ball in Hand') : S.mode === '9' ? `nächste Kugel: ${BD.low(S.b)}` : '', W/2, 34);
   if (S.lab && now - S.labT < 1800) { ctx.font = '56px "Lilita One", sans-serif'; ctx.fillStyle = PAL.ol; ctx.fillText(S.lab, W/2 + 3, H/2 + 23); ctx.fillStyle = PAL.sun; ctx.fillText(S.lab, W/2, H/2 + 20); }
@@ -9737,7 +9758,7 @@ function bdBegin(mode, starter, ui, onEnd){
       S.b = out.bs; S.g = out.g; S.rec = null; S.plan = null; S.brk = false;
       for (const id of out.pots) if (!S.pot.includes(id) && S.b.find(b => b.id === id).f) S.pot.push(id);
       S.pot = S.pot.filter(id => S.b.find(b => b.id === id).f);
-      let msg;
+      let msg; S.lab = '';
       if (out.win >= 0) { S.ph = 'done'; S.lab = out.win === p ? (S.mode === '9' ? 'DIE 9!' : 'DIE 8!') : 'VERLOREN!'; S.labT = now; msg = `${nm(p)} ${out.msg}.`; }
       else if (out.foul) { S.p = 1 - p; S.bih = 2; msg = `Foul von ${nm(p)}: ${out.foul}. Ball in Hand für ${nm(S.p)}.`; S.lab = 'FOUL'; S.labT = now; }
       else if (out.keep) { S.bih = 0; msg = `${nm(p)} ${out.msg || 'hat versenkt'} und bleibt dran.`; }
@@ -10043,6 +10064,7 @@ function mgDraw(cv, S, now){
   const ctx = cv.getContext('2d'); if (!ctx) return;
   const k = cw/W;
   // feste Bahn einmal vorzeichnen
+  if (S.layerV !== PAL.ver) { S.layer = null; S.layerV = PAL.ver; }
   if (!S.layer) {
     const L = document.createElement('canvas'); L.width = cw; L.height = ch; const c = L.getContext('2d'); c.setTransform(k, 0, 0, k, 0, 0);
     const path = P => { c.beginPath(); P.forEach(([x, y], i) => i ? c.lineTo(x, y) : c.moveTo(x, y)); c.closePath(); };
@@ -13957,9 +13979,9 @@ function mSetup(){
       ${BOT.on ? `<div class="mkv"><span>Bot-Stärke</span><div class="seg" id="bsel">${BOT_NAMES.map((t, i) => `<button data-v="${i}" class="${BOT.lvl === i ? 'on' : ''}">${t}</button>`).join('')}</div></div>` : ''}`}
     </div>
     <div class="mpanel"><h3><span class="n">3</span>Modus</h3>
+      <div class="mkv mnch"><span>Spiele zur Wahl<small>${MODE.nch ? 'so viele Spiele stehen vor jeder Runde zur Auswahl' : 'freie Wahl aus allen Spielen, mit Suche'}</small></span><span class="mkr"><div class="stepper"><button id="cm" aria-label="Weniger"${MODE.nch ? '' : ' disabled'}>−</button><input id="cn" type="number" min="2" max="${n}" inputmode="numeric" value="${MODE.nch || n}"${MODE.nch ? '' : ' disabled'}><button id="cp" aria-label="Mehr"${MODE.nch ? '' : ' disabled'}>+</button></div><button class="btn ghost${MODE.nch ? '' : ' on'}" id="call">${MODE.nch ? 'Alle' : '✓ Alle'}</button></span></div>
       <div class="mmodes" id="msel">${modes.map(([k, e, t, d]) => `<button class="mmode${MODE.kind === k ? ' on' : ''}" data-k="${k}"><span class="e">${e}</span><b>${t}</b><small>${d}</small></button>`).join('')}</div>
       ${isEndless() ? '' : `<div class="mkv"><span>Runden</span><div class="stepper"><button id="rm" aria-label="Weniger Runden">−</button><input id="rn" type="number" min="1" max="50" inputmode="numeric" value="${rounds}"><button id="rp" aria-label="Mehr Runden">+</button></div></div>`}
-      <div class="mkv"><span>Spiele zur Wahl<small>pro Runde, „Alle“ = freie Wahl mit Suche</small></span><div class="seg" id="nsel">${[2, 3, 4, 6, 0].map(v => `<button data-v="${v}" class="${MODE.nch === v ? 'on' : ''}">${v || 'Alle'}</button>`).join('')}</div></div>
       <div class="mkv"><span>Powerups <button class="minfo" id="puv" title="Alle Powerups ansehen" aria-label="Alle Powerups ansehen">i</button><small>${MODE.pu ? '2 zum Start, mehr unterwegs' : 'ohne Powerups'}</small></span><button class="tgl${MODE.pu ? ' on' : ''}" id="psel" aria-label="Powerups an oder aus"></button></div>
     </div>
     <div class="mpanel"><h3><span class="n">4</span>Welche Spiele?</h3>
@@ -13982,7 +14004,10 @@ function mSetup(){
     $('#rn').addEventListener('change', e => setR(+e.target.value)); $('#rn').addEventListener('keydown', e => { if (e.key === 'Enter') { setR(+e.target.value); e.target.blur(); } }); }
   const seg = (id, fn) => main.querySelectorAll(`#${id} button`).forEach(b => b.onclick = () => { fn(b); saveSettings(); menu(); });
   seg('msel', b => { MODE.kind = b.dataset.k; });
-  seg('nsel', b => { MODE.nch = +b.dataset.v; });
+  const setC = v => { MODE.nch = clamp(Math.round(v) || 2, 2, Math.max(2, n)); saveSettings(); menu(); };
+  $('#cm').onclick = () => setC(MODE.nch - 1); $('#cp').onclick = () => setC(MODE.nch + 1);
+  $('#cn').addEventListener('change', e => setC(+e.target.value)); $('#cn').addEventListener('keydown', e => { if (e.key === 'Enter') setC(+e.target.value); });
+  $('#call').onclick = () => { MODE.nch = MODE.nch ? 0 : 3; saveSettings(); menu(); };
   seg('osel', b => setBot(b.dataset.v === '1', BOT.lvl));
   seg('bsel', b => setBot(true, +b.dataset.v));
   $('#psel').onclick = () => { MODE.pu = !MODE.pu; saveSettings(); menu(); };
@@ -14462,12 +14487,13 @@ function draftOptions(){
   const on = DISC.filter(isOn), prev = order[order.length-1];
   if (!pool.length) pool = on.slice();
   let cand = pool.filter(d => d !== prev);
-  if (cand.length < 3) cand = cand.concat(shuffle(on.filter(d => !cand.includes(d) && d !== prev)));
+  const N0 = Math.min(MODE.nch || 3, on.length);
+  if (cand.length < N0) cand = cand.concat(shuffle(on.filter(d => !cand.includes(d) && d !== prev)));
   if (!cand.length) cand = on.slice();
   const byCat = {};
   shuffle(cand.slice()).forEach(d => { (byCat[d.cat] = byCat[d.cat] || []).push(d); });
   const cats = shuffle(Object.keys(byCat)).sort((a,b) => (a === lastCat) - (b === lastCat));
-  const N = MODE.nch || 3, out = cats.slice(0, N).map(c => byCat[c][0]);
+  const N = N0, out = cats.slice(0, N).map(c => byCat[c][0]);
   for (const d of shuffle(cand.slice())) { if (out.length >= N) break; if (!out.includes(d)) out.push(d); }
   return out;
 }
