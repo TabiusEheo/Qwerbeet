@@ -2084,20 +2084,21 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
 <script>
 let UIZ = 1;
-/* Höhe der Spielfläche (0 = wie früher, 1 = so hoch wie möglich, unten wird dann gescrollt) */
-let UIH = 0, UIHR = 1;
-function uiHigh(v, keep){ UIH = Number.isFinite(+v) ? Math.min(1, Math.max(0, +v)) : 0; UIHR = Math.round((1 - UIH*.85)*100)/100; if (!keep) try { localStorage.setItem('qw-high', String(UIH)); } catch(e) {} document.documentElement.style.setProperty('--hr', String(UIHR)); document.documentElement.style.setProperty('--hu', String(UIH)); dispatchEvent(new Event('resize')); }
-(() => { let v = 0; try { v = +localStorage.getItem('qw-high') || 0; } catch(e) {} uiHigh(v, true); })();
-/* Breite der Oberfläche (0 = schmal wie früher, 1 = ganzer Bildschirm), stufenlos */
-let UIW = .36;
-function uiWideApply(){ const full = innerWidth/UIZ - 32, w = Math.round(Math.max(Math.min(660, full), 660 + UIW*(full - 660))); document.documentElement.style.setProperty('--gw', w + 'px'); }
-function uiWide(w, keep){ UIW = clamp01(+w); if (!keep) try { localStorage.setItem('qw-wide2', String(UIW)); } catch(e) {} uiWideApply(); dispatchEvent(new Event('resize')); }
-const clamp01 = v => Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : .36;
-addEventListener('resize', uiWideApply);
-(() => { let w = .36; try { const v = localStorage.getItem('qw-wide2'); if (v != null) w = +v; } catch(e) {} UIW = clamp01(w); uiWideApply(); })();
-/* Größe der Oberfläche (Einstellungen → Aussehen): Zoom auf die ganze Seite */
-function uiZoom(z, keep){ UIZ = Number.isFinite(+z) && +z >= .7 && +z <= 2 ? Math.round(+z*100)/100 : 1; if (!keep) try { localStorage.setItem('qw-zoom', String(UIZ)); } catch(e) {} document.body.style.zoom = UIZ === 1 ? '' : String(UIZ); document.documentElement.style.setProperty('--z', String(UIZ)); if (typeof uiWideApply === 'function') uiWideApply(); dispatchEvent(new Event('resize')); }
-(() => { let z = 1; try { z = +localStorage.getItem('qw-zoom') || 1; } catch(e) {} const go = () => uiZoom(z); document.body ? go() : addEventListener('DOMContentLoaded', go); })();
+/* Größe der Oberfläche: alles wird gleichmäßig größer (Zoom auf die ganze Seite).
+   „An Bildschirm anpassen“ rechnet aus, wie groß es auf diesen Bildschirm passt; der Regler stellt von Hand nach. */
+let UIH = 0, UIHR = 1, UIW = 0, UIA = true, UIS = 1;
+const UI_BW = 720, UI_BH = 780;   // so groß ist die Oberfläche bei 100 %
+function uiFit(){ return Math.max(1, Math.min(2.4, Math.min(innerWidth/UI_BW, innerHeight/UI_BH))); }
+function uiApply(){
+  const z = Math.round(Math.min(3, Math.max(.6, (UIA ? uiFit() : 1)*UIS))*100)/100;
+  if (z === UIZ && document.body && document.body.style.zoom === (z === 1 ? '' : String(z))) return;
+  UIZ = z; if (document.body) document.body.style.zoom = z === 1 ? '' : String(z);
+  const r = document.documentElement.style; r.setProperty('--z', String(z)); r.setProperty('--gw', '660px'); r.setProperty('--hr', '1'); r.setProperty('--hu', '0');
+  dispatchEvent(new Event('resize'));
+}
+function uiSet(a, s){ if (a != null) UIA = !!a; if (s != null && Number.isFinite(+s)) UIS = Math.min(1.6, Math.max(.6, +s)); try { localStorage.setItem('qw-ui', JSON.stringify({a: UIA, s: UIS})); } catch(e) {} uiApply(); }
+let uiRT = 0; addEventListener('resize', e => { if (!UIA || !e.isTrusted) return; clearTimeout(uiRT); uiRT = setTimeout(uiApply, 150); });
+(() => { try { const o = JSON.parse(localStorage.getItem('qw-ui') || 'null'); if (o) { UIA = o.a !== false; UIS = Number.isFinite(+o.s) ? +o.s : 1; } } catch(e) {} const go = () => uiApply(); document.body ? go() : addEventListener('DOMContentLoaded', go); })();
 /* ---------- Farben der gezeichneten Spiele (folgen Heldenfarben und hell/dunkel) ---------- */
 const PAL = (() => {
   const T = {};
@@ -2116,16 +2117,16 @@ const PAL = (() => {
 })();
 
 
-// Regler für Breite und Größe (Einstellungen und 🎨 oben)
-const uiSliders = () => `<div class="mkv"><span>Breite<small>Wie viel vom Bildschirm Menü und Spiele nutzen</small></span><span class="mkr"><input type="range" min="0" max="1" step=".01" value="${UIW}" data-ui="w"><b>${Math.round(UIW*100)}%</b></span></div>
-  <div class="mkv"><span>Höhe<small>Wie viel von der Bildschirmhöhe Menü, Spielfelder und Brett nutzen</small></span><span class="mkr"><input type="range" min="0" max="1" step=".01" value="${UIH}" data-ui="h"><b>${Math.round(UIH*100)}%</b></span></div>
-  <div class="mkv"><span>Größe<small>Alles größer oder kleiner</small></span><span class="mkr"><input type="range" min=".7" max="1.8" step=".05" value="${UIZ}" data-ui="z"><b>${Math.round(UIZ*100)}%</b></span></div>`;
+// Größe: Schalter „An Bildschirm anpassen“ und Regler (Einstellungen und 🎨 oben)
+const uiSliders = () => `<div class="mkv"><span>An Bildschirm anpassen<small>Alles wird so groß, wie es auf diesen Bildschirm passt</small></span><button class="tgl${UIA ? ' on' : ''}" data-uia aria-label="An Bildschirm anpassen"></button></div>
+  <div class="mkv"><span>Größe<small>${UIA ? 'Feinjustierung zur automatischen Größe' : 'Alles größer oder kleiner'} · gerade ${Math.round(UIZ*100)} %</small></span><span class="mkr"><input type="range" min=".6" max="1.6" step=".05" value="${UIS}" data-ui="s"><b>${Math.round(UIS*100)}%</b></span></div>`;
 function uiSliderBind(root){
-  (root || document).querySelectorAll('input[data-ui]').forEach(el => {
-    const lab = () => { el.nextElementSibling.textContent = Math.round((el.dataset.ui === 'w' ? UIW : el.dataset.ui === 'h' ? UIH : UIZ)*100) + '%'; };
-    el.oninput = () => { if (el.dataset.ui === 'h') { uiHigh(+el.value, true); lab(); return; } if (el.dataset.ui === 'w') uiWide(+el.value, true); else { el.dataset.v = el.value; el.nextElementSibling.textContent = Math.round(+el.value*100) + '%'; } if (el.dataset.ui === 'w') lab(); };
-    // Größe erst beim Loslassen, sonst springt der Regler unter dem Finger weg
-    el.onchange = () => { if (el.dataset.ui === 'h') uiHigh(+el.value); else if (el.dataset.ui === 'w') uiWide(+el.value); else uiZoom(+el.value); lab(); };
+  const R = root || document, redraw = () => { const p = R.querySelector('[data-uia]'); if (!p) return; const box = p.closest('.mpanel') || p.parentNode.parentNode; const h = document.createElement('div'); h.innerHTML = uiSliders();
+    const rows = [...box.querySelectorAll('.mkv')].filter(r => r.querySelector('[data-uia],[data-ui]')); rows.forEach((r, k) => r.replaceWith(h.children[0])); uiSliderBind(R); };
+  R.querySelectorAll('[data-uia]').forEach(b => b.onclick = () => { uiSet(!UIA, null); redraw(); });
+  R.querySelectorAll('input[data-ui="s"]').forEach(el => {
+    el.oninput = () => { el.nextElementSibling.textContent = Math.round(+el.value*100) + '%'; };
+    el.onchange = () => { uiSet(null, +el.value); redraw(); };   // erst beim Loslassen, sonst springt der Regler unter dem Finger weg
   });
 }
 // =====================================================================
@@ -5924,7 +5925,15 @@ function botPB(){
 }
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const view = h => { main.innerHTML = (G.active && h.indexOf('id="gbar"') < 0 ? pipsHTML() : '') + h; window.scrollTo(0,0); NET.scr++; };
+// Neu zeichnen: ein Textfeld, in dem gerade getippt wird, behält Inhalt, Fokus und Cursor; derselbe Bildschirm behält die Scroll-Position
+const view = h => {
+  const ae = document.activeElement, keep = ae && main.contains(ae) && ae.tagName === 'INPUT' && ae.id && /^(text|search|)$/.test(ae.type || '') ? {id: ae.id, v: ae.value, a: ae.selectionStart, b: ae.selectionEnd} : null;
+  const sig = h.slice(0, (h.indexOf('>') + 1) || 80), same = sig === view.sig; view.sig = sig;
+  main.innerHTML = (G.active && h.indexOf('id="gbar"') < 0 ? pipsHTML() : '') + h;
+  if (!same) window.scrollTo(0,0);
+  if (keep) { const el = document.getElementById(keep.id); if (el && el.tagName === 'INPUT' && !el.disabled && !el.readOnly) { el.value = keep.v; el.focus(); try { el.setSelectionRange(keep.a, keep.b); } catch(e) {} } }
+  NET.scr++;
+};
 const pads = on => document.body.classList.toggle('pads', on);
 const shuffle = a => { for (let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
 const R0 = n => Math.random()*n|0;
@@ -16051,7 +16060,7 @@ netFromLink();
    ===================================================================== */
 const PT_PREFIX = 'qwparty-', PT_MAX = 6;
 const PT_COL = ['#ff5a36', '#16b8c9', '#ffc531', '#8a63d2', '#1fae5b', '#ff6fb1'];
-const PT = {map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
+const PT = {len: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
 const ptTok = (() => { let t = ''; try { t = sessionStorage.getItem('qw-ptok') || ''; } catch(e) {} if (!t) { t = Math.random().toString(36).slice(2, 12); try { sessionStorage.setItem('qw-ptok', t); } catch(e) {} } return t; })();
 const ptName = () => { try { return localStorage.getItem('qw-pname') || ''; } catch(e) { return ''; } };
 const ptSetName = n => { try { localStorage.setItem('qw-pname', n); } catch(e) {} };
@@ -16140,7 +16149,7 @@ function ptSync(){
   if (PT.role === 'local') return ptView();
   if (PT.role !== 'host') return;
   const pub = ptPublic();
-  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, map: PT.map, go: PT.started}); });
+  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, map: PT.map, len: PT.len, go: PT.started}); });
   if (!PT.started) ptView();
 }
 // Herzschlag: der Gastgeber pingt, wer 7 Sekunden stumm ist, gilt als getrennt
@@ -16199,11 +16208,11 @@ function ptConnect(){
     PT.lost = 0; { const bn = document.getElementById('ptban'); if (bn && /unterbrochen/.test(bn.textContent)) bn.hidden = true; }
     if (m.t === 'lob' && Array.isArray(m.pl)) {
       PT.pl = m.pl.slice(0, PT_MAX); PT.me = m.me | 0; try { sessionStorage.setItem('qw-pslot', String(PT.me)); } catch(e) {}
-      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map;
+      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(m.len, .5, 2.5);
       if (m.go) PT.started = true;
       else { PT.started = false; PT.st = 'lobby'; PT.msg = ''; if (PQ.s) pgStop(); ptView(); }
     }
-    else if (m.t === 'ping') { ptSend(c, {t: 'pong'}); if (PT.st === 'game' && Number.isInteger(m.q) && m.q > (PQ.rq || 0)) { if (PQ.rsAt === m.q) ptSend(c, {t: 'rs'}); PQ.rsAt = m.q; } }
+    else if (m.t === 'ping') { ptSend(c, {t: 'pong'}); if (PT.st === 'game' && Number.isInteger(m.q)) { if (m.q > (PQ.rq || 0)) { if (PQ.rsAt) ptSend(c, {t: 'rs'}); PQ.rsAt = 1; } else PQ.rsAt = 0; } }
     else if (m.t === 'pr') pgRTin(m.d);
     else if (m.t === 'pq' && Number.isFinite(m.c)) { const r = performance.now() - m.c; PT.rtt = PT.rtt ? PT.rtt*.7 + r*.3 : r; }
     else if (m.t === 'pg' && m.s && typeof m.s === 'object') { PT.started = true; PT.st = 'game'; if (Number.isInteger(m.q)) PQ.rq = Math.max(PQ.rq || 0, m.q); pgRecv(m.s); }
@@ -16282,6 +16291,7 @@ function ptView(){
       <div class="mkv"><span>Modus<small>${PT.mode === 'board' ? 'Würfeln, Münzen und Sterne, nach jeder Runde ein Minispiel' : 'Ein Minispiel nach dem anderen, Punkte nach Platz, bis ihr aufhört'}</small></span>${host ? `<div class="seg" id="ptmode"><button data-v="board" class="${PT.mode === 'board' ? 'on' : ''}">🎲 Brett</button><button data-v="endless" class="${PT.mode === 'endless' ? 'on' : ''}">♾️ Minispiele</button></div>` : `<b>${PT.mode === 'board' ? '🎲 Brett' : '♾️ Minispiele'}</b>`}</div>
       ${PT.mode === 'board' ? `<div class="mkv"><span>Karte<small>${PT.map >= 0 ? esc(PB_MAPS[PT.map].d) : 'jedes Mal eine andere'}</small></span>${host ? `<div class="seg" id="ptmap">${PB_MAPS.map((m, k) => `<button data-v="${k}" class="${PT.map === k ? 'on' : ''}">${m.ic} ${m.n}</button>`).join('')}<button data-v="-1" class="${PT.map < 0 ? 'on' : ''}">🎲 Zufall</button></div>` : `<b>${PT.map >= 0 ? PB_MAPS[PT.map].ic + ' ' + PB_MAPS[PT.map].n : '🎲 Zufall'}</b>`}</div>` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Runden</span>${host ? `<div class="stepper"><button id="ptrm" aria-label="Weniger">−</button><input id="ptrn" type="number" min="1" max="50" value="${PT.rounds}"><button id="ptrp" aria-label="Mehr">+</button></div>` : `<b>${PT.rounds}</b>`}</div>` : ''}
+      <div class="mkv"><span>Länge der Minispiele<small>Mehr oder weniger Runden und Durchgänge pro Minispiel</small></span>${host ? `<span class="mkr"><input type="range" min=".5" max="2.5" step=".1" value="${PT.len}" id="ptlen"><b>${Math.round(PT.len*100)}%</b></span>` : `<b>${Math.round(PT.len*100)}%</b>`}</div>
       <div class="mkv"><span>Spiele zur Wahl<small>${PT.nch === -1 ? 'jedes Minispiel wird ausgelost' : 'alle stimmen ab, „🎲 Zufall“ gibt es immer dazu'}</small></span>${host ? `<span class="mkr"><div class="stepper"><button id="ptcm"${PT.nch > 0 ? '' : ' disabled'}>−</button><input id="ptcn" value="${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '–'}" disabled><button id="ptcp"${PT.nch > 0 ? '' : ' disabled'}>+</button></div><div class="seg" id="ptcs"><button data-v="3" class="${PT.nch > 0 ? 'on' : ''}">Anzahl</button><button data-v="0" class="${PT.nch === 0 ? 'on' : ''}">Alle</button><button data-v="-1" class="${PT.nch === -1 ? 'on' : ''}">🎲 Zufall</button></div></span>` : `<b>${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '🎲 Zufall'}</b>`}</div>
       <p class="hint">${host ? (n >= 3 ? `${n} Spieler${loc ? '' : ' im Raum'}.` : `Noch ${3 - n} Spieler bis zum Start, mit Bots auffüllen.${loc ? '' : ' Zu zweit geht es über Online → Duell.'}`) : 'Warte, bis der Gastgeber startet.'}</p>
       <div class="mbtns">${host ? `<button class="btn" id="ptgo"${n >= 3 ? '' : ' disabled'}>Party starten</button>` : ''}<button class="btn ghost" id="ptleave">${loc ? 'Zurück' : 'Raum verlassen'}</button></div></div>`;
@@ -16301,6 +16311,7 @@ function ptView(){
   main.querySelectorAll('.ptkick').forEach(b => b.onclick = () => ptKick(+b.dataset.k));
   if (q('ptcopy')) q('ptcopy').onclick = () => { const l = ptLink(), ok = () => { q('ptcopy').textContent = 'Kopiert ✓'; }; if (navigator.clipboard) navigator.clipboard.writeText(l).then(ok, () => toast(l)); else toast(l); };
   main.querySelectorAll('#ptmode button').forEach(b => b.onclick = () => { PT.mode = b.dataset.v; ptSync(); });
+  const ln = q('ptlen'); if (ln) { ln.oninput = () => { ln.nextElementSibling.textContent = Math.round(+ln.value*100) + '%'; }; ln.onchange = () => { PT.len = clamp(+ln.value, .5, 2.5); ptSync(); }; }
   main.querySelectorAll('#ptmap button').forEach(b => b.onclick = () => { PT.map = +b.dataset.v; ptSync(); });
   const setR = v => { PT.rounds = clamp(Math.round(v) || 1, 1, 50); ptSync(); };
   if (q('ptrm')) { q('ptrm').onclick = () => setR(PT.rounds - 1); q('ptrp').onclick = () => setR(PT.rounds + 1); q('ptrn').addEventListener('change', e => setR(+e.target.value)); }
@@ -16534,6 +16545,8 @@ function brView(){
    Zeiten (Reaktion, Zeitgefühl, Quiz) misst jedes Gerät selbst ab dem Moment, in dem es die Anzeige zeigt.
    ===================================================================== */
 const PQ = {s: null, tm: [], mk: {}, taps: {}, raf: 0, botWas: null, last: ''};
+// Länge der Minispiele (Lobby-Regler): Runden und Durchgänge mal Faktor
+const pgR = n => Math.max(1, Math.round(n*((PQ.s && PQ.s.len) || 1)));
 const pgHost = () => PT.role === 'host' || PT.role === 'local';
 const pgN = () => PQ.s ? PQ.s.pl.length : 0;
 // welche Spieler sitzen an diesem Gerät (Sitz 0 = linke Tasten, Sitz 1 = rechte Tasten, nur offline)
@@ -16556,7 +16569,7 @@ const pgMark = (k, fn) => { if (!(k in PQ.mk)) { PQ.mk[k] = performance.now(); i
 function pgBegin(){
   pgClear();
   if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.on = false; }
-  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
+  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: PT.len || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
   if (PQ.s.mode === 'board') pgBoardInit(PQ.s, PT.map);
   pgOrder();
 }
@@ -16607,13 +16620,24 @@ function pgVoteEnd(){
 function pgIntro(id){
   const s = PQ.s;
   s.prev = id;
-  s.ph = 'intro'; s.g = {id, t: Date.now()}; s.res = null;
+  const rp = PGAMES[id].rep ? pgR(PGAMES[id].rep) : 1;
+  s.ph = 'intro'; s.g = {id, t: Date.now(), rp: {n: rp, k: 0, sum: s.pl.map(() => 0)}}; s.res = null;
   pgPush();
   pgT(() => { s.ph = 'play'; PGAMES[id].start(s); pgPush(); }, 4200);
 }
 // Ergebnis eines Minispiels: höhere Wertung = besser, Gleichstand teilt sich den Platz
 function pgResult(sc, txt){
   pgClear();
+  // mehrere Durchgänge: Platzpunkte sammeln, dann den nächsten Durchgang
+  { const s = PQ.s, g = s.g, rp = g && g.rp; if (rp && rp.n > 1) {
+    const n = s.pl.length, o = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]), pl = []; o.forEach((i, k) => { pl[i] = k && sc[i] === sc[o[k - 1]] ? pl[o[k - 1]] : k; });
+    pl.forEach((p, i) => { rp.sum[i] += n - p; }); rp.k++;
+    if (rp.k < rp.n) { const keep = {id: g.id, t: g.t, rp, show: {txt: txt || sc.map(String), pl}}; s.g = keep; pgPush(); pgT(() => { s.g = {id: keep.id, t: Date.now(), rp}; PGAMES[keep.id].start(s); pgPush(); }, 3200); return; }
+    return pgResultF(rp.sum, rp.sum.map(v => v + ' Pkt.'));
+  } }
+  pgResultF(sc, txt);
+}
+function pgResultF(sc, txt){
   const s = PQ.s, n = s.pl.length, pay = BR_PAY[n] || BR_PAY[6];
   const ord = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]);
   const place = []; ord.forEach((i, k) => { place[i] = k && sc[i] === sc[ord[k - 1]] ? place[ord[k - 1]] : k; });
@@ -16651,8 +16675,8 @@ function pgSend(i, a){ if (i < 0) return; if (pgHost()) pgIn(i, a); else if (PT.
 function pgRender(){
   if (mode !== 'party' || !PQ.s) return;
   const s = PQ.s, g = s.g, G0 = g && PGAMES[g.id], seats = pgSeats();
-  const key = s.ph + ':' + s.ri;
-  if (key !== PQ.last) { PQ.last = key; if (s.ph === 'intro') { PQ.mk = {}; PQ.taps = {}; PQ.grid = null; PQ.aim = {}; PQ.solo = {}; PQ.lc = {}; PQ.gh = {}; RTK[0].clear(); RTK[1].clear(); } }
+  const key = s.ph + ':' + s.ri + ':' + (g && g.rp ? g.rp.k : 0) + (g && g.show ? 's' : '');
+  if (key !== PQ.last) { const ch = PQ.last && PQ.last.split(':')[2] !== key.split(':')[2]; PQ.last = key; if (s.ph === 'intro' || (s.ph === 'play' && ch)) { PQ.mk = {}; PQ.taps = {}; PQ.grid = null; PQ.aim = {}; PQ.solo = {}; PQ.lc = {}; PQ.gh = {}; RTK[0].clear(); RTK[1].clear(); } }
   // Stand als Tabelle unter dem Spiel, sortiert wie nach den Minispielen
   const scv = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i];
   const ordS = s.pl.map((p, i) => i).sort((a, b) => scv(b) - scv(a));
@@ -16673,7 +16697,8 @@ function pgRender(){
       ${P.win ? '<p class="hint">Gleich geht es los …</p>' : pgDots(s, i => P.v[i] != null)}`;
   } else if (s.ph === 'board') body = pgBoardView(s, seats);
   else if (s.ph === 'intro') body = `<div class="pgintro"><div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p><div class="pgcd" id="pgcd"></div></div>`;
-  else if (s.ph === 'play') body = G0.view(s, seats);
+  else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">Gleich geht es weiter …</p>`; }
+  else if (s.ph === 'play') body = (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
   else if (s.ph === 'res') {
     const ord = s.pl.map((p, i) => i).sort((a, b) => s.res.place[a] - s.res.place[b]);
     body = `<div class="kick">${G0.icon} ${G0.name}</div><div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${s.res.place[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(s.res.txt[i]))}</small><span class="gn">+${s.res.gain[i]}${s.br ? ' 🪙' : ''}</span></div>`).join('')}</div>
@@ -16692,7 +16717,7 @@ function pgRender(){
   if (q('pgre')) q('pgre').onclick = pgBegin;
   if (q('pglob')) q('pglob').onclick = pgLobby;
   if (s.ph === 'intro') { const T = pgMark('intro' + s.ri); cancelAnimationFrame(PQ.raf); const tick = () => { const e = q('pgcd'); if (!e || PQ.s !== s || s.ph !== 'intro') return; const r = Math.max(0, Math.ceil((4000 - (performance.now() - T))/1000)); e.textContent = r ? `Gleich geht es los … ${r}` : 'Los!'; PQ.raf = requestAnimationFrame(tick); }; tick(); }
-  if (s.ph === 'play' && G0.after) G0.after(s, seats);
+  if (s.ph === 'play' && G0.after && !g.show) G0.after(s, seats);
   if (s.ph === 'board') pgBoardAfter(s, seats);
   main.querySelectorAll('.pgor').forEach(b => b.onclick = () => pgSend(+b.dataset.i, {k: 'roll'}));
   const vote = (i, id) => { if (i == null || i < 0 || s.ph !== 'pick' || s.pk.win || s.pk.v[i] != null || PQ.taps['vt' + s.pk.n + ':' + i]) return; PQ.taps['vt' + s.pk.n + ':' + i] = id; Snd.tick(); pgSend(i, {k: 'pick', id}); pgRender(); };
@@ -16715,7 +16740,7 @@ const PGAMES = {
   // Reaktion: 3 Durchgänge, bei Grün drücken. Zu früh = Durchgang verloren. Punkte nach Platz je Durchgang.
   reakt: {
     disc: 'reaktion',
-    icon: '⚡', name: 'Reaktion', rule: 'Wird die Fläche grün, sofort drücken. Wer zu früh drückt, ist für den Durchgang raus. 3 Durchgänge.', keys: 'Buzzer oder auf die Fläche tippen.',
+    icon: '⚡', name: 'Reaktion', rule: 'Wird die Fläche grün, sofort drücken. Wer zu früh drückt, ist für den Durchgang raus. Mehrere Durchgänge.', keys: 'Buzzer oder auf die Fläche tippen.',
     start(s){ s.g.d = 0; s.g.sum = s.pl.map(() => 0); this.round(s); },
     round(s){
       const g = s.g; g.st = 'wait'; g.rt = s.pl.map(() => null); g.fs = s.pl.map(() => false);
@@ -16736,13 +16761,13 @@ const PGAMES = {
       const ok = s.pl.map((p, i) => i).filter(i => g.rt[i] != null).sort((a, b) => g.rt[a] - g.rt[b]);
       ok.forEach((i, k) => { g.sum[i] += s.pl.length - k; });
       pgPush();
-      pgT(() => { if (++g.d >= 3) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.round(s); pgPush(); } }, 2200);
+      pgT(() => { if (++g.d >= pgR(5)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.round(s); pgPush(); } }, 2200);
     },
     view(s, seats){
       const g = s.g, st = g.st;
       const txt = st === 'wait' ? 'Warten …' : st === 'go' ? 'JETZT!' : 'Durchgang ' + (g.d + 1);
       const list = st === 'show' ? `<div class="pgrt">${s.pl.map((p, i) => `<span style="--pc:${PT_COL[i]}">${esc(p.n)}: <b>${g.fs[i] ? 'zu früh' : g.rt[i] != null ? g.rt[i] + ' ms' : '–'}</b></span>`).join('')}</div>` : pgDots(s, i => g.fs[i] || g.rt[i] != null);
-      return `<div class="pgrx ${st}" id="pgrx"><span>${txt}</span></div><p class="hint">Durchgang ${g.d + 1} von 3 · ${pgKeyHint(seats, 'bz')}</p>${list}`;
+      return `<div class="pgrx ${st}" id="pgrx"><span>${txt}</span></div><p class="hint">Durchgang ${g.d + 1} von ${pgR(5)} · ${pgKeyHint(seats, 'bz')}</p>${list}`;
     },
     after(s){ const g = s.g; if (g.st === 'go') pgMark('go' + g.d); const el = $('#pgrx'); if (el) el.onpointerdown = e => { e.preventDefault(); this.local(s, pgSeats()[0], {k: 'bz'}); }; },
     local(s, i, a){
@@ -16753,7 +16778,7 @@ const PGAMES = {
   },
   // Hämmern: 5 Sekunden so oft wie möglich drücken, jedes Gerät zählt selbst
   ham: {
-    disc: 'haemmern',
+    disc: 'haemmern', rep: 3,
     icon: '🔨', name: 'Hämmern', rule: 'Nach dem Startsignal 5 Sekunden lang so oft wie möglich drücken.', keys: 'Buzzer oder auf die Fläche tippen.',
     start(s){ const g = s.g; g.st = 'cd'; g.cnt = s.pl.map(() => null);
       pgT(() => { g.st = 'go'; pgPush();
@@ -16778,7 +16803,7 @@ const PGAMES = {
   },
   // Zeitgefühl: genau nach X Sekunden drücken, die Uhr verschwindet nach 2 Sekunden
   zeit: {
-    disc: 'zeit',
+    disc: 'zeit', rep: 3,
     icon: '⏱️', name: 'Zeitgefühl', rule: 'Drückt genau nach der angesagten Zeit. Die Uhr verschwindet nach 2 Sekunden. Wer am nächsten dran ist, gewinnt.', keys: 'Buzzer, einmal drücken.',
     start(s){ const g = s.g; g.X = Math.round((4 + Math.random()*4)*10)/10; g.st = 'show'; g.err = s.pl.map(() => null);
       pgT(() => { g.st = 'run'; pgPush();
@@ -16808,10 +16833,10 @@ const PGAMES = {
       const ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].a === g.Q.c).sort((a, b) => g.ans[a].t - g.ans[b].t);
       ok.forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
       pgPush();
-      pgT(() => { if (++g.k >= 5) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3000); },
+      pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3000); },
     view(s, seats){ const g = s.g, Q = g.Q, sh = g.st === 'show';
       const mine = seats.filter(i => i >= 0), myA = mine.length ? g.ans[mine[0]] : null;
-      return `<p class="hint">Frage ${g.k + 1} von 5</p><h2 class="pgq">${esc(Q.t)}</h2>
+      return `<p class="hint">Frage ${g.k + 1} von ${pgR(7)}</p><h2 class="pgq">${esc(Q.t)}</h2>
         <div class="pgopt">${Q.o.map((t, k) => `<button class="pgo${sh && k === Q.c ? ' ok' : ''}${sh && myA && myA.a === k && k !== Q.c ? ' bad' : ''}${!sh && myA && myA.a === k ? ' sel' : ''}" data-o="${k}"><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(t)}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] && g.ans[i].a === k ? `<i style="--pc:${PT_COL[i]}" title="${esc(p.n)}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
         ${sh ? '' : pgDots(s, i => !!g.ans[i])}`; },
     after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('q' + g.k);
@@ -17284,7 +17309,7 @@ PGAMES.sumo = {
 // Jeder Tastendruck nennt den Takt, ab dem er gilt. Kommt er beim Gastgeber zu spät an, rechnet der die letzten Takte neu
 // und schickt das ganze Feld zur Korrektur.
 PGAMES.lichtrad = {
-  disc: 'lichtrad', icon: '🏍️', name: 'Lichtrad', rule: 'Euer Lichtrad fährt immer weiter und zieht eine Spur. Ihr lenkt nur nach links oder rechts. Wer in eine Spur fährt, ist raus. Wer am längsten fährt, gewinnt.', keys: '1. Auswahltaste links, 2. rechts. Am Touchscreen: linke oder rechte Bildhälfte antippen.',
+  disc: 'lichtrad', rep: 2, icon: '🏍️', name: 'Lichtrad', rule: 'Euer Lichtrad fährt immer weiter und zieht eine Spur. Ihr lenkt nur nach links oder rechts. Wer in eine Spur fährt, ist raus. Wer am längsten fährt, gewinnt.', keys: '1. Auswahltaste links, 2. rechts. Am Touchscreen: linke oder rechte Bildhälfte antippen.',
   W: 72, H: 48, DT: 115, BACK: 10,
   dirs: [[1, 0], [0, 1], [-1, 0], [0, -1]],
   start(s){
@@ -17425,11 +17450,11 @@ function pgQ(c){
       const ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].a === g.Q.c).sort((a, b) => g.ans[a].t - g.ans[b].t);
       ok.forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
       pgPush();
-      pgT(() => { if (++g.k >= c.rounds) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, c.after ? 3000 : 2600);
+      pgT(() => { if (++g.k >= pgR(c.rounds)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, c.after ? 3000 : 2600);
     },
     view(s, seats){
       const g = s.g, Q = g.Q, sh = g.st === 'show', mine = seats.filter(i => i >= 0), myA = mine.length ? g.ans[mine[0]] : null;
-      return `<p class="hint">${c.label || 'Frage'} ${g.k + 1} von ${c.rounds}</p>${c.top(s, g, sh)}
+      return `<p class="hint">${c.label || 'Frage'} ${g.k + 1} von ${pgR(c.rounds)}</p>${c.top(s, g, sh)}
         <div class="pgopt${Q.o.length === 2 ? ' two' : ''}">${Q.o.map((t, k) => `<button class="pgo${sh && k === Q.c ? ' ok' : ''}${sh && myA && myA.a === k && k !== Q.c ? ' bad' : ''}${!sh && myA && myA.a === k ? ' sel' : ''}" data-o="${k}"><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(String(t))}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] && g.ans[i].a === k ? `<i style="--pc:${PT_COL[i]}" title="${esc(p.n)}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
         ${sh ? (Q.x ? `<p class="hint">${esc(Q.x)}</p>` : '') : pgDots(s, i => !!g.ans[i])}`;
     },
@@ -17448,14 +17473,14 @@ function pgQ(c){
 const pgPickNew = (arr, used) => { let k, n = 0; do { k = R0(arr.length); } while (used.includes(k) && ++n < 50); used.push(k); return arr[k]; };
 
 PGAMES.wf = pgQ({
-  disc: 'wf', icon: '⚖️', name: 'Wahr oder falsch', label: 'Aussage', rounds: 6, limit: 8000,
-  rule: '6 Aussagen, alle antworten gleichzeitig: wahr oder falsch. Wer richtig liegt, bekommt Punkte, je schneller, desto mehr.',
+  disc: 'wf', icon: '⚖️', name: 'Wahr oder falsch', label: 'Aussage', rounds: 8, limit: 8000,
+  rule: 'Mehrere Aussagen, alle antworten gleichzeitig: wahr oder falsch. Wer richtig liegt, bekommt Punkte, je schneller, desto mehr.',
   bot: [.55, .7, .85], bt: L => 1500 + Math.random()*[5000, 4000, 2500][L],
   make(s, used){ const q = pgPickNew(WF, used); return {t: q[0], o: ['wahr', 'falsch'], c: q[1] ? 0 : 1, x: q[2] || ''}; },
   top(s, g){ return `<h2 class="pgq">${esc(g.Q.t)}</h2>`; },
 });
 PGAMES.emoji = pgQ({
-  disc: 'emoji', icon: '😎', name: 'Emoji-Rätsel', label: 'Rätsel', rounds: 5, limit: 14000,
+  disc: 'emoji', icon: '😎', name: 'Emoji-Rätsel', label: 'Rätsel', rounds: 6, limit: 14000,
   rule: 'Die Emojis erscheinen nacheinander. Wer zuerst richtig liegt, bekommt die meisten Punkte. Früh raten ist schneller, aber riskanter.',
   bot: [.5, .7, .9], bt: L => 2500 + Math.random()*[7000, 5000, 3500][L],
   make(s, used){ const q = pgPickNew(EMO, used); const o = shuffle([q[1], ...q[2].slice(0, 3)]); return {t: q[0], o, c: o.indexOf(q[1]), x: q[3] || ''}; },
@@ -17465,7 +17490,7 @@ PGAMES.emoji = pgQ({
     const tick = () => { const el = $('#pgemo'); if (!el || PQ.s !== s || g.st !== 'ask') return; const n = Math.floor((performance.now() - T)/1500) + 1; el.querySelectorAll('span').forEach(x => x.classList.toggle('on', +x.dataset.k < n)); PQ.raf = requestAnimationFrame(tick); }; tick(); },
 });
 PGAMES.blitz = pgQ({
-  disc: 'blitz', icon: '👁️', name: 'Blitzblick', label: 'Runde', rounds: 5, limit: 9000,
+  disc: 'blitz', icon: '👁️', name: 'Blitzblick', label: 'Runde', rounds: 7, limit: 9000,
   rule: 'Punkte blitzen 1,3 Sekunden lang auf. Danach antworten alle gleichzeitig, wie viele es waren. Richtig und schnell bringt mehr Punkte.',
   bot: [.4, .6, .8], bt: L => 1800 + Math.random()*[4000, 3000, 2000][L],
   make(){ const n = 7 + R0(17), o = shuffle([n, ...shuffle([-3, -2, -1, 1, 2, 3]).slice(0, 3).map(d => n + d)]);
@@ -17479,7 +17504,7 @@ PGAMES.blitz = pgQ({
 
 /* Schätzen: alle tippen gleichzeitig eine Zahl, wer am nächsten dran ist, bekommt die meisten Punkte */
 PGAMES.schaetzen = {
-  disc: 'schaetzen', icon: '🎯', name: 'Schätzen', rule: '4 Schätzfragen, alle tippen gleichzeitig und verdeckt eine Zahl. Wer am nächsten dran ist, bekommt die meisten Punkte.', keys: 'Zahl eintippen und mit Enter abschicken.',
+  disc: 'schaetzen', icon: '🎯', name: 'Schätzen', rule: 'Mehrere Schätzfragen, alle tippen gleichzeitig und verdeckt eine Zahl. Wer am nächsten dran ist, bekommt die meisten Punkte.', keys: 'Zahl eintippen und mit Enter abschicken.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){
     const g = s.g, q = pgPickNew(EST, g.used); g.Q = {t: q[0], v: q[1], u: q[2] || ''}; g.st = 'ask'; g.ans = s.pl.map(() => null);
@@ -17492,12 +17517,12 @@ PGAMES.schaetzen = {
     const err = g.ans.map(v => v == null ? Infinity : Math.abs(v - g.Q.v)), ord = s.pl.map((p, i) => i).filter(i => isFinite(err[i])).sort((a, b) => err[a] - err[b]);
     let pl = 0; ord.forEach((i, k) => { if (k && err[i] > err[ord[k - 1]]) pl = k; g.sum[i] += s.pl.length - pl; });
     pgPush();
-    pgT(() => { if (++g.k >= 4) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3500);
+    pgT(() => { if (++g.k >= pgR(6)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3500);
   },
   view(s, seats){
     const g = s.g, sh = g.st === 'show', mine = seats.filter(i => i >= 0);
     const fmt = v => Number(v).toLocaleString('de-DE');
-    return `<p class="hint">Frage ${g.k + 1} von 4</p><h2 class="pgq">${esc(g.Q.t)}</h2>
+    return `<p class="hint">Frage ${g.k + 1} von ${pgR(6)}</p><h2 class="pgq">${esc(g.Q.t)}</h2>
       ${sh ? `<p class="pgsol">Richtig: <b>${fmt(g.Q.v)} ${esc(g.Q.u)}</b></p><div class="pgrt">${s.pl.map((p, i) => `<span style="--pc:${PT_COL[i]}">${esc(p.n)}: <b>${g.ans[i] == null ? '–' : fmt(g.ans[i])}</b></span>`).join('')}</div>`
         : `<div class="pgest">${mine.map(i => g.ans[i] != null || PQ.taps['e' + g.k + ':' + i] ? `<span class="ok" style="--pc:${PT_COL[i]}">${esc(s.pl[i].n)}: ✓ abgegeben</span>` : `<label style="--pc:${PT_COL[i]}">${mine.length > 1 ? esc(s.pl[i].n) : ''}<input type="number" inputmode="decimal" class="ptin pgein" data-i="${i}" placeholder="Zahl" value="${esc(String((PQ.ev || {})[g.k + ':' + i] || ''))}"><button class="btn" data-e="${i}">OK</button></label>`).join('')}</div>${pgDots(s, i => g.ans[i] != null)}`}`;
   },
@@ -17518,7 +17543,7 @@ PGAMES.schaetzen = {
 
 /* Farbfalle: Wörter wechseln, wer drückt, wenn Wort und Farbe passen, bekommt Punkte, falsch kostet einen */
 PGAMES.farbfalle = {
-  disc: 'farbfalle', icon: '🎨', name: 'Farbfalle', rule: 'Wörter wechseln immer schneller. Drückt, wenn ein Wort in seiner eigenen Farbe erscheint, etwa ROT in Rot: +2. Falsch gedrückt: −1. Jedes Wort zählt nur einmal pro Spieler.', keys: 'Buzzer oder auf das Wort tippen.',
+  disc: 'farbfalle', rep: 2, icon: '🎨', name: 'Farbfalle', rule: 'Wörter wechseln immer schneller. Drückt, wenn ein Wort in seiner eigenen Farbe erscheint, etwa ROT in Rot: +2. Falsch gedrückt: −1. Jedes Wort zählt nur einmal pro Spieler.', keys: 'Buzzer oder auf das Wort tippen.',
   C: [['ROT', '#ff3b4f'], ['BLAU', '#3a86ff'], ['GRÜN', '#1fae5b'], ['GELB', '#ffc531']],
   start(s){
     const g = s.g, seq = []; let t = 0, iv = 1300;
@@ -17547,7 +17572,7 @@ PGAMES.farbfalle = {
 const pgRng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; };
 function pgSolo(c){
   return {
-    disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys || 'Buzzer oder auf dein Feld tippen.',
+    disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys || 'Buzzer oder auf dein Feld tippen.', rep: c.rep,
     start(s){
       const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.sc = s.pl.map(() => null);
       pgT(() => { g.st = 'run'; pgPush();
@@ -17600,7 +17625,7 @@ function pgSolo(c){
 
 // Stapelturm: Block pendelt, Buzzer lässt ihn fallen, Überstand wird abgeschnitten
 PGAMES.stapel = pgSolo({
-  disc: 'stapel', icon: '🏗️', name: 'Stapelturm', W: 400, H: 600, max: 60,
+  disc: 'stapel', rep: 2, icon: '🏗️', name: 'Stapelturm', W: 400, H: 600, max: 60,
   rule: 'Jeder baut seinen eigenen Turm. Der Block pendelt, mit dem Buzzer lässt du ihn fallen. Was übersteht, wird abgeschnitten. Wer daneben setzt, ist fertig. Wer am höchsten kommt, gewinnt.',
   bot: [8, 14, 21], botT: v => 2500 + v*1100, fmt: v => `${v} Blöcke`,
   make(r){ return {bl: [{x: 100, w: 200}], cur: {x: 0, w: 200, d: 1, v: 190}, score: 0, cam: 0,
@@ -17620,7 +17645,7 @@ PGAMES.stapel = pgSolo({
 });
 // Flappy: flattern, durch die Röhren, alle bekommen dieselben Röhren
 PGAMES.flappy = pgSolo({
-  disc: 'flappy', icon: '🐦', name: 'Flappy', W: 400, H: 600, max: 75,
+  disc: 'flappy', rep: 2, icon: '🐦', name: 'Flappy', W: 400, H: 600, max: 75,
   rule: 'Jeder fliegt für sich durch dieselben Röhren. Jedes Flattern hebt den Vogel an. Wer eine Röhre, den Boden oder die Decke berührt, ist fertig. Wer die meisten Röhren schafft, gewinnt.',
   bot: [4, 10, 18], botT: v => 2500 + v*1500, fmt: v => `${v} Röhren`,
   make(r){ const P = []; let px = 420; for (let k = 0; k < 120; k++) { const gap = Math.max(130, 175 - k*2); P.push({x: px, y: 110 + r()*(380 - gap), g: gap, ok: false}); px += 210; }
@@ -17641,7 +17666,7 @@ PGAMES.flappy = pgSolo({
 });
 // Neon-Lauf: springen über Blöcke, Tempo steigt, alle haben denselben Parcours
 PGAMES.sprint = pgSolo({
-  disc: 'sprint', icon: '🏃', name: 'Neon-Lauf', W: 600, H: 300, max: 75,
+  disc: 'sprint', rep: 2, icon: '🏃', name: 'Neon-Lauf', W: 600, H: 300, max: 75,
   rule: 'Jeder läuft für sich denselben Parcours. Springt über die Blöcke, das Tempo steigt. Wer crasht, ist fertig. Wer am weitesten kommt, gewinnt.',
   bot: [90, 170, 280], botT: v => 2500 + v*90, fmt: v => `${v} m`,
   make(r){ const O = []; let ox = 700; for (let k = 0; k < 400; k++) { const w = 18 + r()*26, h = 26 + r()*34; O.push({x: ox, w, h}); ox += 260 + r()*320; }
@@ -17661,7 +17686,7 @@ PGAMES.sprint = pgSolo({
 
 // Hühnerjagd: jeder hat seine eigenen Hühner (bei allen gleich), 30 Sekunden, 8 Schuss, dann wird nachgeladen
 PGAMES.huhn = pgSolo({
-  disc: 'huhn', icon: '🐔', name: 'Hühnerjagd', W: 600, H: 400, max: 30,
+  disc: 'huhn', rep: 2, icon: '🐔', name: 'Hühnerjagd', W: 600, H: 400, max: 30,
   rule: 'Jeder schießt auf seine eigenen Hühner, bei allen fliegen dieselben. Kleine Hühner hinten 25 Punkte, mittlere 10, nahe 5, das Goldhuhn 50, die Vogelscheuche kostet 25. Nach 8 Schuss wird nachgeladen. Nach 30 Sekunden gewinnt, wer mehr Punkte hat.',
   keys: 'Maus oder Finger: zielen und klicken. Tasten: Auswahltasten bewegen das Fadenkreuz (links, hoch, runter, rechts), Buzzer schießt.',
   bot: [120, 220, 330], botT: () => 30500, fmt: v => `${v} Punkte`,
@@ -17718,7 +17743,7 @@ const pgShuf = n => shuffle(Array.from({length: n}, (_, k) => k));
 // Letzter Mann: jeder wählt heimlich 1–5. Wer eine Zahl allein gewählt hat, bekommt so viele Punkte.
 PGAMES.unik = {
   icon: '🖐️', name: 'Letzter Mann', only: true,
-  rule: '5 Runden. Jeder wählt heimlich eine Zahl von 1 bis 5. Wer eine Zahl als Einziger gewählt hat, bekommt so viele Punkte. Haben mehrere dieselbe Zahl, gehen alle leer aus.', keys: 'Zahl antippen oder Auswahltasten 1–5 der eigenen Reihe.',
+  rule: 'Mehrere Runden. Jeder wählt heimlich eine Zahl von 1 bis 5. Wer eine Zahl als Einziger gewählt hat, bekommt so viele Punkte. Haben mehrere dieselbe Zahl, gehen alle leer aus.', keys: 'Zahl antippen oder Auswahltasten 1–5 der eigenen Reihe.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); this.ask(s); },
   ask(s){ const g = s.g; g.st = 'ask'; g.ch = s.pl.map(() => null);
     s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'n', v: pickOne([1, 2, 2, 3, 3, 4, 4, 5, 5, 5])}), 1000 + Math.random()*4000); });
@@ -17726,9 +17751,9 @@ PGAMES.unik = {
   input(s, i, a){ const g = s.g; if (a.k === 'n' && g.st === 'ask' && g.ch[i] == null && a.v >= 1 && a.v <= 5) { g.ch[i] = a.v | 0; pgPush(); if (g.ch.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
     g.ch.forEach((v, i) => { if (v != null && g.ch.filter(x => x === v).length === 1) g.sum[i] += v; });
-    pgPush(); pgT(() => { if (++g.k >= 5) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3200); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3200); },
   view(s, seats){ const g = s.g, sh = g.st === 'show', mine = seats.filter(i => i >= 0);
-    return `<p class="hint">Runde ${g.k + 1} von 5</p>
+    return `<p class="hint">Runde ${g.k + 1} von ${pgR(7)}</p>
       ${sh ? `<div class="pgun">${[1, 2, 3, 4, 5].map(v => { const who = s.pl.map((p, i) => i).filter(i => g.ch[i] === v); return `<div class="${who.length === 1 ? 'ok' : who.length ? 'bad' : ''}"><b>${v}</b>${who.map(i => `<i style="--pc:${PT_COL[i]}">${esc(s.pl[i].n)}</i>`).join('')}</div>`; }).join('')}</div>`
       : mine.map(i => g.ch[i] != null || PQ.taps['u' + g.k + ':' + i] ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)} hat gewählt</p>` : `<div class="pgnum" style="--pc:${PT_COL[i]}">${mine.length > 1 ? `<b>${esc(s.pl[i].n)}</b>` : ''}${[1, 2, 3, 4, 5].map(v => `<button class="btn" data-n="${v}" data-i="${i}">${v} ${kbp(PT.role === 'local' ? seats.indexOf(i) : 0, 'r' + (v - 1))}</button>`).join('')}</div>`).join('')}
       ${sh ? '' : pgDots(s, i => g.ch[i] != null)}`; },
@@ -17766,9 +17791,9 @@ PGAMES.wer = {
     else if (a.k === 'gs' && g.st === 'guess' && g.gs[i] == null && a.m && typeof a.m === 'object') { const m = {}; for (const k in a.m) { const ak = +k, w = +a.m[k]; if (ak !== i && s.pl[ak] && s.pl[w]) m[ak] = w; } g.gs[i] = m; pgPush(); if (g.gs.every(v => v)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'guess') return; pgClear(); g.st = 'show';
     s.pl.forEach((p, i) => { const m = g.gs[i] || {}; g.ord.forEach(a => { if (a === i) return; if (m[a] === a) g.sum[i]++; else g.sum[a]++; }); });
-    pgPush(); pgT(() => { if (++g.k >= 3) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 7000); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(3)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 7000); },
   view(s, seats){ const g = s.g, mine = seats.filter(i => i >= 0);
-    let b = `<p class="hint">Frage ${g.k + 1} von 3</p><h2 class="pgq">${esc(g.Q)}</h2>`;
+    let b = `<p class="hint">Frage ${g.k + 1} von ${pgR(3)}</p><h2 class="pgq">${esc(g.Q)}</h2>`;
     if (g.st === 'write') b += mine.map(i => g.txt[i] != null ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)}: abgegeben</p>` : pgTxt('w' + g.k, i, 'Deine Antwort')).join('') + pgDots(s, i => g.txt[i] != null);
     else if (g.st === 'guess') { const me = mine.find(i => g.gs[i] == null && !PQ.taps['g' + g.k + ':' + i]);
       b += me == null ? `<p class="pgok">✓ geraten, warte auf die anderen</p>${pgDots(s, i => !!g.gs[i])}` : `<p class="hint" style="color:${PT_COL[me]}">${esc(s.pl[me].n)}: Wer hat was geschrieben?</p><div class="pgwl">${g.ord.filter(a => a !== me).map(a => `<div class="pgw"><q>${esc(g.txt[a])}</q><div class="pgwn">${s.pl.map((p, k) => k === me ? '' : `<button class="${(PQ.wg || {})[a] === k ? 'on' : ''}" data-a="${a}" data-w="${k}" style="--pc:${PT_COL[k]}">${esc(p.n)}</button>`).join('')}</div></div>`).join('')}</div><button class="btn" id="pgwok" data-i="${me}">Fertig</button>`; }
@@ -17808,9 +17833,9 @@ PGAMES.lex = {
     else if (a.k === 'vt' && g.st === 'vote' && g.vt[i] == null && Number.isInteger(a.v) && a.v !== i && (a.v === -1 || s.pl[a.v])) { g.vt[i] = a.v; pgPush(); if (g.vt.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'vote') return; pgClear(); g.st = 'show';
     g.vt.forEach((v, i) => { if (v === -1) g.sum[i] += 2; else if (v != null && v !== i) g.sum[v]++; });
-    pgPush(); pgT(() => { if (++g.k >= 3) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 7000); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(3)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 7000); },
   view(s, seats){ const g = s.g, mine = seats.filter(i => i >= 0);
-    let b = `<p class="hint">Wort ${g.k + 1} von 3</p><h2 class="pgq">Was bedeutet <b class="pglw">${esc(g.W)}</b>?</h2>`;
+    let b = `<p class="hint">Wort ${g.k + 1} von ${pgR(3)}</p><h2 class="pgq">Was bedeutet <b class="pglw">${esc(g.W)}</b>?</h2>`;
     const def = a => a === -1 ? g.R : g.txt[a];
     if (g.st === 'write') b += mine.map(i => g.txt[i] != null ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)}: abgegeben</p>` : pgTxt('l' + g.k, i, 'Deine erfundene Erklärung')).join('') + pgDots(s, i => g.txt[i] != null);
     else if (g.st === 'vote') { const me = mine.find(i => g.vt[i] == null && !PQ.taps['v' + g.k + ':' + i]);
@@ -17956,7 +17981,7 @@ PGAMES.minigolf = pgShot({
 // Kantenstoß: 2 Durchgänge, reihum je eine Kugel, am nächsten an der roten Kante gewinnt den Durchgang
 PGAMES.kante = pgShot({
   disc: 'kante', icon: '🎯', name: 'Kantenstoß', W: KA.W, H: KA.H, PULL: KA.PULL, FMS: 4*KA.DT*1000,
-  rule: '2 Durchgänge. Reihum stößt jeder seine Kugel vom Startpunkt. Wer am Ende am nächsten an der roten Kante liegt, ohne runterzufallen, bekommt die meisten Punkte. Kugeln bleiben liegen und dürfen weggeschossen werden.',
+  rule: 'Mehrere Durchgänge. Reihum stößt jeder seine Kugel vom Startpunkt. Wer am Ende am nächsten an der roten Kante liegt, ohne runterzufallen, bekommt die meisten Punkte. Kugeln bleiben liegen und dürfen weggeschossen werden.',
   init(s, g){ g.per = s.pl.length <= 4 ? 2 : 1; g.sum = s.pl.map(() => 0); g.gap = null; this.table(s, g); },
   table(s, g){ let t; do t = R0(KA.TABLES.length); while (t === g.t); g.t = t; g.sf = pickOne(['holz', 'eis', 'teppich', 'mix']); g.tg = KA.target(t); g.zn = g.sf === 'mix' ? KA.zones(t) : []; g.ob = KA.obstacles(t, g.tg);
     g.b = []; g.nid = 1; g.left = s.pl.map(() => g.per); g.q = pgRot(s, g.r); g.k = -1; },
@@ -17970,7 +17995,7 @@ PGAMES.kante = pgShot({
     const gap = s.pl.map((p, i) => this.best(g, null, i)), n = s.pl.length;
     const ord = s.pl.map((p, i) => i).filter(i => gap[i] < Infinity).sort((a, b) => gap[a] - gap[b]);
     let pl = 0; ord.forEach((i, k) => { if (k && gap[i] > gap[ord[k - 1]]) pl = k; g.sum[i] += n - pl; });
-    g.r++; if (g.r >= 2) { pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); return false; }
+    g.r++; if (g.r >= pgR(3)) { pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); return false; }
     this.table(s, g); return true; },
   plan(s, g, p, lvl, T, done){
     const L0 = this.L(g), bs = g.b.map(b => ({...b})), cb = bs[bs.length - 1], sa = [.06, .03, .012][lvl], sw = [.12, .06, .025][lvl], cands = [];
@@ -17979,7 +18004,7 @@ PGAMES.kante = pgShot({
     const others = s.pl.map((x, i) => i).filter(i => i !== p);
     pgPlan(cands, ([a, w]) => { const L = this.L(g, bs), [vx, vy] = kaVel(L, a, w), r = KA.sim(L, vx, vy, false), me = KA.best(L, r.fin, p); let op = Infinity; for (const o of others) op = Math.min(op, KA.best(L, r.fin, o)); return (me === Infinity ? 400 : Math.max(me, 0)) - (op === Infinity ? 150 : Math.min(op, 150))*.35; }, sa, sw, done);
   },
-  status(s, g){ return `Durchgang ${Math.min(g.r + 1, 2)} von 2 · ${esc(KA.TABLES[g.t].n)}, ${KA.SURF[g.sf].n}${g.st === 'done' ? ' · alle Kugeln gestoßen' : g.p != null ? ` · <b style="color:${PT_COL[g.p]}">${esc(s.pl[g.p].n)}</b> ist dran` : ''}<br><span class="pgsk">${s.pl.map((p, i) => `<i style="--pc:${PT_COL[i]}">${esc(p.n.slice(0, 10))} ${kaFmt(this.best(g, null, i))}</i>`).join('')}</span>`; },
+  status(s, g){ return `Durchgang ${Math.min(g.r + 1, pgR(3))} von ${pgR(3)} · ${esc(KA.TABLES[g.t].n)}, ${KA.SURF[g.sf].n}${g.st === 'done' ? ' · alle Kugeln gestoßen' : g.p != null ? ` · <b style="color:${PT_COL[g.p]}">${esc(s.pl[g.p].n)}</b> ist dran` : ''}<br><span class="pgsk">${s.pl.map((p, i) => `<i style="--pc:${PT_COL[i]}">${esc(p.n.slice(0, 10))} ${kaFmt(this.best(g, null, i))}</i>`).join('')}</span>`; },
   evMs(e){ return e[0]*KA.DT*1000; },
   sound(e){ if (e[1] === 'b') Snd.tone(1000, .04, 'triangle', .03 + .05*e[2]); else if (e[1] === 'o') Snd.tone(260, .05, 'square', .04); else if (e[1] === 'f') { Snd.tone(300, .5, 'sine', .06, 0, -260); return 'RUNTER!'; } return ''; },
   draw(cv, s, g, pos, mt, aim, now){
@@ -18163,7 +18188,7 @@ PGAMES.kaese = {
 
 // Karten-Duell: alle tippen gleichzeitig auf die Karte, wer näher dran ist, bekommt mehr Punkte
 PGAMES.karte = {
-  disc: 'karte', icon: '🗺️', name: 'Karten-Duell', rule: '5 Orte, auf der Welt- oder der Deutschlandkarte. Alle tippen gleichzeitig und verdeckt, wo der Ort liegt. Wer am nächsten dran ist, bekommt die meisten Punkte. 15 Sekunden pro Ort.', keys: 'Auf die Karte tippen.',
+  disc: 'karte', icon: '🗺️', name: 'Karten-Duell', rule: 'Mehrere Orte, auf der Welt- oder der Deutschlandkarte. Alle tippen gleichzeitig und verdeckt, wo der Ort liegt. Wer am nächsten dran ist, bekommt die meisten Punkte. 15 Sekunden pro Ort.', keys: 'Auf die Karte tippen.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){
     const g = s.g; g.m = Math.random() < .5 ? 'welt' : 'de'; const m = MAPS[g.m], L = m.places();
@@ -18178,11 +18203,11 @@ PGAMES.karte = {
     const t = [g.c[1], g.c[2]]; g.dist = g.ans.map(v => v ? KM(v, t) : null);
     const ord = s.pl.map((p, i) => i).filter(i => g.dist[i] != null).sort((a, b) => g.dist[a] - g.dist[b]);
     let pl = 0; ord.forEach((i, k) => { if (k && g.dist[i] > g.dist[ord[k - 1]]) pl = k; g.sum[i] += s.pl.length - pl; });
-    pgPush(); pgT(() => { if (++g.k >= 5) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 5000);
+    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 5000);
   },
   view(s, seats){
     const g = s.g, m = MAPS[g.m], c = g.c, mine = seats.filter(i => i >= 0), R = m.w*.016;
-    const head = `<p class="hint">Ort ${g.k + 1} von 5</p><h2 class="q">Wo liegt <b class="acc">${esc(c[0])}</b>?</h2><div class="ordk">${esc(c[3])}</div>`;
+    const head = `<p class="hint">Ort ${g.k + 1} von ${pgR(7)}</p><h2 class="q">Wo liegt <b class="acc">${esc(c[0])}</b>?</h2><div class="ordk">${esc(c[3])}</div>`;
     if (g.st === 'show') {
       const [cx, cy] = m.xy([c[1], c[2]]);
       const mk = s.pl.map((p, i) => { if (!g.ans[i]) return ''; const [x, y] = m.xy(g.ans[i]); return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="dline" style="stroke:${PT_COL[i]}"/><circle cx="${x}" cy="${y}" r="${R}" style="fill:${PT_COL[i]}" class="dpin"/>`; }).join('');
@@ -18287,7 +18312,7 @@ PGAMES.kanone = {
 /* ---------- Gleichzeitig, jeder auf seinem Gerät ---------- */
 // Ordnen: alle bekommen denselben Begriff und ordnen ihn verdeckt ein. Richtig: Punkte, wer schneller ist, mehr.
 PGAMES.ordnen = {
-  disc: 'ordnen', icon: '🔢', name: 'Ordnen', rule: '6 Begriffe. Alle bekommen denselben neuen Begriff und tippen gleichzeitig und verdeckt die Stelle, an die er in der Liste gehört. Wer richtig liegt, bekommt Punkte, je schneller, desto mehr. Danach kommt er an die richtige Stelle. 20 Sekunden pro Begriff.', keys: 'Lücke in der Liste antippen.',
+  disc: 'ordnen', icon: '🔢', name: 'Ordnen', rule: 'Mehrere Begriffe. Alle bekommen denselben neuen Begriff und tippen gleichzeitig und verdeckt die Stelle, an die er in der Liste gehört. Wer richtig liegt, bekommt Punkte, je schneller, desto mehr. Danach kommt er an die richtige Stelle. 20 Sekunden pro Begriff.', keys: 'Lücke in der Liste antippen.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); this.list(g); this.ask(s); },
   list(g){
     if (Math.random() < .5) { g.T = {lo: 'früher', hi: 'später', kick: 'Jahre', y: 1}; g.pool = EV.map(e => ({n: e[0], v: e[1], show: yr(e[1])})); }
@@ -18308,7 +18333,7 @@ PGAMES.ordnen = {
     const right = g.L.filter(x => x.v < g.cur.v).length, ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].at === right).sort((a, b) => g.ans[a].t - g.ans[b].t);
     ok.forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
     g.res = {right, n: g.cur.n, ok}; g.L.splice(right, 0, g.cur); g.cur = null;
-    pgPush(); pgT(() => { if (++g.k >= 6) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3200);
+    pgPush(); pgT(() => { if (++g.k >= pgR(8)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3200);
   },
   view(s, seats){
     const g = s.g, R = g.res, me = g.st === 'ask' ? seats.filter(i => i >= 0).find(i => !g.ans[i] && !PQ.taps['or' + g.k + ':' + i]) : null;
@@ -18317,7 +18342,7 @@ PGAMES.ordnen = {
       if (g.st === 'ask') h += `<button class="oslot" data-s="${i}"${me != null ? '' : ' disabled'}>${me != null ? '＋ hier' : ''}</button>`;
       if (i < g.L.length) { const it = g.L[i], nw = R && g.st === 'show' && it.n === R.n; h += `<div class="oitem${nw ? ' okk' : ''}">${esc(it.n)}<em>${esc(it.show)}</em>${nw ? `<small class="pgwho">${s.pl.map((p, k) => g.ans[k] && g.ans[k].at === R.right ? esc(p.n) : '').filter(Boolean).join(', ') || 'keiner'} richtig</small>` : ''}</div>`; }
     }
-    return `<p class="hint">Begriff ${g.k + 1} von 6${g.st === 'ask' ? ' · ' + pgCdn('or' + g.k, 20000) : ''}</p>
+    return `<p class="hint">Begriff ${g.k + 1} von ${pgR(8)}${g.st === 'ask' ? ' · ' + pgCdn('or' + g.k, 20000) : ''}</p>
       ${g.cur ? `<div class="onew"><small>Neu</small><b>${esc(g.cur.n)}</b></div>` : ''}
       ${g.st === 'ask' ? (me != null ? (seats[1] >= 0 ? `<p class="hint" style="color:${PT_COL[me]}"><b>${esc(s.pl[me].n)}</b> ordnet ein, der andere schaut weg</p>` : '') : '<p class="pgok">✓ eingeordnet, warte auf die anderen</p>') : ''}
       <p class="hint">${esc(g.T.kick)}</p><div class="ordrow"><div class="ordax v"><span>${esc(g.T.hi)}</span><i></i><span>${esc(g.T.lo)}</span></div><div class="olist pgol">${h}</div></div>
@@ -18331,7 +18356,7 @@ PGAMES.ordnen = {
 /* Jeder spielt für sich auf dem eigenen Gerät; das Spielfeld bleibt beim Neuzeichnen erhalten (Eingabe, Fokus) */
 function pgLocal(c){
   return {
-    disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys,
+    disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys, rep: c.rep,
     start(s){
       const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.sc = s.pl.map(() => null); if (c.init) c.init(s, g);
       pgT(() => { g.st = 'run'; pgPush();
@@ -18363,7 +18388,7 @@ function pgLocal(c){
 }
 
 PGAMES.tempo = pgLocal({
-  disc: 'tempo', icon: '⌨️', name: 'Tempo-Tippen', max: 60, low: true, hint: 'Lostippen',
+  disc: 'tempo', rep: 3, icon: '⌨️', name: 'Tempo-Tippen', max: 60, low: true, hint: 'Lostippen',
   rule: 'Alle tippen gleichzeitig denselben Satz ab. Ein falscher Buchstabe wird rot und blockiert, bis der richtige kommt. Wer zuerst fertig ist, gewinnt. Höchstens 60 Sekunden.', keys: 'Normale Tastatur, am Handy die Bildschirmtastatur (Satz antippen, falls sie nicht kommt).',
   init(s, g){ g.tx = R0(TT_TX.length); },
   bot(s, g, L){ const n = TT_TX[g.tx].length, ms = n/([3.6, 5.2, 7.2][L]*(1 + gauss()*.12))*1000 + 400; return [Math.round(ms), ms]; },
@@ -18377,7 +18402,7 @@ PGAMES.tempo = pgLocal({
 });
 
 PGAMES.senso = pgLocal({
-  disc: 'senso', icon: '🧠', name: 'Senso', max: 120, hint: 'Nachspielen',
+  disc: 'senso', rep: 2, icon: '🧠', name: 'Senso', max: 120, hint: 'Nachspielen',
   rule: 'Jeder spielt für sich dieselbe Farbkette nach, sie wird jedes Mal eine Farbe länger. Wer sich verhaut, ist fertig. Wer die längste Kette schafft, gewinnt.', keys: 'Farben antippen oder Auswahltasten 1–4.',
   bot(s, g, L){ const v = Math.max(1, Math.round([5, 8, 12][L] + gauss()*2)); return [v, 2500 + v*v*600]; },
   fmt: v => `${v} Farben`,
@@ -18435,10 +18460,10 @@ function pgType(c){
     input(s, i, a){ const g = s.g; if (a.k === 'ok' && g.st === 'ask' && g.ok[i] == null && Number.isFinite(a.t) && c.check(g.Q, String(a.a))) { g.ok[i] = a.t; pgPush(); if (g.ok.every(v => v != null)) this.show(s); } },
     show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
       s.pl.map((p, i) => i).filter(i => g.ok[i] != null).sort((a, b) => g.ok[a] - g.ok[b]).forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
-      pgPush(); pgT(() => { if (++g.k >= c.rounds) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3000); },
+      pgPush(); pgT(() => { if (++g.k >= pgR(c.rounds)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3000); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
-      return `<p class="hint">${c.label} ${g.k + 1} von ${c.rounds}${g.st === 'ask' ? ' · ' + pgCdn('ty' + g.k, c.limit) : ''}</p>${c.html(g)}
+      return `<p class="hint">${c.label} ${g.k + 1} von ${pgR(c.rounds)}${g.st === 'ask' ? ' · ' + pgCdn('ty' + g.k, c.limit) : ''}</p>${c.html(g)}
         ${g.st === 'show' ? `<p class="pgsol">Lösung: <b>${esc(g.Q.show)}</b></p><div class="pgrt">${s.pl.map((p, i) => `<span style="--pc:${PT_COL[i]}">${esc(p.n)}: <b>${g.ok[i] == null ? '–' : (g.ok[i]/1000).toFixed(1).replace('.', ',') + ' s'}</b></span>`).join('')}</div>`
           : mine.map(i => g.ok[i] != null || PQ.taps['ty' + g.k + ':' + i] ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)}: richtig!</p>` : pgTxt('ty' + g.k, i, c.ph, 40)).join('') + pgDots(s, i => g.ok[i] != null)}`;
     },
@@ -18450,16 +18475,16 @@ function pgType(c){
   };
 }
 PGAMES.rechnen = pgType({
-  disc: 'rechnen', icon: '🧮', name: 'Kopfrechnen', label: 'Aufgabe', rounds: 6, limit: 20000, ph: 'Ergebnis',
-  rule: '6 Aufgaben, sie werden immer schwerer. Alle tippen gleichzeitig. Wer zuerst richtig liegt, bekommt die meisten Punkte. Falsch: einfach nochmal.',
+  disc: 'rechnen', icon: '🧮', name: 'Kopfrechnen', label: 'Aufgabe', rounds: 8, limit: 20000, ph: 'Ergebnis',
+  rule: 'Mehrere Aufgaben, sie werden immer schwerer. Alle tippen gleichzeitig. Wer zuerst richtig liegt, bekommt die meisten Punkte. Falsch: einfach nochmal.',
   make(g){ const [t, r] = mathTask(g.k); return {t, a: String(r), show: String(r)}; },
   check: (Q, v) => parseInt(String(v).replace(/[^\d-]/g, ''), 10) === +Q.a,
   bt: (g, L) => [6000, 4000, 2600][L]*(1 + .35*Math.min(5, g.k))*Math.exp(gauss()*.3),
   html: g => `<div class="task">${esc(g.Q.t)}</div>`,
 });
 PGAMES.wortsalat = pgType({
-  disc: 'wortsalat', icon: '🔤', name: 'Wortsalat', label: 'Wort', rounds: 5, limit: 30000, ph: 'Wort',
-  rule: '5 Wörter, die Buchstaben sind durcheinander. Alle tippen gleichzeitig. Wer das Wort zuerst richtig hat, bekommt die meisten Punkte.',
+  disc: 'wortsalat', icon: '🔤', name: 'Wortsalat', label: 'Wort', rounds: 6, limit: 30000, ph: 'Wort',
+  rule: 'Mehrere Wörter, die Buchstaben sind durcheinander. Alle tippen gleichzeitig. Wer das Wort zuerst richtig hat, bekommt die meisten Punkte.',
   make(g){ const w = pgPickNew(WORDS, g.used); return {t: scramble(w), a: w, show: w}; },
   check: (Q, v) => norm(v) === Q.a,
   bt: (g, L) => [1500, 1000, 700][L]*(.6 + .12*g.Q.a.length)*Math.exp(gauss()*.35)*1.6,
@@ -18468,20 +18493,20 @@ PGAMES.wortsalat = pgType({
 
 // Auktion: alle bieten verdeckt, das höchste Gebot bekommt den Gegenstand, alle zahlen ihr Gebot
 PGAMES.auktion = {
-  disc: 'auktion', icon: '💰', name: 'Auktion', rule: '5 Gegenstände, jeder hat 100 Credits für alle zusammen. Alle bieten gleichzeitig und verdeckt. Das höchste Gebot bekommt den Gegenstand, bei Gleichstand keiner. Bezahlen muss jeder sein Gebot. Wer am Ende die meisten Gegenstände hat, gewinnt, bei Gleichstand zählen die übrigen Credits.', keys: 'Gebot eintippen und mit Enter abschicken.',
+  disc: 'auktion', icon: '💰', name: 'Auktion', rule: 'Mehrere Gegenstände, jeder hat 100 Credits für alle zusammen. Alle bieten gleichzeitig und verdeckt. Das höchste Gebot bekommt den Gegenstand, bei Gleichstand keiner. Bezahlen muss jeder sein Gebot. Wer am Ende die meisten Gegenstände hat, gewinnt, bei Gleichstand zählen die übrigen Credits.', keys: 'Gebot eintippen und mit Enter abschicken.',
   IT: ['Neon-Katana', 'Enterhaken', 'Raketenstiefel', 'Glitch-Chip', 'Holo-Maske', 'Cyber-Arm', 'Drohnen-Schwarm', 'Nachtsicht-Visier', 'Chrom-Herz', 'Daten-Kristall', 'Tarnumhang', 'Plasma-Seil'],
-  start(s){ const g = s.g; g.k = 0; g.m = s.pl.map(() => 100); g.it = s.pl.map(() => 0); g.items = shuffle(this.IT.slice()).slice(0, 5); this.ask(s); },
+  start(s){ const g = s.g; g.k = 0; g.m = s.pl.map(() => 100*Math.max(1, Math.round(pgR(6)/6))); g.it = s.pl.map(() => 0); g.items = shuffle(this.IT.slice()).slice(0, pgR(6)); while (g.items.length < pgR(6)) g.items.push(pickOne(this.IT)); this.ask(s); },
   ask(s){ const g = s.g; g.st = 'ask'; g.b = s.pl.map(() => null); g.w = -1;
-    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const left = 5 - g.k, base = g.m[i]/left, v = clamp(Math.round(base*(.5 + Math.random()*[1.4, 1.2, 1][pgLvl(i)]) + (pgLvl(i) === 2 && Math.random() < .3 ? 7 : 0)), 0, g.m[i]); pgT(() => pgIn(i, {k: 'bid', v}), 2000 + Math.random()*6000); });
+    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const left = g.items.length - g.k, base = g.m[i]/left, v = clamp(Math.round(base*(.5 + Math.random()*[1.4, 1.2, 1][pgLvl(i)]) + (pgLvl(i) === 2 && Math.random() < .3 ? 7 : 0)), 0, g.m[i]); pgT(() => pgIn(i, {k: 'bid', v}), 2000 + Math.random()*6000); });
     pgT(() => this.show(s), 21000); pgPush(); },
   input(s, i, a){ const g = s.g; if (a.k === 'bid' && g.st === 'ask' && g.b[i] == null && Number.isInteger(a.v) && a.v >= 0 && a.v <= g.m[i]) { g.b[i] = a.v; pgPush(); if (g.b.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
     const b = g.b.map(v => v || 0), mx = Math.max(...b), top = b.map((v, i) => i).filter(i => b[i] === mx); g.w = mx > 0 && top.length === 1 ? top[0] : -1;
     b.forEach((v, i) => { g.m[i] -= v; }); if (g.w >= 0) g.it[g.w]++;
-    pgPush(); pgT(() => { if (++g.k >= 5) { const sc = s.pl.map((p, i) => g.it[i]*1000 + g.m[i]); pgResult(sc, s.pl.map((p, i) => `${g.it[i]} Stück · ${g.m[i]} übrig`)); } else this.ask(s); }, 3500); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(6)) { const sc = s.pl.map((p, i) => g.it[i]*1000 + g.m[i]); pgResult(sc, s.pl.map((p, i) => `${g.it[i]} Stück · ${g.m[i]} übrig`)); } else this.ask(s); }, 3500); },
   view(s, seats){
     const g = s.g, mine = seats.filter(i => i >= 0);
-    return `<p class="hint">Gegenstand ${g.k + 1} von 5${g.st === 'ask' ? ' · ' + pgCdn('au' + g.k, 20000) : ''}</p><h2 class="pgq">${esc(g.items[g.k])}</h2>
+    return `<p class="hint">Gegenstand ${g.k + 1} von ${pgR(6)}${g.st === 'ask' ? ' · ' + pgCdn('au' + g.k, 20000) : ''}</p><h2 class="pgq">${esc(g.items[g.k])}</h2>
       ${g.st === 'show' ? `<p class="pgsol">${g.w >= 0 ? `<b style="color:${PT_COL[g.w]}">${esc(s.pl[g.w].n)}</b> bekommt ihn` : 'Gleichstand, keiner bekommt ihn'}</p><div class="pgrt">${s.pl.map((p, i) => `<span style="--pc:${PT_COL[i]}">${esc(p.n)}: <b>${g.b[i] == null ? 0 : g.b[i]}</b></span>`).join('')}</div>`
         : mine.map(i => g.b[i] != null || PQ.taps['au' + g.k + ':' + i] ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)}: geboten</p>` : pgTxt('au' + g.k, i, `0 bis ${g.m[i]}`, 3)).join('') + pgDots(s, i => g.b[i] != null)}
       ${pgChips(s, i => ['', `💰 ${g.m[i]} · ${g.it[i]} Stück`])}`;
@@ -18527,7 +18552,7 @@ addEventListener('keydown', e => pgKey(e, true)); addEventListener('keyup', e =>
 const pgTxtC = (x, t, X, Y, sz, col) => { x.font = `${sz}px "Lilita One", sans-serif`; x.textAlign = 'center'; x.fillStyle = PAL.ol; x.fillText(t, X + 2, Y + 2); x.fillStyle = col || PAL.sun; x.fillText(t, X, Y); };
 // Sprung: Doodle-Jump, dieselben Plattformen, wer am höchsten kommt
 PGAMES.doodle = pgSolo({
-  disc: 'doodle', icon: '🦘', name: 'Sprung', W: 400, H: 560, max: 120, rk: 'doodle', hint: 'Links und rechts lenken',
+  disc: 'doodle', rep: 2, icon: '🦘', name: 'Sprung', W: 400, H: 560, max: 120, rk: 'doodle', hint: 'Links und rechts lenken',
   rule: 'Jeder springt für sich automatisch von Plattform zu Plattform nach oben, alle haben dieselben Plattformen. Ihr lenkt nur nach links und rechts, am Rand geht es auf der anderen Seite weiter. Wer runterfällt, ist fertig. Wer am höchsten kommt, gewinnt.',
   keys: 'Tasten links und rechts. Am Touchscreen links oder rechts vom Springer halten.',
   botF: L => { const v = Math.max(20, Math.round([180, 420, 800][L]*(1 + gauss()*.3))); return [v, 6000 + v*100]; }, fmt: v => `${v} m`,
@@ -18628,7 +18653,7 @@ PGAMES.drift = pgSolo({
 });
 // Raketen-Landung: jeder fliegt für sich, wer am schnellsten sicher landet
 PGAMES.rakete = pgSolo({
-  disc: 'rakete', icon: '🚀', name: 'Raketen-Landung', W: 500, H: ML.H, max: 90, rk: 'rakete', low: true, hint: 'Triebwerk und seitlich steuern',
+  disc: 'rakete', rep: 2, icon: '🚀', name: 'Raketen-Landung', W: 500, H: ML.H, max: 90, rk: 'rakete', low: true, hint: 'Triebwerk und seitlich steuern',
   rule: 'Jeder steuert seine Rakete von der Start-Plattform über das Gelände zum Ziel, alle auf derselben Karte. Mit dem Triebwerk steigt und bremst ihr. Sicher landen heißt langsam (⬇ grün) und kaum seitlich. Wer am schnellsten sicher landet, gewinnt, wer abstürzt, ist hinten.',
   keys: 'Tasten Triebwerk, links, rechts. Am Touchscreen halten zündet das Triebwerk, links oder rechts neben der Rakete steuert dorthin.',
   botF: L => Math.random() < [.35, .18, .06][L] ? [1e9, 15000] : (v => [v, v])(Math.round([28000, 19000, 13000][L]*(1 + gauss()*.15))), fmt: v => v >= 1e9 ? '💥 abgestürzt' : `${(v/1000).toFixed(1).replace('.', ',')} s`,
@@ -18663,7 +18688,7 @@ PGAMES.rakete = pgSolo({
 });
 // Takt-Tauziehen als Takt-Spiel: dieselben Noten für alle, wer am genauesten drückt
 PGAMES.tauziehen = pgSolo({
-  disc: 'tauziehen', icon: '🥁', name: 'Taktgefühl', W: 400, H: 560, max: 34, hint: 'Im Takt drücken',
+  disc: 'tauziehen', rep: 2, icon: '🥁', name: 'Taktgefühl', W: 400, H: 560, max: 34, hint: 'Im Takt drücken',
   rule: 'Noten fallen auf die gelbe Linie zu, bei allen dieselben. Drückt genau dann, wenn eine Note die Linie trifft: genau +3, knapp +1. Daneben drücken kostet einen Punkt. Der Takt wird schneller. Wer am Ende die meisten Punkte hat, gewinnt.',
   keys: 'Buzzer oder aufs Feld tippen.',
   botF: L => { const v = Math.round([45, 75, 100][L]*(1 + gauss()*.12)); return [Math.max(0, v), 34000]; }, fmt: v => `${v} Punkte`,
@@ -18688,7 +18713,7 @@ PGAMES.tauziehen = pgSolo({
 
 // Spiegelmalen: dieselbe halbe Form für alle, gespiegelt ergänzen
 PGAMES.spiegel = pgLocal({
-  disc: 'spiegel', icon: '🪞', name: 'Spiegelmalen', max: 20, hint: 'Rechte Hälfte malen',
+  disc: 'spiegel', rep: 3, icon: '🪞', name: 'Spiegelmalen', max: 20, hint: 'Rechte Hälfte malen',
   rule: 'Links ist eine halbe Form vorgegeben, bei allen dieselbe. Alle malen gleichzeitig die rechte Hälfte spiegelverkehrt dazu. Wer am genauesten ist, gewinnt. Gekritzel daneben kostet Punkte. 20 Sekunden.', keys: 'Mit Finger oder Maus in der rechten Hälfte malen. ↶ nimmt den letzten Strich zurück.',
   init(s, g){ g.sh = R0(SM_SH.length); },
   bot(s, g, L){ const v = clamp(Math.round([55, 72, 86][L] + gauss()*8), 0, 100); return [v, 8000 + Math.random()*10000]; },
@@ -18753,7 +18778,7 @@ PGAMES.sokoban = pgLocal({
 
 // Memory (Pairs Speed): jeder deckt auf seinem eigenen Feld auf, alle haben dieselbe Verteilung
 PGAMES.memory = pgLocal({
-  disc: 'memory', icon: '🃏', name: 'Memory', max: 120, low: true, hint: 'Paare finden',
+  disc: 'memory', rep: 2, icon: '🃏', name: 'Memory', max: 120, low: true, hint: 'Paare finden',
   rule: 'Jeder hat ein eigenes Feld mit denselben 8 Kartenpaaren an denselben Stellen. Alle decken gleichzeitig auf. Wer zuerst alle Paare gefunden hat, gewinnt. Höchstens 2 Minuten.', keys: 'Karten antippen.',
   E: ['🍎', '🚀', '🐙', '🎸', '🌵', '🍕', '⚽', '🦊', '🎈', '🐢', '🌈', '🍩'],
   init(s, g){ const e = shuffle(this.E.slice()).slice(0, 8); g.cards = shuffle([...e, ...e]); },
