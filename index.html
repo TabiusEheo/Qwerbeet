@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Qwerbeet</title>
 <style>
-:root{--z:1}
+:root{--z:1;--hr:1}
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){
 }
@@ -737,7 +737,7 @@ body.match .sc{display:inline-grid}
 body:has(#dmap) .hero{height:calc(calc(40vh / var(--z)) * var(--hs,1))!important}
 .game:has(#dmap){max-width:min(980px,100%)}
 .game:has(.dmap.wide){max-width:min(1500px,100%)!important}
-.dmap.wide{height:auto;width:100%;max-height:calc(calc(100vh / var(--z)) - 400px);min-height:0}
+.dmap.wide{height:auto;width:100%;max-height:calc(calc(100vh / var(--z)) - 400px*var(--hr));min-height:0}
 body:has(.dmap.wide) .hero{height:calc(calc(30vh / var(--z)) * var(--hs,1))!important}
 .gfield:has(.dmap){padding:10px}
 .gfield:has(.dmap) .q{font-size:clamp(22px,calc(3vw / var(--z)),30px)}
@@ -1441,7 +1441,7 @@ body:not(.pads) .emob{bottom:16px}
 .kd.d10{background:#ffe9a8}.kd .k10{grid-area:1/1/4/4;display:grid;place-items:center;font-family:"Lilita One";font-weight:400;font-size:28px;color:#1d1a16}
 .kr span small{font-size:10px;opacity:.6;margin-left:3px}
 .lfree button.knmax{min-width:0!important;padding:6px 10px!important;font-size:13px!important}
-.bwb{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(100%,480px,calc(calc(100vh / var(--z)) - 330px));aspect-ratio:1;margin:0 auto;border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px var(--ol)}
+.bwb{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(100%,480px,calc(calc(100vh / var(--z)) - 330px*var(--hr)));aspect-ratio:1;margin:0 auto;border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px var(--ol)}
 .bwc{position:relative;border:0;padding:0;margin:0;background:#f0dcb4;display:grid;place-items:center;cursor:pointer;touch-action:manipulation;border-radius:0}
 .bwc.dk{background:#b58863}
 .bwc:disabled{cursor:default}
@@ -1454,7 +1454,7 @@ body:not(.pads) .emob{bottom:16px}
 /* online sieht jeder seine eigenen Bauern weiß von unten */
 body.net-guest .bwb{transform:rotate(180deg)}body.net-guest .bwp{transform:rotate(180deg)}
 body.net-guest .bwp.c1{fill:#2a2633;stroke:#0c0a12}body.net-guest .bwp.c2{fill:#fbf6ea;stroke:#1d1a16}
-.c4w{width:min(100%,460px,calc((calc(100vh / var(--z)) - 330px)*7/7));margin:0 auto}
+.c4w{width:min(100%,460px,calc((calc(100vh / var(--z)) - 330px*var(--hr))*7/7));margin:0 auto}
 .c4top{display:grid;grid-template-columns:repeat(7,1fr);gap:4%;padding:0 3%;height:18px;margin-bottom:4px}
 .c4top i{border-radius:50%;width:16px;height:16px;margin:0 auto;opacity:0;transition:opacity .15s}
 .c4top i.on{opacity:1}.c4top i.c1{background:var(--p1)}.c4top i.c2{background:var(--p2)}
@@ -1826,7 +1826,7 @@ body.brett .hxrail{visibility:hidden}
 @media (max-width:560px){.brd{gap:3px}.brt{border-radius:7px}.brpl{padding:4px 6px}.brpl .hd{width:30px;height:30px}.brpl{grid-template-columns:30px auto auto}.brpls{gap:6px}}
 body.brett .pb{display:none}
 .brcard{max-width:820px}
-.brd{max-height:calc(calc(100vh / var(--z)) - 230px);margin-left:auto;margin-right:auto}
+.brd{max-height:calc(calc(100vh / var(--z)) - 230px*var(--hr));margin-left:auto;margin-right:auto}
 .brroll.a{background:var(--p1);color:var(--t1,#fff)}.brroll.b{background:var(--p2);color:var(--t2,#fff)}
 .mplay{grid-template-columns:1fr 1fr}.mpo{padding:30px 18px}@media (max-width:560px){.mplay{grid-template-columns:1fr}}
 .mplay{width:min(720px,calc(calc(100vw / var(--z)) - 32px))}.mpo .e{font-size:54px}
@@ -1867,7 +1867,7 @@ body.brett .pb{display:none}
 .pgwrap.wide{width:min(980px,calc(calc(100vw / var(--z)) - 32px))}
 .pgp.act{transform:translateY(-3px);box-shadow:0 0 0 3px var(--pc),0 6px 14px rgba(0,0,0,.25)}
 .pgp .pt.sm{font:14px Nunito,sans-serif;font-weight:900;color:var(--ink);white-space:nowrap}
-.pgcard .brd{max-height:calc(calc(100vh / var(--z)) - 260px)}
+.pgcard .brd{max-height:calc(calc(100vh / var(--z)) - 260px*var(--hr))}
 .brk.on{z-index:3;filter:drop-shadow(0 0 6px var(--pc)) drop-shadow(0 3px 2px rgba(0,0,0,.35))}
 .brk{width:6%}
 body.party.pgon #quit{visibility:visible;display:inline-flex}
@@ -1883,8 +1883,8 @@ body.party.pgon #quit{visibility:visible;display:inline-flex}
 .tbad i.p{background:#c7f0d4;color:#14663a}
 [data-theme="dark"] .tbad i.p{background:#1f4a32;color:#aef0c6}
 .mmodes2{font-size:13px;color:var(--muted)}
-.pgcv{width:100%;max-width:min(620px,calc(calc(100vh / var(--z)) - 300px));aspect-ratio:1;display:block;margin:6px auto;border-radius:18px;touch-action:none}
-.pgcv[data-h]:not([data-h="1"]){aspect-ratio:3/2;max-width:min(860px,calc((calc(100vh / var(--z)) - 300px)*1.5))}
+.pgcv{width:100%;max-width:min(620px,calc(calc(100vh / var(--z)) - 300px*var(--hr)));aspect-ratio:1;display:block;margin:6px auto;border-radius:18px;touch-action:none}
+.pgcv[data-h]:not([data-h="1"]){aspect-ratio:3/2;max-width:min(860px,calc((calc(100vh / var(--z)) - 300px*var(--hr))*1.5))}
 .pgopt.two{grid-template-columns:1fr 1fr}
 .pgemo{font-size:52px;display:flex;gap:10px;justify-content:center;min-height:70px;margin:6px 0 12px}
 .pgemo span{opacity:0;transform:scale(.6);transition:opacity .25s,transform .25s}.pgemo span.on{opacity:1;transform:none}
@@ -1972,7 +1972,7 @@ button.pgw{cursor:pointer;text-align:left}button.pgw:hover{outline:3px solid var
 
 .choice.sel{box-shadow:0 0 0 4px var(--sun)!important}.choice.on{box-shadow:0 0 0 4px #1fae5b!important;background:#c7f0d4}
 .afk.one .ab0{left:50%;margin-left:max(-24vw,-280px)}.afk.one .afksay.l{left:50%;transform:translateX(-50%)}
-.pbd{position:relative;aspect-ratio:16/10;width:100%;max-height:calc(calc(100vh / var(--z)) - 300px);margin:6px auto;border-radius:18px;background:radial-gradient(circle at 50% 40%,var(--bg1),var(--bg2));box-shadow:0 0 0 3px var(--ol),0 5px 0 3px var(--ol);overflow:hidden}
+.pbd{position:relative;aspect-ratio:16/10;width:100%;max-height:calc(calc(100vh / var(--z)) - 300px*var(--hr));margin:6px auto;border-radius:18px;background:radial-gradient(circle at 50% 40%,var(--bg1),var(--bg2));box-shadow:0 0 0 3px var(--ol),0 5px 0 3px var(--ol);overflow:hidden}
 .pbl{position:absolute;inset:0;width:100%;height:100%}
 .pbl .pth line{stroke:#fffaf0;stroke-width:10px;vector-effect:non-scaling-stroke;stroke-linecap:round;opacity:.9}
 .pbl .shut line{stroke:#ff4d5e;stroke-width:6px;vector-effect:non-scaling-stroke;stroke-dasharray:6 8;stroke-linecap:round}
@@ -2030,7 +2030,7 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .hxo em.on{background:var(--p1);color:var(--t1)}
 .tabs button{border-radius:14px;padding:7px 12px;background:var(--card);color:var(--ink);box-shadow:var(--shs);font:900 14px Nunito,sans-serif}
 .tabs button.on{background:var(--p1);color:var(--t1)}
-.pbd{max-height:none!important;width:min(100%,calc((calc(100vh / var(--z)) - 280px)*1.6))!important}
+.pbd{max-height:none!important;width:min(100%,calc((calc(100vh / var(--z)) - 280px*var(--hr))*1.6))!important}
 .pbn{width:3.1%!important}
 .pblog{max-width:640px;margin:6px auto;text-align:left;background:var(--track);border-radius:14px;padding:6px 12px}
 .pblog summary{cursor:pointer;font-weight:900}.pblog ol{list-style:none;margin:6px 0 2px;padding:0;max-height:220px;overflow:auto}
@@ -2039,6 +2039,24 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 :is(.game,.gbar,.sprint,.mscr,.card,.msticky .mbig){max-width:var(--gw,660px)}
 .pgwrap,.pgwrap.wide{width:min(max(var(--gw,660px),900px),calc(100vw / var(--z) - 32px))}
 .pgcard{max-width:none}.pgcard .pgtab,.pgcard .pgres{max-width:660px;margin-left:auto;margin-right:auto}
+/* Höhe: die ganze Oberfläche wächst nach unten mit */
+:root{--hu:0}
+.mscr{min-height:calc((100vh / var(--z) - 110px)*var(--hu));display:flex;flex-direction:column}
+.mhome .mgrid{flex:1 1 auto;grid-auto-rows:1fr}
+.mhome .mbig{padding:calc(12px + 34px*var(--hu)) 12px;font-size:calc(26px + 12px*var(--hu))}
+.mhome .mhb{font-size:calc(1em + .35em*var(--hu))}
+.mhome .mlogo svg{width:min(100%,calc(700px + 300px*var(--hu)))}
+.game{min-height:calc((100vh / var(--z) - 120px)*var(--hu))}
+.game > .gfield,.game .gfield{flex:1 1 auto}
+.pgcard{min-height:calc((100vh / var(--z) - 130px)*var(--hu))}
+.mpanel .mkv{padding-top:calc(8px + 8px*var(--hu));padding-bottom:calc(8px + 8px*var(--hu))}
+/* Inhalt wächst mit der Höhe */
+.mhb.ch .chfig{width:calc(120px*(1 + 1.4*var(--hu)));height:calc(150px*(1 + 1.4*var(--hu)))}
+.mhome .mhb .e{transform:scale(calc(1 + .6*var(--hu)));margin:0 calc(22px*var(--hu))}
+.game .q{font-size:calc(23px*(1 + .6*var(--hu)))}
+.game .oli{font-size:calc(16px*(1 + .45*var(--hu)));min-height:calc(48px*(1 + .6*var(--hu)))}
+.game .gfield .task,.game .gfield .letters{font-size:calc(100% + 50%*var(--hu))}
+.pgcard .pgq{font-size:calc(24px*(1 + .5*var(--hu)))}.pgcard .pgo{font-size:calc(16px*(1 + .4*var(--hu)))}
 </style>
 </head>
 <body>
@@ -2066,6 +2084,10 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
 <script>
 let UIZ = 1;
+/* Höhe der Spielfläche (0 = wie früher, 1 = so hoch wie möglich, unten wird dann gescrollt) */
+let UIH = 0, UIHR = 1;
+function uiHigh(v, keep){ UIH = Number.isFinite(+v) ? Math.min(1, Math.max(0, +v)) : 0; UIHR = Math.round((1 - UIH*.85)*100)/100; if (!keep) try { localStorage.setItem('qw-high', String(UIH)); } catch(e) {} document.documentElement.style.setProperty('--hr', String(UIHR)); document.documentElement.style.setProperty('--hu', String(UIH)); dispatchEvent(new Event('resize')); }
+(() => { let v = 0; try { v = +localStorage.getItem('qw-high') || 0; } catch(e) {} uiHigh(v, true); })();
 /* Breite der Oberfläche (0 = schmal wie früher, 1 = ganzer Bildschirm), stufenlos */
 let UIW = .36;
 function uiWideApply(){ const full = innerWidth/UIZ - 32, w = Math.round(Math.max(Math.min(660, full), 660 + UIW*(full - 660))); document.documentElement.style.setProperty('--gw', w + 'px'); }
@@ -2096,13 +2118,14 @@ const PAL = (() => {
 
 // Regler für Breite und Größe (Einstellungen und 🎨 oben)
 const uiSliders = () => `<div class="mkv"><span>Breite<small>Wie viel vom Bildschirm Menü und Spiele nutzen</small></span><span class="mkr"><input type="range" min="0" max="1" step=".01" value="${UIW}" data-ui="w"><b>${Math.round(UIW*100)}%</b></span></div>
+  <div class="mkv"><span>Höhe<small>Wie viel von der Bildschirmhöhe Menü, Spielfelder und Brett nutzen</small></span><span class="mkr"><input type="range" min="0" max="1" step=".01" value="${UIH}" data-ui="h"><b>${Math.round(UIH*100)}%</b></span></div>
   <div class="mkv"><span>Größe<small>Alles größer oder kleiner</small></span><span class="mkr"><input type="range" min=".7" max="1.8" step=".05" value="${UIZ}" data-ui="z"><b>${Math.round(UIZ*100)}%</b></span></div>`;
 function uiSliderBind(root){
   (root || document).querySelectorAll('input[data-ui]').forEach(el => {
-    const lab = () => { el.nextElementSibling.textContent = Math.round((el.dataset.ui === 'w' ? UIW : UIZ)*100) + '%'; };
-    el.oninput = () => { if (el.dataset.ui === 'w') uiWide(+el.value, true); else { el.dataset.v = el.value; el.nextElementSibling.textContent = Math.round(+el.value*100) + '%'; } if (el.dataset.ui === 'w') lab(); };
+    const lab = () => { el.nextElementSibling.textContent = Math.round((el.dataset.ui === 'w' ? UIW : el.dataset.ui === 'h' ? UIH : UIZ)*100) + '%'; };
+    el.oninput = () => { if (el.dataset.ui === 'h') { uiHigh(+el.value, true); lab(); return; } if (el.dataset.ui === 'w') uiWide(+el.value, true); else { el.dataset.v = el.value; el.nextElementSibling.textContent = Math.round(+el.value*100) + '%'; } if (el.dataset.ui === 'w') lab(); };
     // Größe erst beim Loslassen, sonst springt der Regler unter dem Finger weg
-    el.onchange = () => { if (el.dataset.ui === 'w') uiWide(+el.value); else uiZoom(+el.value); lab(); };
+    el.onchange = () => { if (el.dataset.ui === 'h') uiHigh(+el.value); else if (el.dataset.ui === 'w') uiWide(+el.value); else uiZoom(+el.value); lab(); };
   });
 }
 // =====================================================================
@@ -7638,7 +7661,7 @@ function kaese(done){
     const cnt = q => B.filter(v => v === q).length;
     function draw(){
       pads(false);
-      const SR = 2*bh + 1, SC = 2*bw + 1; let h = `<div class="kkb" style="grid-template-columns:repeat(${bw},14px 1fr) 14px;grid-template-rows:repeat(${bh},14px 1fr) 14px;aspect-ratio:${bw}/${bh};width:min(100%,${Math.round(440*Math.min(1, bw/bh))}px,calc((100vh / var(--z) - 330px)*${bw/bh}))">`;
+      const SR = 2*bh + 1, SC = 2*bw + 1; let h = `<div class="kkb" style="grid-template-columns:repeat(${bw},14px 1fr) 14px;grid-template-rows:repeat(${bh},14px 1fr) 14px;aspect-ratio:${bw}/${bh};width:min(100%,${Math.round(440*Math.min(1, bw/bh))}px,calc((100vh / var(--z) - 330px*var(--hr))*${bw/bh}))">`;
       for (let r = 0; r < SR; r++) for (let c = 0; c < SC; c++) {
         if (r % 2 === 0 && c % 2 === 0) h += dotOn(r/2, c/2) ? '<i class="kkd"></i>' : '<i></i>';
         else if (r % 2 === 0) { const l = (r/2)*bw + (c - 1)/2; if (!K.valid[l]) { h += '<i></i>'; continue; } h += `<button class="kkl h${L[l] ? ' on c' + (who[l] + 1) : ''}${l === last ? ' nw' : ''}" data-l="${l}"${L[l] || over || busy ? ' disabled' : ''}></button>`; }
@@ -8951,7 +8974,7 @@ function djTime(w, y){ // Zeit bis zur Höhe y im Fallen
 function djDraw(cv, S, now){
   const W = 1000, H = 600, PWID = 488, sc = PWID/DJ.W;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   // langsame Geräte: nach ein paar zähen Bildern mit voller statt doppelter Auflösung zeichnen
   const ft = performance.now() - (S.lastF || performance.now()); S.lastF = performance.now(); if (ft > 70) S.slowN = (S.slowN || 0) + 1; else if (S.slowN) S.slowN -= .25;
@@ -9231,7 +9254,7 @@ const kaAuto = p => isBot(p) || (RT.auto && (!NET.on || p === (NET.role === 'hos
 function kaDrawBase(cv, S){
   const {W, H, R} = KA, T = KA.TABLES[S.t], sf = KA.SURF[S.sf];
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
@@ -9495,7 +9518,7 @@ const suState = S => ({v: S.v, r: S.r, b: S.b, T: S.T, ph: S.ph, n: S.n});
 function suDraw(cv, S, now){
   const {W, H, C, BR} = SU;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -9866,7 +9889,7 @@ function bdBall(ctx, id, x, y, R){
 function bdDraw(cv, S, now){
   const {W, H, R, L, Rr, T, B} = BD; BD.geo();
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
@@ -10436,7 +10459,7 @@ const mgAuto = (S, p) => isBot(p) || (RT.auto && (!NET.on || p === (NET.role ===
 function mgDrawBase(cv, S, now){
   const {W, H, R, CR} = MG, h = S.h;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
@@ -10828,7 +10851,7 @@ function rtTick(s){
   s.rot = s.kind === 'hk' && pw < 640 && innerHeight > innerWidth*1.2 ? (s.local[0] ? 0 : 1) : -1;
   const rot = s.rot >= 0, LW = rot ? E.H : E.W, LH = rot ? E.W : E.H;
   const top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185);   // Platz bis unten, abzüglich Spielerfelder und Statuszeile
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR);   // Platz bis unten, abzüglich Spielerfelder und Statuszeile
   const vw = rot ? Math.round(Math.min(pw, innerHeight/UIZ*.52*E.H/E.W)) : Math.round(Math.min(pw, avail*E.W/E.H));
   const css = rot || vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.height = rot ? `${Math.round(vw*E.W/E.H)}px` : ''; cv.style.aspectRatio = rot ? `${E.H}/${E.W}` : `${E.W}/${E.H}`; cv.style.margin = css ? '0 auto' : ''; }
@@ -11359,7 +11382,7 @@ function tkTick(s){
   }
   if (!cv || !cv.getContext) return;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || TK.W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*TK.W/TK.H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*TK.W/TK.H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${TK.W}/${TK.H}`; }
   const w = cv.clientWidth || TK.W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*TK.H/TK.W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -11546,7 +11569,7 @@ function lrBot(S, p, lvl){
 }
 function lrDraw(cv, S, now, pred){
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || 1000, top = cv.getBoundingClientRect().top, W = LR.W, H = LR.H;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -12023,7 +12046,7 @@ function fbFlap(b){ if (b.alive) { b.vy = FB.FLAP; b.flap = performance.now(); }
 function fbDraw(cv, S, t, me){
   const {W, H} = FB;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -12285,7 +12308,7 @@ function siTick(S, p, dt, now, sendAtk){
 function siDraw(cv, S, now){
   const W = 660, H = 470;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(260, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(260, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -12479,7 +12502,7 @@ function tgTick(S, p, now, sendAtk){
 function tgDraw(cv, S, now){
   const {C} = TG, W = 860, H = 610;
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(260, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(260, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -12837,7 +12860,7 @@ const KN_TH = [
 function knDraw(cv, S, now, me){
   const {W, H} = KAN, T = KN_TH[S.th || 0];
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -13527,7 +13550,7 @@ function drTick(s){
   }
   if (!cv || !cv.getContext) return;
   const {W, H} = DR, pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; s.bg = null; }
@@ -13732,7 +13755,7 @@ function mlTick(s){
   }
   if (!cv || !cv.getContext) return;
   const {W, H} = ML, pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; }
@@ -13921,7 +13944,7 @@ function hjTick(s){
   if (NET.on && NET.open && !s.over && now - s.sendT >= 40 && !netBusy()) { s.sendT = now; const p = s.local[0] ? 0 : 1; netSend({t: 'rt', k: 'hjf', rid: s.rid, a: [Math.round(s.ch[p].x), Math.round(s.ch[p].y), s.ammo[p], s.rl[p] ? 1 : 0]}); }
   if (!cv || !cv.getContext) return;
   const {W, H} = HJ, pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), chh = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== chh) { cv.width = cw; cv.height = chh; s.bg = null; }
@@ -17540,7 +17563,7 @@ function pgSolo(c){
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : c.hint || 'Jeder spielt dieselbe Strecke'} · ${c.rk ? `<span class="kbonly">${rtKeyHint(c.rk, 0)}</span>` : pgKeyHint(seats, 'bz')}</p>
-        <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px)*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
+        <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
         ${pgDots(s, i => g.sc[i] != null)}`;
     },
     after(s, seats){
