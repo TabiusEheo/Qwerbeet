@@ -2035,6 +2035,10 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .pblog{max-width:640px;margin:6px auto;text-align:left;background:var(--track);border-radius:14px;padding:6px 12px}
 .pblog summary{cursor:pointer;font-weight:900}.pblog ol{list-style:none;margin:6px 0 2px;padding:0;max-height:220px;overflow:auto}
 .pblog li{padding:3px 0;border-top:1px dashed rgba(0,0,0,.12);font-size:14px}.pblog li small{display:inline-block;min-width:30px;font-weight:900;color:var(--muted)}
+/* Breite: --gw kommt aus dem Regler */
+:is(.game,.gbar,.sprint,.mscr,.card,.msticky .mbig){max-width:var(--gw,660px)}
+.pgwrap,.pgwrap.wide{width:min(max(var(--gw,660px),900px),calc(100vw / var(--z) - 32px))}
+.pgcard{max-width:none}.pgcard .pgtab,.pgcard .pgres{max-width:660px;margin-left:auto;margin-right:auto}
 </style>
 </head>
 <body>
@@ -2061,9 +2065,16 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 <canvas id="fx"></canvas>
 
 <script>
-/* Größe der Oberfläche (Einstellungen → Aussehen): Zoom auf die ganze Seite */
 let UIZ = 1;
-function uiZoom(z){ UIZ = [.85, 1, 1.15, 1.3, 1.5].includes(+z) ? +z : 1; try { localStorage.setItem('qw-zoom', String(UIZ)); } catch(e) {} document.body.style.zoom = UIZ === 1 ? '' : String(UIZ); document.documentElement.style.setProperty('--z', String(UIZ)); dispatchEvent(new Event('resize')); }
+/* Breite der Oberfläche (0 = schmal wie früher, 1 = ganzer Bildschirm), stufenlos */
+let UIW = .36;
+function uiWideApply(){ const full = innerWidth/UIZ - 32, w = Math.round(Math.max(Math.min(660, full), 660 + UIW*(full - 660))); document.documentElement.style.setProperty('--gw', w + 'px'); }
+function uiWide(w, keep){ UIW = clamp01(+w); if (!keep) try { localStorage.setItem('qw-wide2', String(UIW)); } catch(e) {} uiWideApply(); dispatchEvent(new Event('resize')); }
+const clamp01 = v => Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : .36;
+addEventListener('resize', uiWideApply);
+(() => { let w = .36; try { const v = localStorage.getItem('qw-wide2'); if (v != null) w = +v; } catch(e) {} UIW = clamp01(w); uiWideApply(); })();
+/* Größe der Oberfläche (Einstellungen → Aussehen): Zoom auf die ganze Seite */
+function uiZoom(z, keep){ UIZ = Number.isFinite(+z) && +z >= .7 && +z <= 2 ? Math.round(+z*100)/100 : 1; if (!keep) try { localStorage.setItem('qw-zoom', String(UIZ)); } catch(e) {} document.body.style.zoom = UIZ === 1 ? '' : String(UIZ); document.documentElement.style.setProperty('--z', String(UIZ)); if (typeof uiWideApply === 'function') uiWideApply(); dispatchEvent(new Event('resize')); }
 (() => { let z = 1; try { z = +localStorage.getItem('qw-zoom') || 1; } catch(e) {} const go = () => uiZoom(z); document.body ? go() : addEventListener('DOMContentLoaded', go); })();
 /* ---------- Farben der gezeichneten Spiele (folgen Heldenfarben und hell/dunkel) ---------- */
 const PAL = (() => {
@@ -2082,6 +2093,18 @@ const PAL = (() => {
   return T;
 })();
 
+
+// Regler für Breite und Größe (Einstellungen und 🎨 oben)
+const uiSliders = () => `<div class="mkv"><span>Breite<small>Wie viel vom Bildschirm Menü und Spiele nutzen</small></span><span class="mkr"><input type="range" min="0" max="1" step=".01" value="${UIW}" data-ui="w"><b>${Math.round(UIW*100)}%</b></span></div>
+  <div class="mkv"><span>Größe<small>Alles größer oder kleiner</small></span><span class="mkr"><input type="range" min=".7" max="1.8" step=".05" value="${UIZ}" data-ui="z"><b>${Math.round(UIZ*100)}%</b></span></div>`;
+function uiSliderBind(root){
+  (root || document).querySelectorAll('input[data-ui]').forEach(el => {
+    const lab = () => { el.nextElementSibling.textContent = Math.round((el.dataset.ui === 'w' ? UIW : UIZ)*100) + '%'; };
+    el.oninput = () => { if (el.dataset.ui === 'w') uiWide(+el.value, true); else { el.dataset.v = el.value; el.nextElementSibling.textContent = Math.round(+el.value*100) + '%'; } if (el.dataset.ui === 'w') lab(); };
+    // Größe erst beim Loslassen, sonst springt der Regler unter dem Finger weg
+    el.onchange = () => { if (el.dataset.ui === 'w') uiWide(+el.value); else uiZoom(+el.value); lab(); };
+  });
+}
 // =====================================================================
 // HELDEN: Aussehen, Editor, Bühne, Punkteleiste, Angriffe, Emotes, Sieg, Abwesenheit
 // =====================================================================
@@ -2789,11 +2812,13 @@ function look(){const draw=()=>{const tm=themeMode();
  <div class="mpanel"><h3>🖼️ Hintergrund</h3><div class="bgsel">${BGN.map(([k,n])=>`<div class="bg-${k} ${k===BG?'on':''}" data-b="${k}">${bgArt(k)}<b>${n}</b></div>`).join('')}</div>
  <div class="mkv"><span>Animation<small>Hintergrund bewegt sich dezent</small></span><button class="tgl ${BGA?'on':''}" data-ba="${BGA?0:1}" aria-label="Animation an oder aus"></button></div></div>
  <div class="mpanel"><h3>🌗 Hell / Dunkel</h3><div class="mkv"><span>Modus<small>Auto folgt Handy oder PC</small></span><div class="seg">${[['light','☀️ Hell'],['dark','🌙 Dunkel'],['auto','🌗 Auto']].map(([k,t])=>`<button data-t="${k}" class="${tm===k?'on':''}">${t}</button>`).join('')}</div></div></div>
+ <div class="mpanel"><h3>📐 Anzeige</h3>${uiSliders()}</div>
  <div class="mpanel"><h3>🔊 Ton</h3><div class="mkv"><span>Ton</span><button class="tgl ${Snd.on?'on':''}" data-snd="${Snd.on?0:1}" aria-label="Ton an oder aus"></button></div>
  <div class="mkv"><span>Lautstärke<small>gesamt</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" value="${VOL}" id="vol"><b>${Math.round(VOL*100)}%</b></span></div>
  <div class="mkv"><span>Spiele<small>Töne in den Spielen und im Menü</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" value="${GVOL}" id="gvol"><b>${Math.round(GVOL*100)}%</b></span></div>
  <div class="mkv"><span>Emotes<small>Töne der Figuren</small></span><span class="mkr"><input type="range" min="0" max="1" step=".05" value="${EVOL}" id="evol"><b>${Math.round(EVOL*100)}%</b></span></div></div></div></div>`;
  document.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{BG=e.dataset.b;save();refresh();draw();});
+ uiSliderBind($('#MOD'));
  document.querySelectorAll('[data-snd]').forEach(e=>e.onclick=()=>{Snd.on=e.dataset.snd==='1';try{saveSettings()}catch(x){}const sb=$('#snd');if(sb)sb.textContent=Snd.on?'🔊':'🔇';if(Snd.on)Snd.init();draw();sfx('right');});
  {const v=$('#vol');v.oninput=()=>{VOL=+v.value;v.nextElementSibling.textContent=Math.round(VOL*100)+'%';if(MG)MG.gain.value=VOL;};v.onchange=()=>{save();sfx('buzz');};
   const g=$('#gvol');g.oninput=()=>{gvol(+g.value);g.nextElementSibling.textContent=Math.round(GVOL*100)+'%';};g.onchange=()=>{save();sfx('buzz');};
@@ -14485,7 +14510,7 @@ function mSet(){
     </div>
     <div class="mpanel"><h3>🎨 Aussehen</h3>
       <div class="mkv"><span>Hell / Dunkel<small>Auto folgt der Einstellung von Handy oder PC. Auch oben über ${tm === 'dark' ? '🌙' : tm === 'auto' ? '🌗' : '☀️'}</small></span><div class="seg" id="thsel"><button data-t="light" class="${tm === 'light' ? 'on' : ''}">☀️ Hell</button><button data-t="dark" class="${tm === 'dark' ? 'on' : ''}">🌙 Dunkel</button><button data-t="auto" class="${tm === 'auto' ? 'on' : ''}">🌗 Auto</button></div></div>
-      <div class="mkv"><span>Größe<small>Alles größer oder kleiner, etwa wenn Spiele oder das Brett am PC zu klein sind</small></span><div class="seg" id="zsel">${[[.85, 'Klein'], [1, 'Normal'], [1.15, 'Groß'], [1.3, 'Größer'], [1.5, 'Riesig']].map(([v, n]) => `<button data-z="${v}" class="${UIZ === v ? 'on' : ''}">${n}</button>`).join('')}</div></div>
+      ${uiSliders()}
       <div class="mkv"><span>Hintergrund<small>Auch oben über 🎨</small></span><button class="btn ghost" id="bgo">🎨 Auswählen</button></div>
     </div>
     <div class="mpanel"><h3>❓ Hilfe & Daten</h3>
@@ -14493,7 +14518,7 @@ function mSet(){
       <div class="mkv"><span>Gespielte Fragen zurücksetzen<small>Wissensfragen kommen wieder von vorn</small></span><button class="btn mred" id="rst">Zurücksetzen</button></div>
     </div></div>`);
   mWire();
-  main.querySelectorAll('#zsel button').forEach(b => b.onclick = () => { uiZoom(+b.dataset.z); mSet(); });
+  uiSliderBind(main);
   main.querySelectorAll('#thsel button').forEach(b => b.onclick = () => { HX.theme(b.dataset.t); menu(); });
   $('#bgo').onclick = () => HX.look();
   $('#sndt').onclick = () => { Snd.on = !Snd.on; saveSettings(); const sb = $('#snd'); if (sb) sb.textContent = Snd.on ? '🔊' : '🔇'; if (Snd.on) { Snd.init(); Snd.good(); } menu(); };
