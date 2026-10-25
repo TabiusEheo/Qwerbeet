@@ -2002,7 +2002,7 @@ button.pgw{cursor:pointer;text-align:left}button.pgw:hover{outline:3px solid var
 .pbc{margin-top:12px}
 .pbl .rd0 polyline{fill:none;stroke:#c9b37f;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
 .pbl .rd1 polyline{fill:none;stroke:#fff3d6;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
-.pbl .shut polyline{fill:none;stroke:#ff4d5e;stroke-width:3;stroke-dasharray:2 3;stroke-linecap:round;opacity:.9}
+.pbl .shut polyline{fill:none;stroke:#ff4d5e;stroke-width:5;stroke-dasharray:2 3;stroke-linecap:round;opacity:.9}
 .pbl .arw path{fill:none;stroke:#fff;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 .4px 0 rgba(0,0,0,.4))}
 .pbl .tol circle{fill:#ffc531;stroke:#1d1a16;stroke-width:.6}.pbl .tol text{font:900 3px Nunito,sans-serif;text-anchor:middle;fill:#1d1a16}
 .pbn{width:3.6%!important;border-radius:50%!important;box-shadow:0 0 0 2px #fff,0 0 0 3.5px rgba(0,0,0,.35),0 2px 0 3.5px rgba(0,0,0,.25)!important;font-size:clamp(9px,calc(1.4vw / var(--z)),16px)!important}
@@ -2057,6 +2057,13 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .game .oli{font-size:calc(16px*(1 + .45*var(--hu)));min-height:calc(48px*(1 + .6*var(--hu)))}
 .game .gfield .task,.game .gfield .letters{font-size:calc(100% + 50%*var(--hu))}
 .pgcard .pgq{font-size:calc(24px*(1 + .5*var(--hu)))}.pgcard .pgo{font-size:calc(16px*(1 + .4*var(--hu)))}
+.pbgo{position:absolute;z-index:7;transform:translate(-50%,-140%);border:0;border-radius:12px;padding:6px 10px;background:var(--p1);color:var(--t1,#fff);font:900 13px Nunito,sans-serif;box-shadow:0 0 0 2.5px var(--ol),0 4px 0 2.5px var(--ol);cursor:pointer;white-space:nowrap;animation:pbpulse 1s ease-in-out infinite alternate}
+@keyframes pbpulse{to{transform:translate(-50%,-160%)}}
+
+.pbn.off{opacity:.35;filter:grayscale(1)}
+.pbblk{position:absolute;transform:translate(-50%,-50%);z-index:4;display:flex;flex-direction:column;align-items:center;font-size:calc(3.6vh / var(--z,1));line-height:1;pointer-events:none;filter:drop-shadow(0 2px 3px #0008);animation:pbblk 1.6s ease-in-out infinite alternate}
+@keyframes pbblk{to{transform:translate(-50%,-50%) scale(1.15)}}
+.pbblk small{font-weight:800;font-size:calc(1.3vh / var(--z,1));color:#fff;background:#ff4d5e;border-radius:6px;padding:2px 6px;margin-top:2px}
 </style>
 </head>
 <body>
@@ -14830,6 +14837,21 @@ function openHelp(){
     <div class="ctl"><div class="l"><small class="c1">${esc(P[0].name)}</small><span class="kl">${kbp(0, 'bz')} Buzzer</span><span class="kl">${[0,1,2,3,4].map(i => kbp(0, 'r' + i)).join('')} Auswahl</span></div><div class="r"><small class="c2">${esc(P[1].name)}</small><span class="kl">${kbp(1, 'bz')} Buzzer</span><span class="kl">${[0,1,2,3,4].map(i => kbp(1, 'r' + i)).join('')} Auswahl</span></div>
       <div class="w"><span class="kl">${kb('Enter')} starten und weiter, auch in der Pause nach jedem Punkt</span></div></div>
     <p class="ctlnote">Jede Auswahl liegt im eigenen Feld, von links nach rechts wie die Tasten. Am Touchscreen tippt jeder in seinem Feld.${TOUCH ? '' : ` ${kb('Esc')} schließt die Hilfe.`}</p>
+    ${d ? '' : `<h3>Party (3–6 Spieler)</h3>
+    <ul><li>Unter „Party“ einen Raum erstellen und den Link schicken, oder lokal an einem Gerät spielen. Freie Plätze füllt der Gastgeber mit Bots (drei Stärken).</li>
+      <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, oder ♾️ nur Minispiele mit Punkten nach Platz.</li>
+      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Anzahl Minispiele zur Wahl (oder Zufall) und Länge der Minispiele (50–250 %, mehr oder weniger Runden und Durchgänge).</li>
+      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost.</li></ul>
+    <h3>Brett</h3>
+    <ul><li>Reihum würfeln (1–6) und laufen. An einer Abzweigung wählst du den Weg über die ➜-Pfeile auf dem Brett oder die Knöpfe darüber.</li>
+      <li>Felder: ${Object.values(PB_T).filter(x => x.n !== 'Start').map(x => esc(x.n)).join(', ')}. Antippen oder darüberfahren zeigt, was ein Feld macht.</li>
+      <li><b>⭐ Stern:</b> beim Vorbeilaufen für ${BR_STAR} Münzen kaufen, danach wandert er weiter. Wer am Ende die meisten Sterne hat, gewinnt, bei Gleichstand entscheiden die Münzen.</li>
+      <li><b>🛒 Shop:</b> beim Vorbeilaufen einkaufen, höchstens ${PB_MAX} Gegenstände. Vor dem Würfeln einsetzen: ${Object.values(PB_IT).map(x => `${x.ic} ${esc(x.n)} (${x.c} 🪙)`).join(', ')}.</li>
+      <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. Manche Karten verändern sich von Runde zu Runde.</li>
+      <li><b>🔥 Endspurt:</b> die letzten 3 Runden zählen blaue und rote Felder doppelt, der Letzte bekommt einen Gegenstand.</li>
+      <li><b>Bonus-Sterne</b> am Ende: je +1 ⭐ für die meisten Minispiel-Siege, die meisten gesammelten Münzen und die meisten Ereignisfelder.</li></ul>`}
+    <h3>Anzeige</h3>
+    <ul><li>Unter 🎨 lässt sich die Größe automatisch an den Bildschirm anpassen oder per Regler einstellen.</li></ul>
     <h3>Duell</h3>
     <ul><li>${MODE.nch ? `Vor jeder Runde stehen ${MODE.nch} Spiele zur Wahl` : 'Vor jeder Runde gibt es freie Wahl aus allen Spielen'}, wer zurückliegt, wählt.</li>
       <li>${modeRule(false)}</li>
@@ -17040,7 +17062,8 @@ function pgWalk(p, n){
   if (op.length > 1) {
     const o = op.map(q => ({id: String(q.k), l: (here.lab[q.k] || (q.k ? 'abbiegen' : 'weiter')) + (here.toll[q.k] ? ` · ${here.toll[q.k]} 🪙 Zoll` : '')}));
     b.msg = `${pbN(p)} steht an einer Abzweigung, noch ${n} ${n === 1 ? 'Schritt' : 'Schritte'}.`;
-    return pbAsk(p, 'Wohin?', o, o[0].id, () => { const L = pgLvl(p), ds = op.map(q => pbDist(b, q.z, b.star) + (here.toll[q.k] ? 2 : 0)); return String((Math.random() < [.4, .15, .05][L] ? pickOne(op) : op[ds.indexOf(Math.min(...ds))]).k); }, v => { const q = op.find(q => String(q.k) === v) || op[0]; go(q.z, q.k); });
+    b.fk = {at: b.pos[p], to: op.map(q => ({id: String(q.k), z: q.z}))};
+    return pbAsk(p, 'Wohin?', o, o[0].id, () => { const L = pgLvl(p), ds = op.map(q => pbDist(b, q.z, b.star) + (here.toll[q.k] ? 2 : 0)); return String((Math.random() < [.4, .15, .05][L] ? pickOne(op) : op[ds.indexOf(Math.min(...ds))]).k); }, v => { b.fk = null; const q = op.find(q => String(q.k) === v) || op[0]; go(q.z, q.k); });
   }
   go(nx[0], op[0] ? op[0].k : null);
 }
@@ -17144,10 +17167,12 @@ function pgBoardView(s, seats){
   const b = s.br, p = b.act, N = pbG(b.mi), M = PB_MAPS[b.mi];
   const pl = P => `<polyline points="${P.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}"/>`, road = N.segs.map(sg => pl(sg.P)).join('');
   const shut = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)).map(sg => pl(sg.P)).join('');
+  const shutS = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)), shutIds = new Set(shutS.flatMap(sg => sg.ids.slice(1, -1)));
+  const blk = shutS.map(sg => { const m = N[sg.ids[Math.floor(sg.ids.length/2)]]; return `<div class="pbblk" style="left:${m.x}%;top:${m.y}%">${M.ev === 'tide' ? '🌊' : M.ev === 'tree' ? '🌲' : '⛔'}<small>gesperrt</small></div>`; }).join('');
   const arrows = N.segs.filter(sg => sg.ids.length >= 4).map(sg => { const k = Math.floor((sg.ids.length - 1)/2), a = N[sg.ids[k]], c = N[sg.ids[k + 1]], ang = Math.atan2(c.Y - a.Y, c.X - a.X)*180/Math.PI;
     return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2}) rotate(${ang.toFixed(0)})"><path d="M-1.3 -2 L1.5 0 L-1.3 2" /></g>`; }).join('');
   const tolls = N.segs.filter(sg => sg.toll).map(sg => { const a = N[sg.ids[0]], c = N[sg.ids[1]]; return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2})"><circle r="2.6"/><text y="1">${sg.toll}</text></g>`; }).join('');
-  const tiles = N.map((n, i) => { const t = b.T[i]; return `<div class="pbn t-${t}${i === b.star ? ' star' : ''}${n.nx.length > 1 ? ' fork' : ''}" data-n="${i}" style="left:${n.x}%;top:${n.y}%"><span>${i === b.star ? '⭐' : t === 'b' || t === 'r' ? '' : PB_T[t].ic}</span>${b.traps[i] != null ? `<i class="trap" style="--pc:${PT_COL[b.traps[i]]}">🚧</i>` : ''}</div>`; }).join('');
+  const tiles = N.map((n, i) => { const t = b.T[i]; return `<div class="pbn t-${t}${shutIds.has(i) ? ' off' : ''}${i === b.star ? ' star' : ''}${n.nx.length > 1 ? ' fork' : ''}" data-n="${i}" style="left:${n.x}%;top:${n.y}%"><span>${i === b.star ? '⭐' : t === 'b' || t === 'r' ? '' : PB_T[t].ic}</span>${b.traps[i] != null ? `<i class="trap" style="--pc:${PT_COL[b.traps[i]]}">🚧</i>` : ''}</div>`; }).join('');
   const toks = s.pl.map((pl, i) => { const n = N[b.pos[i]], same = s.pl.map((x, k) => k).filter(k => b.pos[k] === b.pos[i]), j = same.indexOf(i), m = same.length;
     const dx = m > 1 ? Math.cos(j/m*2*Math.PI)*2 : 0, dy = m > 1 ? Math.sin(j/m*2*Math.PI)*3 : 0;
     return `<div class="pbk${i === p ? ' on' : ''}" style="left:${n.x + dx}%;top:${n.y + dy}%;--pc:${PT_COL[i]}">${ptHead({av: pl.av}, i)}</div>`; }).join('');
@@ -17161,9 +17186,10 @@ function pgBoardView(s, seats){
   else if (p >= 0 && b.st === 'pre') act = `<p class="hint">${pbN(p)} würfelt gleich …</p>`;
   const dice = b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0);
   return `${b.end ? '<div class="pbend">🔥 Endspurt: blaue und rote Felder zählen doppelt</div>' : ''}
-    <div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g></svg>${tiles}${toks}
-      <div class="pbmap">${M.ic} ${M.n}</div><div class="pbtip" id="pbtip" hidden></div></div>
     <div class="pbc"><div class="mxdice pbdice">${dice}</div><div><p class="brmsg">${b.msg}${b.st === 'walk' && b.left > 0 && !b.ask ? ` <b>noch ${b.left}</b>` : ''}</p><div class="bract">${act}</div></div></div>
+    <div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g></svg>${tiles}${blk}${toks}
+      ${b.ask && b.fk && pgMine(b.ask.p) && !pgBot(b.ask.p) ? b.fk.to.map(t => { const n = N[t.z], o = b.ask.o.find(x => x.id === t.id); return `<button class="pbgo" data-bo="${t.id}" style="left:${n.x}%;top:${n.y}%">➜ ${esc(o ? o.l : '')}</button>`; }).join('') : ''}
+      <div class="pbmap">${M.ic} ${M.n}</div><div class="pbtip" id="pbtip" hidden></div></div>
     ${pgChips(s, i => [i === p ? 'on' : '', b.items[i].length ? b.items[i].map(k => PB_IT[k].ic).join(' ') : 'keine Gegenstände'])}
     <p class="hint">Felder antippen oder mit der Maus darüberfahren zeigt, was sie machen.</p>
     ${(b.log || []).length ? `<details class="pblog"${PQ.logOpen ? ' open' : ''}><summary>📜 Verlauf</summary><ol>${b.log.slice().reverse().map(e => `<li><small>R${e.r}</small> ${e.m}</li>`).join('')}</ol></details>` : ''}`;
