@@ -2172,6 +2172,43 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .pbn.pp.c0{box-shadow:0 0 0 3px #ffe066,0 0 0 5px #1d1a16!important}.pbn.pp.c1{box-shadow:0 0 0 3px #7ee0ea,0 0 0 5px #1d1a16!important}.pbn.pp.c2{box-shadow:0 0 0 3px #ffa8d2,0 0 0 5px #1d1a16!important}
 .pbn.pp.hot{transform:translate(-50%,-50%) scale(1.15)}
 @media (max-width:560px){#ptmap{grid-template-columns:repeat(2,1fr)}#pttempo button{font-size:13px;padding:7px 4px;white-space:nowrap}}
+/* neue Felder, Glücksrad, Boss */
+.pbn.t-g{background:#ff8a1f}.pbn.t-k{background:#7a1fd6;box-shadow:0 0 0 2px #ffd54a inset}.pbn.t-n{background:#1f9e6a}.pbn.t-z{background:#5b5f73}
+.pbnum.tr{background:#5b5f73}
+.pbwh{position:relative;width:118px;height:118px;flex:none;margin:2px auto}
+.pbwr{position:absolute;inset:6px;border-radius:50%;border:3px solid #1d1a16;background:conic-gradient(#ffc531 0 60deg,#4d9bff 0 120deg,#ff5d6c 0 180deg,#2ec4d6 0 240deg,#9b7be0 0 300deg,#3fbf5a 0);transform:rotate(var(--rot));animation:pbwspin 3s cubic-bezier(.15,.7,.2,1) var(--ad) both}
+.pbwh.dn .pbwr{animation:none}
+.pbwr span{position:absolute;left:50%;top:50%;width:0;height:0}.pbwr span i{position:absolute;left:-11px;top:-48px;width:22px;text-align:center;font-style:normal;font-size:19px;line-height:22px}
+.pbwp{position:absolute;left:50%;top:-6px;transform:translateX(-50%);font-size:20px;color:#1d1a16;text-shadow:0 0 3px #fff;z-index:2}
+.pbwh em{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);white-space:nowrap;background:#1d1a16;color:#fff;font:900 12px/1 Nunito,sans-serif;font-style:normal;padding:4px 8px;border-radius:8px;z-index:2}
+@keyframes pbwspin{from{transform:rotate(0)}to{transform:rotate(var(--rot))}}
+.pgteam.boss{background:linear-gradient(90deg,#7a1fd6,#ff4d5e)}
+.pgtr{font-style:normal;font-weight:900;color:#1fae5b;white-space:nowrap}
+.pbits{flex-wrap:wrap}
+/* neue Party-Spiele */
+.pgopt.pgo2{grid-template-columns:1fr 1fr}.pgopt.pgo3{grid-template-columns:1fr 1fr 1fr}
+@media (max-width:560px){.pgopt.pgo2{grid-template-columns:1fr 1fr}.pgopt.pgo3{grid-template-columns:1fr 1fr 1fr}}
+.pgch{max-width:560px;margin:8px auto 4px}
+.pgsp{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 6px}.pgsp span{font-size:46px;line-height:1}
+.pgssp{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:10px 0}
+.pgssp div{min-width:86px;padding:10px 8px;border-radius:12px;background:var(--card);box-shadow:0 0 0 3px var(--pc),var(--shs);display:flex;flex-direction:column;align-items:center;gap:2px}
+.pgssp div.off{opacity:.45;filter:grayscale(1)}.pgssp span{font-size:44px;line-height:1.1}.pgssp b{font-size:13px}.pgssp small{font-size:11px;opacity:.7}
+.pgbal{display:flex;flex-direction:column;align-items:center;gap:8px}
+.pgbs{display:flex;gap:8px}.pgbs span{padding:4px 10px;border-radius:999px;background:var(--card);font-weight:900;font-size:14px;opacity:.6}.pgbs span.on{opacity:1;box-shadow:0 0 0 2px var(--p2)}
+.pgbw{height:300px;display:flex;align-items:flex-end;justify-content:center;width:100%}
+.pgbb{position:relative;border-radius:50% 50% 47% 47%/55% 55% 45% 45%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.7) 0 8%,transparent 22%),var(--c);box-shadow:inset -10px -14px 0 rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;margin-bottom:26px;transition:width .08s,height .08s}
+.pgbb::after{content:"";position:absolute;bottom:-26px;left:50%;width:2px;height:26px;background:#555}
+.pgbb b{font:400 34px/1 "Lilita One",sans-serif;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3)}
+.pgbpop,.pgbend{font-size:90px;line-height:1;display:flex;flex-direction:column;align-items:center;align-self:center;animation:pgpop .3s}
+.pgbpop small,.pgbend small{font-size:16px;font-weight:900}.pgbend b{font:400 54px/1 "Lilita One",sans-serif}
+@keyframes pgpop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+.pgbp{min-width:150px;font-size:20px}
+.pgbhp{display:flex;align-items:center;gap:8px;max-width:520px;margin:4px auto 8px}.pgbhp span{font-size:34px}.pgbhp div{flex:1;height:18px;border-radius:9px;background:#3a0d14;overflow:hidden;box-shadow:0 0 0 2px var(--ol)}
+.pgbhp i{display:block;height:100%;transition:width .5s}.pgbhp b{font:400 22px/1 "Lilita One",sans-serif;min-width:36px}
+.pgbossd{margin-top:8px}.pgbossd span{display:inline-flex;flex-direction:column;align-items:center;padding:4px 10px;margin:3px;border-radius:10px;background:var(--card);box-shadow:0 0 0 2px var(--pc)}.pgbossd small{font-weight:900}
+.pgcq{font-size:clamp(16px,2.4vw,22px);line-height:1.25;margin:10px 0}
+.pgbal .mbtns{flex-wrap:wrap;justify-content:center}.pgbp{min-width:0;font-size:18px}
+#ptmap{grid-template-columns:repeat(4,1fr)}#ptmap button{white-space:nowrap}@media (max-width:560px){#ptmap{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -10025,6 +10062,8 @@ function bdBall(ctx, id, x, y, R){
   ctx.fillStyle = g; ctx.fillRect(x - R, y - R, 2*R, 2*R); ctx.restore();
   if (id) { ctx.fillStyle = '#f4f1e6'; ctx.beginPath(); ctx.arc(x, y, R*.64, 0, 7); ctx.fill(); ctx.fillStyle = "#111"; ctx.font = `900 ${Math.round(R*(id > 9 ? 1.3 : 1.5))}px Nunito, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(id), x, y + R*.06); ctx.textBaseline = 'alphabetic'; }
 }
+// Farbe und Name je Seite (die Party gibt eigene vor: Teamfarben, Teamnamen oder eine eigene Kopfzeile)
+const bdCol = (S, j) => S.col ? S.col[j] : j ? PAL.p2 : PAL.p1;
 function bdDraw(cv, S, now){
   const {W, H, R, L, Rr, T, B} = BD; BD.geo();
   const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
@@ -10070,14 +10109,14 @@ c.strokeStyle = PAL.p2; c.lineWidth = 4; c.lineCap = 'round';
   }
   const tgt = S.mode === '9' && S.ph !== 'done' && S.ph !== 'roll' ? BD.low(S.b) : -1;
   for (const [id, x, y, f] of pos) if (!f && id === tgt) { const k = .5 + .5*Math.sin(now/180); ctx.fillStyle = PAL.a('sun', .25 + .2*k); ctx.beginPath(); ctx.arc(x, y, R*(1.9 + .25*k), 0, 7); ctx.fill(); ctx.strokeStyle = PAL.sun; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, y, R*(1.55 + .25*k), 0, 7); ctx.stroke(); }
-  if (S.mode === '8' && S.g[S.p] && S.ph === 'aim' && !r) { const col = S.p ? PAL.p2 : PAL.p1; ctx.strokeStyle = col; ctx.lineWidth = 3; for (const [id, x, y, f] of pos) if (!f && id && bdLegal(S, id)) { ctx.beginPath(); ctx.arc(x, y, R + 4, 0, 7); ctx.stroke(); } }
+  if (S.mode === '8' && S.g[S.p] && S.ph === 'aim' && !r) { const col = bdCol(S, S.p); ctx.strokeStyle = col; ctx.lineWidth = 3; for (const [id, x, y, f] of pos) if (!f && id && bdLegal(S, id)) { ctx.beginPath(); ctx.arc(x, y, R + 4, 0, 7); ctx.stroke(); } }
   for (const [id, x, y, f] of pos) if (!f) { ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.arc(x + 2.5, y + 3, R, 0, 7); ctx.fill(); bdBall(ctx, id, x, y, R); }
   // Zielhilfe und Queue
   const A = S.aim, cue = S.b.find(b => b.id === 0);
   if (S.ph === 'aim' && !r && cue && !cue.f) {
     if (S.bih && !(A && A.w > .02)) { ctx.strokeStyle = PAL.a('sun', .6); ctx.setLineDash([4, 4]); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cue.x, cue.y, R + 6, 0, 7); ctx.stroke(); ctx.setLineDash([]); }
     if (A) {
-      const ux = Math.cos(A.a), uy = Math.sin(A.a), h = BD.ray(S.b, cue.x, cue.y, ux, uy), col = S.p ? PAL.p2 : PAL.p1;
+      const ux = Math.cos(A.a), uy = Math.sin(A.a), h = BD.ray(S.b, cue.x, cue.y, ux, uy), col = bdCol(S, S.p);
       ctx.strokeStyle = PAL.a('ink', .75); ctx.lineWidth = 1.5; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(cue.x, cue.y); ctx.lineTo(h.gx, h.gy); ctx.stroke(); ctx.setLineDash([]);
       ctx.strokeStyle = PAL.a('ink', .8); ctx.beginPath(); ctx.arc(h.gx, h.gy, R, 0, 7); ctx.stroke();
       if (h.b) {
@@ -10097,15 +10136,15 @@ c.strokeStyle = PAL.p2; c.lineWidth = 4; c.lineCap = 'round';
   // versenkte Kugeln unten am Rand, Gruppen oben
   let x0 = W/2 - S.pot.length*12; for (const id of S.pot) { bdBall(ctx, id, x0 + 12, H - 22, 9); x0 += 24; }
   ctx.font = '900 18px Nunito, sans-serif';
-  for (const j of [0, 1]) {
-    const me = S.p === j && S.ph !== 'done' ? '● ' : '', nmT = j ? `${P[j].name.slice(0, 14)} ${me}` : `${me}${P[j].name.slice(0, 14)}`;
-    ctx.textAlign = j ? 'right' : 'left'; ctx.fillStyle = j ? PAL.p2 : PAL.p1; ctx.font = '900 18px Nunito, sans-serif'; ctx.fillText(nmT, j ? W - 18 : 18, 34);
+  if (S.hud) S.hud(ctx); else for (const j of [0, 1]) {
+    const nm0 = (S.nm ? S.nm[j] : P[j].name).slice(0, 14), me = S.p === j && S.ph !== 'done' ? '● ' : '', nmT = j ? `${nm0} ${me}` : `${me}${nm0}`;
+    ctx.textAlign = j ? 'right' : 'left'; ctx.fillStyle = bdCol(S, j); ctx.font = '900 18px Nunito, sans-serif'; ctx.fillText(nmT, j ? W - 18 : 18, 34);
     if (S.mode !== '8') continue;
     const tw = ctx.measureText(nmT).width, gx = j ? W - 18 - tw - 12 : 18 + tw + 12;
     if (!S.g[j]) { ctx.font = '800 14px Nunito, sans-serif'; ctx.fillStyle = PAL.a('ink', .6); ctx.fillText('offener Tisch', gx, 33); continue; }
     // eigene Gruppe als Kugelreihe: übrige voll, versenkte blass, danach die 8
     const ids = S.g[j] === 's' ? [1, 2, 3, 4, 5, 6, 7] : [9, 10, 11, 12, 13, 14, 15], left = ids.filter(id => S.b.some(b => b.id === id && !b.f));
-    ctx.font = '900 13px Nunito, sans-serif'; ctx.fillStyle = j ? PAL.p2 : PAL.p1;
+    ctx.font = '900 13px Nunito, sans-serif'; ctx.fillStyle = bdCol(S, j);
     const lab = S.g[j] === 's' ? 'VOLLE' : 'HALBE', lw = ctx.measureText(lab).width;
     ctx.fillText(lab, gx, 33);
     const list = [...ids, 8], dir = j ? -1 : 1; let x = gx + dir*(lw + 17);
@@ -14976,9 +15015,12 @@ function openHelp(){
       <li><b>🛒 Shop:</b> beim Vorbeilaufen oder Stehenbleiben einkaufen, höchstens ${PB_MAX} Gegenstände: ${Object.values(PB_IT).map(x => `${x.ic} ${esc(x.n)} (${x.c} 🪙)`).join(', ')}. Vor dem Würfeln einen benutzen, das 🛡️ Schild wirkt von selbst.</li>
       <li><b>⚔️ Münzduell:</b> bleibst du auf dem Feld eines Mitspielers stehen, kannst du ihn herausfordern. Beide würfeln, der höhere Wurf gewinnt 5 Münzen (im Endspurt 10).</li>
       <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. <b>👥 Team-Minispiel:</b> stehen nach der Runde Spieler auf Blau und auf Rot, spielt Blau gegen Rot (die übrigen werden aufgeteilt). Der Schnitt im Team zählt, jeder im Gewinnerteam bekommt 10 Münzen. Nie zweimal hintereinander.</li>
-      <li>Alle 3 Runden verändert sich die Karte: die Torte dreht ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum. Gesperrte Wege stehen oben in der Spalte.</li>
+      <li>Die Karte verändert sich: die Torte dreht alle 3 Runden ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum, der Vulkan bricht aus (Lava sperrt einen Weg und macht blaue Felder rot), am Bahnhof geht eine Schranke zu. Die Zugbrücke der Burg geht alle 2 Runden hoch oder runter. Gesperrte Wege stehen oben in der Spalte.</li>
+      <li><b>🎰 Glücksrad:</b> ${PB_WH.map(x => `${x.ic} ${esc(x.n)}`).join(', ')}. <b>🏦 Bank:</b> wer vorbeiläuft, zahlt 3 Münzen ein, wer stehen bleibt, bekommt alles. <b>🚉 Bahnhof:</b> für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.</li>
+      <li><b>⚡ Boss-Kampf:</b> wer auf dem Boss-Feld stehen bleibt, weckt den Boss, außerdem kommt er einmal pro Partie in einer zufälligen Runde. Dann spielen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern, gewinnt der Boss, verliert jeder 5 Münzen.</li>
+      <li><b>🍀 Trost:</b> wer im Minispiel Letzter ist, bekommt 2 Münzen extra.</li>
       <li><b>🔥 Endspurt:</b> in den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt, der Letzte bekommt einen Gegenstand. <b>⭐ Letzte Chance:</b> in der letzten Runde kostet der Stern die Hälfte.</li>
-      <li><b>Bonus-Sterne</b> am Ende: je +1 ⭐ für die meisten Minispiel-Siege, die meisten gesammelten Münzen und die meisten Ereignisfelder.</li>
+      <li><b>Bonus-Sterne</b> am Ende: jede Partie werden 3 von ${Object.keys(PB_BON).length} ausgelost, je +1 ⭐ für die meisten ${Object.values(PB_BON).map(x => esc(x.v[1])).join(', ')}.</li>
       <li>Am Handy vergrößert „🔍 Brett vergrößern“ das Brett, es folgt dann der Figur, die gerade zieht.</li></ul>`}
     <h3>Anzeige</h3>
     <ul><li>Unter 🎨 lässt sich die Größe automatisch an den Bildschirm anpassen oder per Regler einstellen.</li></ul>
@@ -15264,7 +15306,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'bf3e29dac';
+const NET_BUILD = 'b76b36b3f';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16778,7 +16820,8 @@ function pgOrderIn(i){
 // Minispiel aussuchen: reihum in der ausgewürfelten Reihenfolge
 // Minispiel aussuchen: alle stimmen gleichzeitig ab (15 s), die meisten Stimmen gewinnen, Gleichstand wird ausgelost
 function pgPick(){
-  const s = PQ.s, ids = Object.keys(PGAMES).filter(k => k !== s.prev);
+  const s = PQ.s, ids = Object.keys(PGAMES).filter(k => k !== s.prev && !PGAMES[k].boss);
+  if (s.boss) { s.len = s.len0 || 1; return pgIntro(pickOne(Object.keys(PGAMES).filter(k => PGAMES[k].boss && k !== s.prev))); }
   if (s.nch === -1) { s.len = s.len0 || s.len || 1; return pgIntro(pickOne(ids)); }   // Einstellung „Zufall“: gar nicht abstimmen
   const opts = s.nch > 0 ? shuffle(ids.slice()).slice(0, s.nch) : ids;
   s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
@@ -16798,7 +16841,7 @@ function pgVoteEnd(){
   const c = {}; s.pk.v.forEach(v => { if (v != null) c[v] = (c[v] || 0) + 1; });
   const mx = Math.max(0, ...Object.values(c)), top = s.pk.opts.filter(id => (c[id] || 0) === mx);
   let id = pickOne(top); s.pk.win = id; s.pk.cnt = c;
-  if (id === 'rnd') id = pickOne(Object.keys(PGAMES).filter(k => k !== s.prev));
+  if (id === 'rnd') id = pickOne(Object.keys(PGAMES).filter(k => k !== s.prev && !PGAMES[k].boss));
   { const lc = [0, 0, 0]; s.pk.lv.forEach(v => { if (v != null) lc[v]++; }); const m = Math.max(...lc), t = [0, 1, 2].filter(k => lc[k] === m); s.pk.lw = t.includes(1) ? 1 : pickOne(t); s.len = Math.round((s.len0 || 1)*PG_LV[s.pk.lw].f*100)/100; }
   s.pk.go = id; pgPush();
   pgT(() => pgIntro(id), pbW(2600));
@@ -16807,7 +16850,7 @@ function pgIntro(id){
   const s = PQ.s;
   s.prev = id;
   const G0 = PGAMES[id], inner = G0.inner != null ? G0.inner : (G0.inner = Object.values(G0).some(f => typeof f === 'function' && /pgR\(/.test(String(f))));
-  const rp = inner ? 1 : pgR(G0.rep || 1);
+  const rp = inner || G0.boss ? 1 : pgR(G0.rep || 1);
   s.ph = 'intro'; s.g = {id, t: Date.now(), rp: {n: rp, k: 0, sum: s.pl.map(() => 0)}}; s.res = null; s.rdy = s.pl.map((p, i) => pgBot(i)); s.go = 0;
   pgPush();
   if (s.rdy.every(Boolean)) return pgT(pgGo, 1500);
@@ -16831,7 +16874,7 @@ function pgResult(sc, txt){
 }
 function pgResultF(sc, txt){
   const s = PQ.s, n = s.pl.length, pay = BR_PAY[n] || BR_PAY[6], T = s.br && s.team;
-  let place, gain;
+  let place, gain, tr = [];
   if (T) {   // Team-Minispiel: der Schnitt im Team zählt, jeder Gewinner bekommt 10, bei Gleichstand alle 3
     const avg = t => { const m = s.pl.map((p, i) => i).filter(i => T.g[i] === t); return m.reduce((a, i) => a + sc[i], 0)/m.length; };
     const a0 = avg(0), a1 = avg(1); T.win = a0 === a1 ? -1 : a0 > a1 ? 0 : 1;
@@ -16840,9 +16883,21 @@ function pgResultF(sc, txt){
     const ord = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]);
     place = []; ord.forEach((i, k) => { place[i] = k && sc[i] === sc[ord[k - 1]] ? place[ord[k - 1]] : k; });
     gain = place.map(p => pay[p] || 0);
+    // Trost: wer im Minispiel Letzter ist, bekommt 2 Münzen extra (Glückspilz)
+    if (s.br && n >= 3) { const lp = Math.max(...place); if (lp > 0) { tr = s.pl.map((p, i) => i).filter(i => place[i] === lp); tr.forEach(i => { gain[i] += 2; s.br.lastp[i]++; }); } }
   }
   gain.forEach((g, i) => { if (s.br) { s.br.coins[i] += g; s.br.got[i] += g; if (place[i] === 0 && !(T && T.win < 0)) s.br.mw[i]++; } else s.pts[i] += g; });
-  s.ph = 'res'; s.res = {place, gain, txt: txt || sc.map(String), tot: s.br ? s.br.coins.slice() : s.pts.slice(), t: Date.now(), hold: false};
+  s.ph = 'res'; s.res = {place, gain, tr, txt: txt || sc.map(String), tot: s.br ? s.br.coins.slice() : s.pts.slice(), t: Date.now(), hold: false};
+  pgAutoNext(); pgPush();
+}
+// Boss-Kampf vorbei: dmg = Schaden je Spieler. Gewonnen: 10 bis 25 Münzen nach Schaden, der Beste +1 Stern. Verloren: alle −5.
+function pgBossEnd(dmg, won, txt){
+  pgClear(); const s = PQ.s, b = s.br, mx = Math.max(1, ...dmg);
+  const ord = dmg.map((v, i) => i).sort((x, y) => dmg[y] - dmg[x]), place = []; ord.forEach((i, k) => { place[i] = k && dmg[i] === dmg[ord[k - 1]] ? place[ord[k - 1]] : k; });
+  const gain = won ? dmg.map(d => Math.round(10 + 15*Math.max(0, d)/mx)) : dmg.map(() => -5), best = won ? ord[0] : -1;
+  gain.forEach((g, i) => { if (b) { if (g > 0) pbAdd(i, g); else b.coins[i] = Math.max(0, b.coins[i] + g); } else s.pts[i] += Math.max(0, g); });
+  if (b && best >= 0) { b.stars[best]++; b.mw[best]++; }
+  s.ph = 'res'; s.res = {place, gain, tr: [], txt: txt || dmg.map(d => `${d} Schaden`), tot: b ? b.coins.slice() : s.pts.slice(), t: Date.now(), hold: false, boss: {won, best}};
   pgAutoNext(); pgPush();
 }
 // Ergebnis bleibt stehen, bis der Gastgeber weitermacht, spätestens nach 15 Sekunden (anhalten geht)
@@ -16903,7 +16958,7 @@ function pgRender(){
       ${P.win ? '<p class="hint">Gleich geht es los …</p>' : pgDots(s, i => P.v[i] != null)}`;
   } else if (s.ph === 'board') body = pgBoardView(s, seats);
   else if (s.ph === 'intro') { const rd = s.rdy || [], wait = seats.filter(i => i >= 0 && !rd[i] && !pgBot(i));
-    body = `<div class="pgintro">${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
+    body = `<div class="pgintro">${s.boss ? '<div class="pgteam boss">⚡ Boss-Kampf: alle zusammen gegen den Boss!<small>Besiegt ihr ihn, bekommt jeder je nach Schaden 10 bis 25 🪙, der beste Kämpfer +1 ⭐. Gewinnt der Boss, verliert jeder 5 🪙.</small></div>' : ''}${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
       ${s.go ? '<div class="pgcd" id="pgcd"></div>' : `${wait.length ? `<div class="mbtns pgrdy">${wait.map(i => `<button class="btn pgrd" data-i="${i}" style="background:${PT_COL[i]};color:#fff">✋ ${seats[1] >= 0 ? esc(s.pl[i].n) + ': ' : ''}Bereit ${kbp(pgSeat(seats, i), 'bz')}</button>`).join('')}</div>` : '<p class="hint">Warte auf die anderen …</p>'}
       ${pgDots(s, i => rd[i])}<p class="hint">Los geht es, wenn alle bereit sind, spätestens in ${pgCdn('rd' + s.g.t, pbW(15000))}</p>`}</div>`; }
   else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
@@ -16911,8 +16966,9 @@ function pgRender(){
   else if (s.ph === 'res') {
     const ord = s.pl.map((p, i) => i).sort((a, b) => s.res.place[a] - s.res.place[b]);
     const T = s.br && s.team, R0s = s.res, tot = R0s.tot, auto = R0s.hold ? '' : pgCdn('ra' + R0s.t, pbW(15000));
-    body = `${G0 ? `<div class="kick">${G0.icon} ${G0.name}</div>` : ''}${T ? `<div class="pgteam${T.win < 0 ? '' : ' w' + T.win}">${T.win < 0 ? '👥 Unentschieden! Alle bekommen 3 🪙.' : `${T.win ? '🔴 Team Rot' : '🔵 Team Blau'} gewinnt! Jeder im Team bekommt 10 🪙.`}</div>` : ''}
-      <div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${T ? `<i class="tm" style="background:${PB_TC[T.g[i]]}"></i>` : `${R0s.place[i] + 1}.`}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(R0s.txt[i]))}</small><span class="gn">+${R0s.gain[i]}${s.br ? ' 🪙' : ''}${tot ? `<em class="pgtot">= ${tot[i]}${s.br ? ' 🪙' : ''}</em>` : ''}</span></div>`).join('')}</div>
+    const BS = R0s.boss, sg = v => v < 0 ? `−${-v}` : `+${v}`;
+    body = `${G0 ? `<div class="kick">${G0.icon} ${G0.name}</div>` : ''}${BS ? `<div class="pgteam ${BS.won ? 'w0' : 'w1'}">${BS.won ? `⚡ Der Boss ist besiegt! Je mehr Schaden, desto mehr Münzen. Bester Kämpfer: <b>${esc(s.pl[BS.best].n)}</b> +1 ⭐` : '💀 Der Boss hat gewonnen. Alle verlieren 5 🪙.'}</div>` : ''}${T ? `<div class="pgteam${T.win < 0 ? '' : ' w' + T.win}">${T.win < 0 ? '👥 Unentschieden! Alle bekommen 3 🪙.' : `${T.win ? '🔴 Team Rot' : '🔵 Team Blau'} gewinnt! Jeder im Team bekommt 10 🪙.`}</div>` : ''}
+      <div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${T ? `<i class="tm" style="background:${PB_TC[T.g[i]]}"></i>` : `${R0s.place[i] + 1}.`}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(R0s.txt[i]))}${(R0s.tr || []).includes(i) ? ' <i class="pgtr" title="Trost für den letzten Platz">🍀 +2</i>' : ''}${BS && BS.best === i ? ' <i class="pgtr">+1 ⭐</i>' : ''}</small><span class="gn">${sg(R0s.gain[i])}${s.br ? ' 🪙' : ''}${tot ? `<em class="pgtot">= ${tot[i]}${s.br ? ' 🪙' : ''}</em>` : ''}</span></div>`).join('')}</div>
       ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgnx">${s.br ? (s.ri + 1 >= s.rounds ? 'Zum Ergebnis' : 'Weiter zum Brett') : 'Nächstes Minispiel'}${enterKb()}</button><button class="btn ghost${PQ.endArm > performance.now() ? ' warn' : ''}" id="pgend">${PQ.endArm > performance.now() ? 'Wirklich beenden?' : 'Party beenden'}</button></div>
         ${auto ? `<p class="hint">Geht automatisch weiter in ${auto} · <button class="link" id="pghold">anhalten</button></p>` : ''}` : `<p class="hint">Der Gastgeber ${s.br ? 'macht weiter' : 'startet das nächste Minispiel'}${auto ? `, spätestens in ${auto}` : ''}.</p>`}`;
   } else if (s.ph === 'bonus') { body = pgBonusView(s);
@@ -17078,8 +17134,19 @@ const pgT0 = (fn, ms) => { const t = setTimeout(fn, ms); PQ.tm.push(t); return t
 /* ---------- Brett für 3–6 Spieler: Karten mit Abzweigungen, Shop und Gegenständen, Endspurt, Bonus-Sterne ----------
    Der Gastgeber hält den Stand in s.br und entscheidet alles. Entscheidungen (Abzweigung, Shop, Stern, Ziel, Duell) laufen
    über b.ask: wählen kann nur, wer gefragt ist, die anderen sehen dieselben Knöpfe ausgegraut; nach Ablauf gilt die Vorgabe. */
-const PB_T = {h: {ic: '🏁', n: 'Start'}, b: {ic: '+3', n: 'Blau: +3 Münzen'}, r: {ic: '−3', n: 'Rot: −3 Münzen'}, e: {ic: '❓', n: 'Ereignis'}, s: {ic: '🛒', n: 'Shop'}, d: {ic: '🦹', n: 'Dieb'}, w: {ic: '🔄', n: 'Tausch'}};
-const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', w: '🔄'};
+const PB_T = {h: {ic: '🏁', n: 'Start'}, b: {ic: '+3', n: 'Blau: +3 Münzen'}, r: {ic: '−3', n: 'Rot: −3 Münzen'}, e: {ic: '❓', n: 'Ereignis'}, s: {ic: '🛒', n: 'Shop'}, d: {ic: '🦹', n: 'Dieb'}, w: {ic: '🔄', n: 'Tausch'},
+  g: {ic: '🎰', n: 'Glücksrad'}, k: {ic: '⚡', n: 'Boss'}, n: {ic: '🏦', n: 'Bank'}, z: {ic: '🚉', n: 'Bahnhof'}};
+const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', w: '🔄', g: '🎰', k: '⚡', n: '🏦', z: '🚉'};
+// Glücksrad: was passieren kann
+const PB_WH = [{ic: '🎉', n: 'Alle +5'}, {ic: '💰', n: 'Du +10'}, {ic: '💸', n: 'Du −8'}, {ic: '⚖️', n: 'Münzen gerecht verteilen'}, {ic: '🎁', n: 'Gegenstand'}, {ic: '🔀', n: 'Sterne tauschen'}];
+// Bonus-Sterne: pro Partie werden 3 davon ausgelost
+const PB_BON = {
+  mw: {ic: '🏆', n: 'Minispiel-Star', v: ['Minispiel-Sieg', 'Minispiel-Siege']}, got: {ic: '🪙', n: 'Münz-Star', v: ['Münze gesammelt', 'Münzen gesammelt']},
+  ev: {ic: '❓', n: 'Ereignis-Star', v: ['Ereignisfeld', 'Ereignisfelder']}, steps: {ic: '🏃', n: 'Lauf-Star', v: ['Feld gelaufen', 'Felder gelaufen']},
+  red: {ic: '🔴', n: 'Pech-Star', v: ['rotes Feld', 'rote Felder']}, blue: {ic: '🔵', n: 'Blau-Star', v: ['blaues Feld', 'blaue Felder']},
+  spent: {ic: '🛒', n: 'Shopping-Star', v: ['Münze ausgegeben', 'Münzen ausgegeben']}, dw: {ic: '⚔️', n: 'Duell-Star', v: ['Duell gewonnen', 'Duelle gewonnen']},
+  lastp: {ic: '🍀', n: 'Glückspilz-Star', v: ['Mal Letzter', 'Mal Letzter']}, wh: {ic: '🎰', n: 'Glücksrad-Star', v: ['Mal gedreht', 'Mal gedreht']},
+};
 const PB_IT = {
   dd: {ic: '🎲🎲', n: 'Doppelwürfel', c: 10, d: 'Du würfelst mit 2 Würfeln.'},
   tt: {ic: '🎲🎲🎲', n: 'Dreifachwürfel', c: 18, d: 'Du würfelst mit 3 Würfeln.'},
@@ -17088,6 +17155,8 @@ const PB_IT = {
   fl: {ic: '🚧', n: 'Falle', c: 6, d: 'Du legst sie auf dein Feld. Wer dort stehen bleibt, zahlt dir 10 Münzen.'},
   sh: {ic: '🛡️', n: 'Schild', c: 12, d: 'Schützt dich einmal vor Dieb, Falle, Tausch, Platztausch und einem verlorenen Duell. Wirkt von selbst.'},
   rk: {ic: '🚀', n: 'Stern-Rakete', c: 35, d: 'Fliegt dich vor dem Würfeln direkt zum Stern, danach würfelst du normal.'},
+  mg: {ic: '🧲', n: 'Münzmagnet', c: 12, d: 'Diese und nächste Runde zahlt dir jeder 2 Münzen, der an dir vorbeiläuft.'},
+  bm: {ic: '🐌', n: 'Bremse', c: 8, d: 'Ein Mitspieler deiner Wahl würfelt beim nächsten Mal nur 1 bis 3.'},
 };
 const PB_MAX = 3;
 const PB_TC = ['#3d8bff', '#ff4d5e'];                                  // Teamfarben Blau und Rot
@@ -17107,13 +17176,13 @@ const PB_MAPS = [
       h.j('i1', ...I(270, 270, 1)[0], 'b'); h.j('i3', ...I(90, 90, 1)[0], 's');
       h.j('r1', ...R(165, 165, 1)[0], 'b'); h.j('r2', ...R(195, 195, 1)[0], 'w');
       h.s('st', 'o1', 'b', [[10, 95], [26, 80]]);
-      h.s('o1', 'o2', 'bebrbbdb', O(135, 270, 12), {lab: 'außen weiter'}); h.s('o2', 'oB', 'bbrb', O(270, 348, 8), {lab: 'außen weiter'}); h.s('oB', 'oA', 'b', O(348, 372, 3));
-      h.s('oA', 'o3', 'bsbrbeb', O(372, 450, 8), {lab: 'außen weiter'}); h.s('o3', 'o1', 'brb', O(90, 135, 5));
+      h.s('o1', 'o2', 'bebrbgdb', O(135, 270, 12), {lab: 'außen weiter'}); h.s('o2', 'oB', 'bbrb', O(270, 348, 8), {lab: 'außen weiter'}); h.s('oB', 'oA', 'b', O(348, 372, 3));
+      h.s('oA', 'o3', 'bsbrkeb', O(372, 450, 8), {lab: 'außen weiter'}); h.s('o3', 'o1', 'brb', O(90, 135, 5));
       h.s('o2', 'i1', 'd', null, {lab: 'in den inneren Ring'});
       h.s('i1', 'i3', 'bbebrbb', I(270, 90, 12), {spin: 1}); h.s('i3', 'i1', 'bdbrb', I(90, -90, 12), {lab: 'im Ring weiter', spin: 1});
       h.s('i3', 'o3', 'r', null, {lab: 'raus nach außen'});
       h.s('oA', 'r1', 'bd', null, {lab: 'zum Pudding ➜', min: 1});
-      h.s('r1', 'r2', 'brbbebrbb', R(165, -165, 14));
+      h.s('r1', 'r2', 'brbnebrbg', R(165, -165, 14));
       h.s('r2', 'oB', 'e', null, {min: 1});
     }},
   {n: 'Lagune', ic: '🏝️', d: 'Zwei Inseln, verbunden durch zwei Brücken. Die untere steht alle 3 Runden bei Flut unter Wasser, die obere kostet Zoll.', ev: 'tide', bg: ['#5cc4e6', '#2486c4'],
@@ -17123,23 +17192,66 @@ const PB_MAPS = [
       h.j('st', 30, 96, 'h'); h.j('l1', 24, 80, 'b'); h.j('l2', 56, 16, 'e'); h.j('l3', 60, 70, 'b');
       h.j('r1', 106, 68, 'b'); h.j('r2', 104, 18, 's');
       h.s('st', 'l1', 'b');
-      h.s('l1', 'l2', 'bbebrbbdbb', [[10, 64], [8, 40], [18, 24], [36, 16]]); h.s('l2', 'l3', 'bbrbew', [[68, 30], [66, 52]], {lab: 'auf der Insel'}); h.s('l3', 'l1', 'brbsb', [[50, 86], [34, 88]], {lab: 'auf der Insel'});
+      h.s('l1', 'l2', 'bbebrbgdbb', [[10, 64], [8, 40], [18, 24], [36, 16]]); h.s('l2', 'l3', 'bbrbew', [[68, 30], [66, 52]], {lab: 'auf der Insel'}); h.s('l3', 'l1', 'brbsb', [[50, 86], [34, 88]], {lab: 'auf der Insel'});
       h.s('l3', 'r1', 'bdbr', null, {lab: 'untere Brücke 🌊', g: 0});
-      h.s('r1', 'r2', 'bbrb', [[100, 50]], {lab: 'auf der Insel'}); h.s('r2', 'r1', 'bbebdbbrbbwbebbr', [[124, 8], [148, 14], [156, 42], [150, 72], [132, 92], [112, 88]], {lab: 'auf der Insel'});
+      h.s('r1', 'r2', 'bbrb', [[100, 50]], {lab: 'auf der Insel'}); h.s('r2', 'r1', 'bbebdbnrbbwbkbbr', [[124, 8], [148, 14], [156, 42], [150, 72], [132, 92], [112, 88]], {lab: 'auf der Insel'});
       h.s('r2', 'l2', 'brbb', null, {lab: 'obere Brücke', toll: 5});
       h.ring('L', ['l1', 'l2', 'l3']); h.ring('R', ['r1', 'r2']);
     }},
-  {n: 'Wald', ic: '🌲', d: 'Ein Wald voller Wege und Kreuzungen. Alle 3 Runden fällt irgendwo ein Baum um und sperrt einen Weg.', ev: 'tree', bg: ['#6fae58', '#3f7a38'],
+  {n: 'Wald', ic: '🌲', d: 'Ein Wald voller Wege und Kreuzungen. Alle 3 Runden fällt irgendwo ein Baum um und sperrt einen Weg.', ev: 'tree', bg: ['#6fae58', '#3f7a38'], cg: 3, blk: '🌲',
+    where: ['links in den Wald', 'von oben in den Wald', 'in der Mitte nach unten'],
     deco: () => `${[[30,24,7],[56,26,6],[96,22,7],[134,58,8],[22,66,6],[72,64,7],[120,84,6],[146,20,6],[8,30,5],[86,92,5]].map(([x, y, r]) => `<circle cx="${x}" cy="${y + 2}" r="${r}" fill="#2e5e2a" opacity=".5"/><circle cx="${x}" cy="${y}" r="${r}" fill="#3f8f3a"/><circle cx="${x - r/3}" cy="${y - r/3}" r="${r/2.4}" fill="#62b350"/>`).join('')}<ellipse cx="146" cy="72" rx="12" ry="8" fill="#58a8c8" opacity=".8"/>`,
     build(h){
       h.j('st', 152, 94, 'h'); h.j('A', 142, 80, 'b'); h.j('B', 152, 42, 'e'); h.j('C', 130, 8, 'b'); h.j('D', 74, 8, 's'); h.j('E', 12, 10, 'b'); h.j('F', 8, 50, 'e'); h.j('G', 12, 90, 'b'); h.j('H', 76, 90, 'w');
       h.j('K', 40, 42, 'b'); h.j('L', 80, 40, 'e'); h.j('M', 116, 32, 'b'); h.j('N', 104, 62, 'b'); h.j('P', 46, 72, 's');
       h.s('st', 'A', 'b');
-      h.s('E', 'D', 'bbrbbe'); h.s('D', 'C', 'bdbbrb', null, {lab: 'oben weiter'}); h.s('C', 'B', 'bbe', [[150, 14]], {lab: 'außen herum'}); h.s('B', 'A', 'bbrb', null); h.s('A', 'H', 'bbdbbrb', [[130, 92]], {lab: 'unten weiter'});
-      h.s('H', 'G', 'bbebbrb', null, {lab: 'unten weiter'}); h.s('G', 'F', 'bbr', null); h.s('F', 'E', 'bbb', null, {lab: 'außen hoch'});
+      h.s('E', 'D', 'bbrgbe'); h.s('D', 'C', 'bdbbrb', null, {lab: 'oben weiter'}); h.s('C', 'B', 'bbe', [[150, 14]], {lab: 'außen herum'}); h.s('B', 'A', 'bbrb', null); h.s('A', 'H', 'bbdbnrb', [[130, 92]], {lab: 'unten weiter'});
+      h.s('H', 'G', 'bbekbrb', null, {lab: 'unten weiter'}); h.s('G', 'F', 'bbr', null); h.s('F', 'E', 'bbb', null, {lab: 'außen hoch'});
       h.s('F', 'K', 'bdb', null, {lab: 'in den Wald', g: 0}); h.s('K', 'L', 'bbr', null, {lab: 'geradeaus'}); h.s('D', 'L', 'bw', null, {lab: 'in den Wald', g: 1}); h.s('L', 'M', 'bbe', null, {lab: 'nach rechts'});
-      h.s('L', 'N', 'rbb', null, {lab: 'nach unten', g: 2}); h.s('M', 'B', 'bb', null, {lab: 'zum Rand'}); h.s('C', 'M', 'bd', null, {lab: 'in den Wald'}); h.s('M', 'N', 'brb', null, {lab: 'nach unten'});
+      h.s('L', 'N', 'rbb', null, {lab: 'nach unten', g: 2}); h.s('M', 'B', 'bb', null, {lab: 'zum Rand'}); h.s('C', 'M', 'bd', null, {lab: 'in den Wald'}); h.s('M', 'N', 'bgb', null, {lab: 'nach unten'});
       h.s('N', 'A', 'bb', null, {lab: 'zum Rand'}); h.s('N', 'H', 'bbe', [[90, 80]], {lab: 'nach links'}); h.s('H', 'P', 'bb', null, {lab: 'in den Wald'}); h.s('P', 'K', 'brb', null, {lab: 'hoch'}); h.s('G', 'P', 'bbd', [[30, 80]], {lab: 'in den Wald', toll: 5});
+    }},
+  {n: 'Burg', ic: '🏰', d: 'Eine Burg im Wassergraben. Die Zugbrücke geht alle 2 Runden hoch oder runter, das Tor hinaus kostet Zoll.', ev: 'bridge', bg: ['#93c66f', '#4f8a3c'], blk: '🏰',
+    deco: () => `<ellipse cx="80" cy="51" rx="46" ry="33" fill="#5cb6dc" stroke="#3d8bb5" stroke-width="1.5"/><ellipse cx="80" cy="51" rx="34" ry="25" fill="#cfc4b0" stroke="#8d8270" stroke-width="2"/>
+      <ellipse cx="80" cy="51" rx="28" ry="20" fill="#e3d9c4"/>${[[50, 30], [110, 30], [50, 72], [110, 72]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="5" fill="#b3a891" stroke="#8d8270" stroke-width="1.2"/><path d="M${x} ${y - 5} v-6 l5 2 -5 2" fill="#ff5a36" stroke="#5a3d00" stroke-width=".5"/>`).join('')}
+      ${[[30, 30, 6], [130, 70, 6], [36, 76, 5], [126, 26, 5]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#3f8f3a"/><circle cx="${x - r/3}" cy="${y - r/3}" r="${r/2.4}" fill="#62b350"/>`).join('')}`,
+    build(h){
+      const I = (a, b, n) => pbArc(80, 51, 20, 17, a, b, n);
+      h.j('st', 8, 94, 'h'); h.j('A', 16, 84, 'b'); h.j('B', 16, 14, 'e'); h.j('C', 80, 8, 'b'); h.j('D', 144, 14, 's'); h.j('E', 144, 84, 'b'); h.j('F', 80, 92, 'b');
+      h.j('G', ...I(90, 90, 1)[0], 'b'); h.j('H', ...I(0, 0, 1)[0], 'e'); h.j('I', ...I(-90, -90, 1)[0], 's'); h.j('J', ...I(180, 180, 1)[0], 'b');
+      h.s('st', 'A', 'b');
+      h.s('A', 'B', 'bbrbebkb', [[8, 62], [8, 36]]); h.s('B', 'C', 'bbebrgb', [[44, 5]]); h.s('C', 'D', 'bnbbrb', [[116, 5]]);
+      h.s('D', 'E', 'bbebrbwb', [[153, 38], [153, 62]]); h.s('E', 'F', 'brbbeb', [[116, 96]]); h.s('F', 'A', 'bbrbgb', [[44, 96]], {lab: 'außen weiter'});
+      h.s('F', 'G', 'b', null, {lab: 'über die Zugbrücke 🏰', g: 0, min: 1});
+      h.s('G', 'H', 'brb', I(90, 0, 6), {exact: 1}); h.s('H', 'I', 'beb', I(0, -90, 6), {exact: 1}); h.s('I', 'J', 'bdb', I(-90, -180, 6), {lab: 'im Burghof weiter', exact: 1}); h.s('J', 'G', 'bgb', I(180, 90, 6), {exact: 1});
+      h.s('I', 'C', 'b', null, {lab: 'durchs Tor hinaus', toll: 5, min: 1});
+    },
+    closed: b => '🏰 Die Zugbrücke ist oben.'},
+  {n: 'Vulkan', ic: '🌋', d: 'Eine Insel mit Vulkan. Alle 3 Runden bricht er aus: Lava sperrt einen Weg am Krater und verbrennt Felder.', ev: 'lava', bg: ['#4fb3d9', '#1f6f9e'], cg: 3, blk: '🌋',
+    where: ['vom Süden zum Krater', 'vom Westen zum Krater', 'vom Krater nach Osten'],
+    deco: () => `<path d="M14 10 Q80 -6 146 10 Q164 50 146 92 Q80 104 14 92 Q-4 50 14 10Z" fill="#e9d79c"/><path d="M22 18 Q80 6 138 18 Q152 50 138 84 Q80 94 22 84 Q8 50 22 18Z" fill="#9bd27a"/>
+      <ellipse cx="80" cy="50" rx="24" ry="19" fill="#8a5a3c"/><ellipse cx="80" cy="50" rx="15" ry="11" fill="#a86b44"/><ellipse cx="80" cy="50" rx="7" ry="5" fill="#ff7a12"/><ellipse cx="80" cy="50" rx="4" ry="3" fill="#ffd54a"/>
+      ${[[70, 34, 3], [86, 31, 4], [78, 27, 2.5]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" opacity=".55"/>`).join('')}${[[34, 30, 5], [128, 72, 6], [40, 70, 5], [124, 28, 4]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#3f8f3a"/>`).join('')}`,
+    build(h){
+      const I = (a, b, n) => pbArc(80, 50, 30, 24, a, b, n);
+      h.j('st', 152, 94, 'h'); h.j('A', 142, 86, 'b'); h.j('E', 80, 92, 'e'); h.j('B', 18, 86, 'b'); h.j('F', 12, 50, 'b'); h.j('C', 18, 14, 's'); h.j('K', 80, 8, 'b'); h.j('D', 142, 14, 'e'); h.j('O', 148, 50, 'b');
+      h.j('P', ...I(90, 90, 1)[0], 'b'); h.j('Q', ...I(0, 0, 1)[0], 'b'); h.j('R', ...I(-90, -90, 1)[0], 'e'); h.j('S', ...I(180, 180, 1)[0], 'b');
+      h.s('st', 'A', 'b');
+      h.s('A', 'E', 'bbrbgb', [[112, 96]]); h.s('E', 'B', 'bbebrb', [[48, 96]], {lab: 'außen weiter'}); h.s('B', 'F', 'bbkb', [[7, 70]]); h.s('F', 'C', 'brbnb', [[7, 30]], {lab: 'außen weiter'});
+      h.s('C', 'K', 'bbebrb', [[48, 4]]); h.s('K', 'D', 'bbrbeb', [[112, 4]]); h.s('D', 'O', 'bbwb', [[154, 30]]); h.s('O', 'A', 'brbb', [[154, 70]]);
+      h.s('E', 'P', 'b', null, {lab: 'zum Krater hoch', g: 0, min: 1}); h.s('F', 'S', 'bbd', null, {lab: 'zum Krater hoch', g: 1}); h.s('Q', 'O', 'bb', null, {lab: 'runter nach Osten', g: 2}); h.s('R', 'K', 'b', null, {lab: 'runter nach Norden', min: 1});
+      h.s('P', 'Q', 'beb', I(90, 0, 6), {exact: 1}); h.s('Q', 'R', 'bsb', I(0, -90, 6), {lab: 'am Krater weiter', exact: 1}); h.s('R', 'S', 'bgb', I(-90, -180, 6), {lab: 'am Krater weiter', exact: 1}); h.s('S', 'P', 'beb', I(180, 90, 6), {exact: 1});
+    }},
+  {n: 'Bahnhof', ic: '🚂', d: 'Eine Stadt mit vier Bahnhöfen: wer auf einem stehen bleibt, kann zu einem anderen fahren. Alle 3 Runden geht eine Schranke zu.', ev: 'train', bg: ['#c9c4d6', '#8d88a3'], cg: 2, blk: '🚧',
+    where: ['von der Mitte nach Osten', 'von oben in die Stadt'],
+    deco: () => `${[[28, 24, 40, 18], [92, 24, 40, 18], [28, 60, 40, 18], [92, 60, 40, 18]].map(([x, y, w, hh]) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="3" fill="#a9a3bd"/>${[0, 1, 2].map(k => `<rect x="${x + 4 + k*12}" y="${y + 3}" width="8" height="${hh - 6}" rx="1.5" fill="#d8d3e6"/>`).join('')}`).join('')}
+      <rect x="9" y="7" width="142" height="86" rx="10" fill="none" stroke="#6b6680" stroke-width="1.4" stroke-dasharray="1 2.2"/><rect x="11" y="9" width="138" height="82" rx="9" fill="none" stroke="#6b6680" stroke-width=".8"/>`,
+    build(h){
+      h.j('st', 8, 94, 'h'); h.j('A', 16, 86, 'b'); h.j('E', 16, 50, 'b'); h.j('B', 16, 14, 'e'); h.j('G', 80, 12, 'b'); h.j('C', 144, 14, 's'); h.j('F', 144, 50, 'b'); h.j('D', 144, 86, 'e'); h.j('H', 80, 88, 'b'); h.j('M', 80, 50, 'w');
+      h.s('st', 'A', 'b');
+      h.s('A', 'E', 'bzbrb'); h.s('E', 'B', 'bbeb', null, {lab: 'außen weiter'}); h.s('B', 'G', 'bbrbgb'); h.s('G', 'C', 'bzbbeb', null, {lab: 'außen weiter'}); h.s('C', 'F', 'bbnb');
+      h.s('F', 'D', 'bzbrb'); h.s('D', 'H', 'bbkbeb'); h.s('H', 'A', 'bzbbrb');
+      h.s('E', 'M', 'bbeb', null, {lab: 'in die Stadt'}); h.s('G', 'M', 'brb', null, {lab: 'in die Stadt', g: 1}); h.s('M', 'F', 'bbeb', null, {lab: 'nach Osten', g: 0}); h.s('M', 'H', 'bgb', null, {lab: 'nach Süden'});
     }},
 ];
 const PB_G = [];
@@ -17203,7 +17315,10 @@ function pgBoardInit(s, sel){
   const n = s.pl.length, mi = sel >= 0 && PB_MAPS[sel] ? sel : R0(PB_MAPS.length), N = pbG(mi);
   s.br = {mi, T: N.map(x => x.t), pos: Array(n).fill(N.start || 0), coins: Array(n).fill(BR_START), stars: Array(n).fill(0), items: s.pl.map(() => []), star: -1, sn: 0, act: -1, dice: [], roll: 0, msg: '', ask: null, st: '',
     traps: {}, closed: [], mw: Array(n).fill(0), got: Array(n).fill(0), ev: Array(n).fill(0), sb: Array(n).fill(0), end: false, last: false, bonus: null, an: 0, tk: 0, again: false,
-    log: [], fx: [], fxn: 0, rev: '', duel: null, fk: null};
+    log: [], fx: [], fxn: 0, rev: '', duel: null, fk: null,
+    steps: Array(n).fill(0), red: Array(n).fill(0), blue: Array(n).fill(0), spent: Array(n).fill(0), dw: Array(n).fill(0), lastp: Array(n).fill(0), wh: Array(n).fill(0),
+    bank: 0, mag: Array(n).fill(-1), slow: Array(n).fill(0), boss: false, bossR: s.rounds >= 3 ? 1 + R0(Math.max(1, s.rounds - 2)) : -1, wheel: null, whn: 0,
+    bset: shuffle(Object.keys(PB_BON)).slice(0, 3)};
   pgStarMove();
 }
 // Stern umsetzen: freies blaues Feld, nie auf einem gesperrten Weg, möglichst 8–18 Schritte vor dem nächsten Spieler
@@ -17224,19 +17339,26 @@ function pbSay(m, log){ const s = PQ.s, b = s.br; b.msg = m; if (log) { b.log.pu
 function pbFx(i, t, k){ const b = PQ.s.br; b.fx.push({id: ++b.fxn, p: i, t, k: k || (/^[−-]/.test(t) ? 'bad' : 'good'), at: Date.now()}); if (b.fx.length > 14) b.fx.shift(); }
 // Schild: fängt einen Angriff ab und ist dann weg
 function pbShield(i){ const it = PQ.s.br.items[i], k = it.indexOf('sh'); if (k < 0) return false; it.splice(k, 1); pbFx(i, '🛡️', 'star'); return true; }
-const pbWhere = ['links in den Wald', 'von oben in den Wald', 'in der Mitte nach unten'];
-function pbClosedTxt(b){ const M = PB_MAPS[b.mi]; if (!b.closed.length) return ''; if (M.ev === 'tide') return '🌊 Flut: Die untere Brücke ist gesperrt.'; if (M.ev === 'tree') return `🌲 Ein Baum sperrt den Weg ${pbWhere[b.closed[0]] || ''}.`; return ''; }
+const pbWhere = b => (PB_MAPS[b.mi].where || [])[b.closed[0]] || '';
+function pbClosedTxt(b){ const M = PB_MAPS[b.mi]; if (!b.closed.length) return ''; if (M.closed) return M.closed(b);
+  return {tide: '🌊 Flut: Die untere Brücke ist gesperrt.', tree: `🌲 Ein Baum sperrt den Weg ${pbWhere(b)}.`, lava: `🌋 Lava sperrt den Weg ${pbWhere(b)}.`, train: `🚧 Schranke zu: der Weg ${pbWhere(b)} ist gesperrt.`}[M.ev] || ''; }
 const pbTeamTxt = s => [0, 1].map(t => `${t ? '🔴' : '🔵'} ${s.pl.map((p, i) => s.team.g[i] === t ? esc(p.n) : '').filter(Boolean).join(', ')}`).join(' gegen ');
 // Rundenbeginn: Karte verändert sich, Endspurt, letzte Chance
 function pgBoardRound(){
   const s = PQ.s, b = s.br, M = PB_MAPS[b.mi], N = pbG(b.mi), msg = [];
-  s.ph = 'board'; s.g = null; s.res = null; s.team = null; b.act = -1; b.ask = null; b.dice = []; b.duel = null; b.fk = null; b.rev = '';
+  s.ph = 'board'; s.g = null; s.res = null; s.team = null; s.boss = false; b.act = -1; b.ask = null; b.dice = []; b.duel = null; b.fk = null; b.rev = ''; b.wheel = null;
+  if (s.ri > 0 && s.ri % 2 === 0 && M.ev === 'bridge') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🏰 Die Zugbrücke geht runter: der Weg in die Burg ist frei!' : '🏰 Die Zugbrücke geht hoch: in die Burg kommt man nur noch, wer schon drin ist, kommt durchs Tor raus!'); if (c) b.rev = '🏰 Die Zugbrücke ist wieder unten.'; }
   if (s.ri > 0 && s.ri % 3 === 0) {
+    if (M.ev === 'lava') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g];
+      const tot = b.T.filter(t => t === 'b' || t === 'r').length, red = b.T.filter(t => t === 'r').length, k = Math.max(0, Math.min(3, Math.floor(tot*.35) - red));
+      const c = shuffle(b.T.map((t, i) => t === 'b' && i !== b.star && !b.pos.includes(i) ? i : -1).filter(i => i >= 0)).slice(0, k); c.forEach(i => { b.T[i] = 'r'; });
+      msg.push(`🌋 Der Vulkan bricht aus! Lava sperrt den Weg ${pbWhere(b)}${c.length ? ` und ${c.length === 1 ? 'ein blaues Feld wird' : c.length + ' blaue Felder werden'} rot` : ''}!`); }
+    if (M.ev === 'train') { const g = pickOne([0, 1].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🚂 Ein Zug kommt: die Schranke ${pbWhere(b)} geht zu!`); }
     if (M.ev === 'spin') { const ring = pbRing(N), ty = ring.map(i => b.T[i]); ring.forEach((i, k) => { b.T[i] = ty[(k + 2) % ty.length]; }); msg.push('🎂 Die Torte dreht sich: die Felder im inneren Ring rutschen weiter!'); b.rev = '🎂 Der innere Ring hat sich gedreht.'; }
     if (M.ev === 'tide') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🌊 Ebbe: die untere Brücke ist wieder frei!' : '🌊 Flut: die untere Brücke steht unter Wasser!'); if (c) b.rev = '🌊 Ebbe: Die untere Brücke ist wieder frei.'; }
-    if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt den Weg ${pbWhere[g]}!`); }
-    if (b.T[b.star] !== 'b' || pbShut(b).has(b.star)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); }
+    if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt den Weg ${pbWhere(b)}!`); }
   }
+  if (b.T[b.star] !== 'b' || pbShut(b).has(b.star)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); }
   if (!b.end && s.rounds >= 4 && s.rounds - s.ri <= 3) {
     b.end = true; const sc = i => b.stars[i]*1000 + b.coins[i], last = s.pl.map((p, i) => i).sort((x, y) => sc(x) - sc(y))[0], k = pbGive(b, last);
     msg.push(`🔥 Endspurt! In den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt.${k ? ` ${pbN(last)} liegt hinten und bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.` : ''}`);
@@ -17253,7 +17375,10 @@ function pgBoardFrom(k0){
 }
 // alle sind gezogen: Team-Minispiel oder jeder gegen jeden
 function pbRoundEnd(){
-  const s = PQ.s, b = s.br; b.act = -1; b.st = ''; b.duel = null; b.dice = []; b.ask = null;
+  const s = PQ.s, b = s.br; b.act = -1; b.st = ''; b.duel = null; b.dice = []; b.ask = null; b.wheel = null;
+  if (b.boss || s.ri === b.bossR) {   // Boss-Feld betreten oder die ausgeloste Boss-Runde: alle zusammen gegen den Boss
+    b.boss = false; if (s.ri === b.bossR) b.bossR = -1; s.team = null; s.boss = true;
+    pbSay('⚡ Boss-Kampf! Alle spielen zusammen gegen den Boss. Wer viel Schaden macht, bekommt mehr Münzen.', true); pgPush(); return pgT(pgPick, pbW(3500)); }
   s.team = pbTeams();
   if (s.team) pbSay(`👥 Team-Minispiel! ${pbTeamTxt(s)}`, true); else pbSay('Alle sind gezogen, jetzt das Minispiel!');
   pgPush(); pgT(pgPick, pbW(s.team ? 3500 : 1800));
@@ -17289,7 +17414,7 @@ function pbAsk(p, q, o, def, bot, cb, kind, x){
 }
 function pgTurn(p, done){
   const s = PQ.s, b = s.br, tk = ++b.tk;
-  b.act = p; b.dice = []; b.ask = null; b.st = 'pre'; b.mul = 1; b.fix = 0; b.used = false; b.duel = null; b.fk = null; pbSay(`${pbN(p)} ist dran.`); PQ.bdone = done;
+  b.act = p; b.dice = []; b.ask = null; b.st = 'pre'; b.mul = 1; b.fix = 0; b.used = false; b.duel = null; b.fk = null; b.wheel = null; pbSay(`${pbN(p)} ist dran.`); PQ.bdone = done;
   pgPush();
   if (pgBot(p)) pgT(() => pbBotPre(p), pbW(1000) + Math.random()*pbW(700));
   else pgT(() => { if (b.tk === tk && b.st === 'pre' && !b.ask) pgRoll(p); }, pbW(30000));
@@ -17304,14 +17429,17 @@ function pbBotPre(p){
     if (it.includes('tt') && d > 7) return use('tt');
     if (it.includes('dd') && d > 5) return use('dd');
     if (it.includes('sw')) { const best = s.pl.map((x, i) => i).filter(i => i !== p && !b.items[i].includes('sh')).sort((x, y) => pbDist(b, b.pos[x], b.star) - pbDist(b, b.pos[y], b.star))[0]; if (best != null && pbDist(b, b.pos[best], b.star) + 4 < d) return use('sw'); }
+    if (it.includes('bm')) { const t = s.pl.map((x, i) => i).filter(i => i !== p && !b.slow[i] && !b.items[i].includes('sh') && pbDist(b, b.pos[i], b.star) <= 9).sort((x, y) => pbDist(b, b.pos[x], b.star) - pbDist(b, b.pos[y], b.star))[0]; if (t != null) return use('bm'); }
+    if (it.includes('mg') && b.mag[p] < s.ri && Math.random() < .6) return use('mg');
     if (it.includes('fl') && Math.random() < .5) return use('fl');
   }
   pgT(() => { if (b.act === p && b.st === 'pre' && !b.ask) pgRoll(p); }, pbW(700));
 }
 function pgRoll(p){
   const s = PQ.s, b = s.br; if (b.act !== p || b.st !== 'pre' || b.ask) return;
-  b.dice = b.fix ? [b.fix] : Array.from({length: b.mul}, () => 1 + R0(6)); const n = b.dice.reduce((a, v) => a + v, 0);
-  b.st = 'walk'; b.roll = (b.roll || 0) + 1; pbSay(`${pbN(p)} würfelt ${b.dice.length > 1 ? b.dice.join(' + ') + ' = ' : 'eine '}${n}.`); pgPush();
+  const slow = b.slow[p]; b.slow[p] = 0;
+  b.dice = b.fix ? [slow ? Math.min(3, b.fix) : b.fix] : Array.from({length: b.mul}, () => 1 + R0(slow ? 3 : 6)); const n = b.dice.reduce((a, v) => a + v, 0);
+  b.st = 'walk'; b.roll = (b.roll || 0) + 1; pbSay(`${slow ? '🐌 Gebremst! ' : ''}${pbN(p)} würfelt ${b.dice.length > 1 ? b.dice.join(' + ') + ' = ' : 'eine '}${n}.`); pgPush();
   pgT(() => pgWalk(p, n), pbW(900));
 }
 function pgWalk(p, n){
@@ -17320,9 +17448,13 @@ function pgWalk(p, n){
   const N = pbG(b.mi), here = N[b.pos[p]], all = pbOpts(b, b.pos[p]), op = all.filter(o => b.coins[p] >= (here.toll[o.k] || 0));
   if (!op.length) { pbSay(`${pbN(p)} kommt hier nicht weiter.`); return pgLand(p); }
   const go = (id, k) => {
-    const c = k != null ? here.toll[k] || 0 : 0; if (c) { b.coins[p] -= c; pbFx(p, `−${c} 🪙`); pbSay(`${pbN(p)} zahlt ${c} Münzen Zoll.`, true); }
-    b.pos[p] = id; b.left = n - 1; pgPush();
-    const cont = () => pgT(() => pgWalk(p, n - 1), pbW(230));
+    const c = k != null ? here.toll[k] || 0 : 0; if (c) { b.coins[p] -= c; b.spent[p] += c; pbFx(p, `−${c} 🪙`); pbSay(`${pbN(p)} zahlt ${c} Münzen Zoll.`, true); }
+    b.pos[p] = id; b.left = n - 1; b.steps[p]++;
+    let wait = 0;
+    if (b.T[id] === 'n' && n > 1 && b.coins[p] > 0) { const x = Math.min(3, b.coins[p]); b.coins[p] -= x; b.bank += x; pbFx(p, `−${x} 🪙`); pbSay(`🏦 ${pbN(p)} zahlt ${x} Münzen in die Bank (jetzt ${b.bank}).`); wait = 700; }
+    s.pl.forEach((x, q) => { if (q !== p && b.mag[q] >= s.ri && b.pos[q] === id && b.coins[p] > 0) { const m = Math.min(2, b.coins[p]); b.coins[p] -= m; pbAdd(q, m); pbFx(p, `−${m} 🪙`); pbFx(q, `+${m} 🪙`); pbSay(`🧲 Münzmagnet: ${pbN(p)} zahlt ${pbN(q)} ${m} Münzen.`, true); wait = 900; } });
+    pgPush();
+    const cont = () => pgT(() => pgWalk(p, n - 1), pbW(230 + wait));
     pgT(() => { if (id === b.star) return pgStarAsk(p, cont); if (b.T[id] === 's' && n > 1) return pbShop(p, cont, true); cont(); }, pbW(260));
   };
   if (op.length > 1) {
@@ -17354,10 +17486,10 @@ function pbShop(p, cont, pass){
   const o = [...Object.entries(PB_IT).map(([k, it]) => ({id: k, l: `${it.ic} ${it.n}`, dis: b.coins[p] < it.c ? 1 : 0})), {id: 'x', l: 'Nichts kaufen', ghost: 1}];
   pbAsk(p, '🛒 Was kaufst du?', o, 'x', () => {
     const L = pgLvl(p), cost = pbStar(b), budget = L ? b.coins[p] - cost : b.coins[p];
-    const pr = ['rk', 'tt', 'dd', 'sh', 'zz', 'sw', 'fl'].filter(k => PB_IT[k].c <= budget && (k !== 'rk' || b.coins[p] - PB_IT.rk.c >= cost) && !b.items[p].includes(k));
+    const pr = ['rk', 'tt', 'dd', 'sh', 'mg', 'zz', 'bm', 'sw', 'fl'].filter(k => PB_IT[k].c <= budget && (k !== 'rk' || b.coins[p] - PB_IT.rk.c >= cost) && !b.items[p].includes(k));
     return pr.length && Math.random() < [.4, .7, .85][L] ? (L ? pr[0] : pickOne(pr)) : 'x';
   }, v => {
-    if (v !== 'x' && PB_IT[v] && b.coins[p] >= PB_IT[v].c && b.items[p].length < PB_MAX) { b.coins[p] -= PB_IT[v].c; b.items[p].push(v); pbFx(p, `−${PB_IT[v].c} 🪙`); pbSay(`🛒 ${pbN(p)} kauft ${PB_IT[v].ic} ${PB_IT[v].n}.`, true); }
+    if (v !== 'x' && PB_IT[v] && b.coins[p] >= PB_IT[v].c && b.items[p].length < PB_MAX) { b.coins[p] -= PB_IT[v].c; b.spent[p] += PB_IT[v].c; b.items[p].push(v); pbFx(p, `−${PB_IT[v].c} 🪙`); pbSay(`🛒 ${pbN(p)} kauft ${PB_IT[v].ic} ${PB_IT[v].n}.`, true); }
     else pbSay(`🛒 ${pbN(p)} kauft nichts.`);
     pgPush(); pgT(cont, pbW(1300));
   }, 'shop');
@@ -17378,10 +17510,14 @@ function pbFin(p){ const b = PQ.s.br; b.st = 'land'; pgPush(); pgT(() => pbDuel(
 function pbTile(p){
   const s = PQ.s, b = s.br, at = b.pos[p], t = b.T[at], m = b.end ? 2 : 1, others = s.pl.map((x, i) => i).filter(i => i !== p);
   const fin = () => pbFin(p);
-  if (t === 'b') { pbAdd(p, 3*m); pbFx(p, `+${3*m} 🪙`); pbSay(`🔵 ${pbN(p)} bekommt ${3*m} Münzen.`, true); return fin(); }
-  if (t === 'r') { const x = Math.min(3*m, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); pbSay(`🔴 ${pbN(p)} verliert ${x} Münzen.`, true); return fin(); }
+  if (t === 'b') { b.blue[p]++; pbAdd(p, 3*m); pbFx(p, `+${3*m} 🪙`); pbSay(`🔵 ${pbN(p)} bekommt ${3*m} Münzen.`, true); return fin(); }
+  if (t === 'r') { b.red[p]++; const x = Math.min(3*m, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); pbSay(`🔴 ${pbN(p)} verliert ${x} Münzen.`, true); return fin(); }
   if (t === 'h') { pbSay(`${pbN(p)} steht auf dem Start.`); return fin(); }
   if (t === 's') return pbShop(p, fin, false);
+  if (t === 'g') return pbWheel(p, fin);
+  if (t === 'z') return pbTrain(p, fin);
+  if (t === 'k') { pbFx(p, '⚡', 'star'); pbSay(b.boss ? `⚡ Der Boss ist schon wach: nach dieser Runde kommt der Boss-Kampf.` : `⚡ ${pbN(p)} weckt den Boss! Nach dieser Runde kämpfen alle zusammen gegen ihn.`, true); b.boss = true; return fin(); }
+  if (t === 'n') { const x = b.bank; if (x) { b.bank = 0; pbAdd(p, x); pbFx(p, `+${x} 🪙`); pbSay(`🏦 ${pbN(p)} räumt die Bank ab: ${x} Münzen!`, true); } else pbSay(`🏦 Die Bank ist leer, ${pbN(p)} geht leer aus.`, true); return fin(); }
   if (t === 'd') {
     const st = others.filter(i => b.stars[i] > 0);
     if (st.length && Math.random() < .12) { const o = st.reduce((a, i) => b.stars[i] > b.stars[a] ? i : a, st[0]);
@@ -17407,6 +17543,39 @@ function pbTile(p){
   if (ev === 'again' && !b.again) { b.again = true; pbSay(`❓ Glückswurf: ${pbN(p)} darf nochmal würfeln!`, true); pgPush(); const d = PQ.bdone; return pgT(() => pgTurn(p, () => { b.again = false; d(); }), pbW(1600)); }
   pbAdd(p, 6); pbFx(p, '+6 🪙'); pbSay(`❓ Goldregen: ${pbN(p)} bekommt 6 Münzen.`, true); fin();
 }
+// Glücksrad: dreht 3 Sekunden, dann passiert, was oben steht
+function pbWheel(p, fin){
+  const s = PQ.s, b = s.br, all = s.pl.map((x, i) => i), r = R0(PB_WH.length);
+  b.wh[p]++; b.wheel = {p, r, n: ++b.whn, done: false}; b.st = 'wheel'; pbSay(`🎰 ${pbN(p)} dreht am Glücksrad …`); pgPush();
+  pgT(() => {
+    let m = '';
+    if (r === 0) { all.forEach(i => { pbAdd(i, 5); pbFx(i, '+5 🪙'); }); m = 'Alle bekommen 5 Münzen!'; }
+    else if (r === 1) { pbAdd(p, 10); pbFx(p, '+10 🪙'); m = `${pbN(p)} bekommt 10 Münzen!`; }
+    else if (r === 2) { const x = Math.min(8, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); m = `${pbN(p)} verliert ${x} Münzen.`; }
+    else if (r === 3) { const tot = all.reduce((a, i) => a + b.coins[i], 0), e = Math.floor(tot/all.length); all.forEach(i => { const d = e + (i === p ? tot - e*all.length : 0) - b.coins[i]; if (d) { pbAdd(i, d); pbFx(i, `${d > 0 ? '+' : '−'}${Math.abs(d)} 🪙`); } }); m = `Alle Münzen werden gerecht verteilt: jeder hat jetzt ${e}.`; }
+    else if (r === 4) { const k = pbGive(b, p); if (k) { pbFx(p, PB_IT[k].ic, 'star'); m = `${pbN(p)} bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.`; } else { pbAdd(p, 5); pbFx(p, '+5 🪙'); m = `${pbN(p)} hat keinen Platz mehr und bekommt 5 Münzen.`; } }
+    else { const c = all.filter(i => i !== p && b.stars[i] !== b.stars[p]);
+      if (!c.length) m = 'Alle haben gleich viele Sterne, nichts passiert.';
+      else { const o = pickOne(c), lo = b.stars[o] > b.stars[p] ? o : p;
+        if (pbShield(lo)) m = `${pbN(p)} und ${pbN(o)} sollen die Sterne tauschen, aber ${pbN(lo)} hat ein 🛡️ Schild.`;
+        else { [b.stars[p], b.stars[o]] = [b.stars[o], b.stars[p]]; pbFx(p, '🔀', 'star'); pbFx(o, '🔀', 'star'); m = `${pbN(p)} und ${pbN(o)} tauschen ihre Sterne: jetzt ${b.stars[p]} gegen ${b.stars[o]}!`; } } }
+    b.wheel.done = true; pbSay(`🎰 ${PB_WH[r].ic} ${PB_WH[r].n}: ${m}`, true); pgPush(); pgT(fin, pbW(1200));
+  }, 3300);
+}
+const pbStName = n => { const dx = n.x - 50, dy = n.y - 50; return Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'West' : 'Ost') : (dy < 0 ? 'Nord' : 'Süd'); };
+const PB_FARE = 3;
+// Bahnhof: für 3 Münzen zu einem anderen Bahnhof fahren
+function pbTrain(p, fin){
+  const s = PQ.s, b = s.br, N = pbG(b.mi), at = b.pos[p], st = b.T.map((t, i) => t === 'z' && i !== at ? i : -1).filter(i => i >= 0);
+  if (!st.length || b.coins[p] < PB_FARE) { pbSay(`🚉 ${pbN(p)} steht am Bahnhof${st.length ? `, hat aber keine ${PB_FARE} Münzen für die Fahrt` : ''}.`); return fin(); }
+  const d = z => pbDist(b, z, b.star), o = [...st.map(z => ({id: String(z), l: `🚂 Bahnhof ${pbStName(N[z])}`, sub: d(z) < 99 ? `${d(z)} Felder bis ⭐` : ''})), {id: 'n', l: 'Hierbleiben', ghost: 1, sub: d(at) < 99 ? `${d(at)} Felder bis ⭐` : ''}];
+  pbSay(`🚉 ${pbN(p)} ist am Bahnhof ${pbStName(N[at])}.`);
+  pbAsk(p, `🚉 Für ${PB_FARE} 🪙 zu einem anderen Bahnhof fahren?`, o, 'n', () => { const best = st.slice().sort((x, y) => d(x) - d(y))[0]; return d(best) + 3 < d(at) ? String(best) : 'n'; }, v => {
+    if (v !== 'n' && st.includes(+v) && b.coins[p] >= PB_FARE) { b.coins[p] -= PB_FARE; b.spent[p] += PB_FARE; b.pos[p] = +v; pbFx(p, `−${PB_FARE} 🪙`); pbFx(p, '🚂', 'star'); pbSay(`🚂 ${pbN(p)} fährt zum Bahnhof ${pbStName(N[+v])}.`, true); }
+    else pbSay(`${pbN(p)} bleibt hier.`);
+    fin();
+  }, 'train');
+}
 // Münzduell: wer auf dem Feld eines anderen stehen bleibt, kann ihn herausfordern; beide würfeln, der höhere Wurf gewinnt den Einsatz
 function pbDuel(p, done){
   const s = PQ.s, b = s.br, at = b.pos[p], stake = 5*(b.end ? 2 : 1);
@@ -17425,7 +17594,7 @@ function pbDuel(p, done){
     if (da === dq) pbSay(`⚔️ Duell ${da} : ${dq} zwischen ${pbN(p)} und ${pbN(q)}: unentschieden, keiner zahlt.`, true);
     else { const w = da > dq ? p : q, l = w === p ? q : p;
       if (pbShield(l)) pbSay(`⚔️ Duell ${da} : ${dq}: ${pbN(w)} gewinnt, aber ${pbN(l)} hat ein 🛡️ Schild.`, true);
-      else { const x = Math.min(stake, b.coins[l]); pbAdd(l, -x); pbAdd(w, x); pbFx(w, `+${x} 🪙`); pbFx(l, `−${x} 🪙`); pbSay(`⚔️ Duell ${da} : ${dq}! ${pbN(w)} gewinnt ${x} Münzen von ${pbN(l)}.`, true); } }
+      else { const x = Math.min(stake, b.coins[l]); pbAdd(l, -x); pbAdd(w, x); b.dw[w]++; pbFx(w, `+${x} 🪙`); pbFx(l, `−${x} 🪙`); pbSay(`⚔️ Duell ${da} : ${dq}! ${pbN(w)} gewinnt ${x} Münzen von ${pbN(l)}.`, true); } }
     pgPush(); pgT(done, pbW(2600));
   }, 'duel');
 }
@@ -17441,7 +17610,15 @@ function pgBoardIn(s, i, a){
     if (k === 'fl') { b.traps[b.pos[i]] = i; pbSay(`🚧 ${pbN(i)} legt eine Falle.`, true); pgPush(); return botRoll(); }
     if (k === 'rk') { b.pos[i] = b.star; pbFx(i, '🚀', 'star'); pbSay(`🚀 ${pbN(i)} fliegt mit der Rakete zum Stern!`, true); pgPush();
       return pgT(() => pgStarAsk(i, () => { pbSay(`${pbN(i)} würfelt jetzt.`); pgPush(); botRoll(600); }), pbW(1300)); }
-    if (k === 'zz') { const R = [1, 2, 3, 4, 5, 6].map(v => pbReach(b, b.pos[i], v, i));
+    if (k === 'mg') { b.mag[i] = s.ri + 1; pbFx(i, '🧲', 'star'); pbSay(`🧲 ${pbN(i)} stellt einen Münzmagnet auf: diese und nächste Runde zahlt jeder 2 Münzen, der an ${pbN(i)} vorbeiläuft.`, true); pgPush(); return botRoll(); }
+    if (k === 'bm') { const o = s.pl.map((x, q) => q).filter(q => q !== i), dist = q => pbDist(b, b.pos[q], b.star);
+      return pbAsk(i, '🐌 Wen bremsen?', o.map(q => ({id: String(q), l: s.pl[q].n, sub: `${dist(q) < 99 ? dist(q) + ' Felder bis ⭐' : 'kein Weg zum ⭐'}${b.items[q].includes('sh') ? ' · 🛡️' : ''}${b.slow[q] ? ' · schon gebremst' : ''}`})), String(o[0]),
+        () => String(o.slice().sort((x, y) => (b.items[x].includes('sh') - b.items[y].includes('sh')) || (b.slow[x] - b.slow[y]) || dist(x) - dist(y))[0]),
+        v => { const q = +v;
+          if (pbShield(q)) pbSay(`🐌 ${pbN(i)} will ${pbN(q)} bremsen, aber ${pbN(q)} hat ein 🛡️ Schild.`, true);
+          else { b.slow[q] = 1; pbFx(q, '🐌', 'bad'); pbSay(`🐌 ${pbN(i)} bremst ${pbN(q)}: beim nächsten Wurf nur 1 bis 3.`, true); }
+          pgPush(); botRoll(1000); }, 'bm'); }
+    if (k === 'zz') { const R = (b.slow[i] ? [1, 2, 3] : [1, 2, 3, 4, 5, 6]).map(v => pbReach(b, b.pos[i], v, i));
       return pbAsk(i, '🎯 Welche Zahl?', R.map((r, v) => ({id: String(v + 1), l: String(v + 1), sub: r.star ? '⭐ erreichbar' : [...new Set(r.land.map(z => PB_EM[b.T[z]] || ''))].join(' ')})), '3',
         () => { const k2 = R.findIndex(r => r.star); return String(k2 >= 0 ? k2 + 1 : 6); }, v => { b.fix = +v; pbSay(`🎯 ${pbN(i)} nimmt den Zielwürfel: ${v}.`, true); pgRoll(i); }, 'zz', {rv: R.map(r => r.land)}); }
     if (k === 'sw') { const o = s.pl.map((x, q) => q).filter(q => q !== i), dist = q => pbDist(b, b.pos[q], b.star);
@@ -17456,14 +17633,14 @@ function pgBoardIn(s, i, a){
 // Bonus-Sterne am Ende: Minispiel-Siege, gesammelte Münzen, Ereignisfelder
 function pgBonus(){
   const s = PQ.s, b = s.br, A = [];
-  for (const [k, ic, n, v] of [['mw', '🏆', 'Minispiel-Star', ['Minispiel-Sieg', 'Minispiel-Siege']], ['got', '🪙', 'Münz-Star', ['Münze gesammelt', 'Münzen gesammelt']], ['ev', '❓', 'Ereignis-Star', ['Ereignisfeld', 'Ereignisfelder']]]) {
-    const mx = Math.max(...b[k]); if (mx <= 0) continue; const w = s.pl.map((x, i) => i).filter(i => b[k][i] === mx); w.forEach(i => { b.stars[i]++; }); A.push({ic, n, v, mx, w}); }
+  for (const k of b.bset || ['mw', 'got', 'ev']) { const B = PB_BON[k], arr = b[k] || [];
+    const mx = Math.max(0, ...arr); if (mx <= 0) { A.push({ic: B.ic, n: B.n, v: B.v, mx: 0, w: []}); continue; } const w = s.pl.map((x, i) => i).filter(i => arr[i] === mx); w.forEach(i => { b.stars[i]++; }); A.push({ic: B.ic, n: B.n, v: B.v, mx, w}); }
   b.bonus = A; s.ph = 'bonus'; pgPush();
   pgT(() => { s.ph = 'end'; pgPush(); }, pbW(3500 + A.length*2800));
 }
 function pgBonusView(s){
   const b = s.br;
-  return `<div class="icon">⭐</div><h1 class="big-h">Bonus-Sterne</h1><div class="pbbon">${b.bonus.length ? b.bonus.map((a, k) => `<div style="animation-delay:${k*1.2}s"><span>${a.ic}</span><b>${a.n}</b><small>${a.mx} ${a.v[a.mx === 1 ? 0 : 1]}</small><em>${a.w.map(i => `<i style="color:${PT_COL[i]}">${esc(s.pl[i].n)}</i>`).join(', ')} +1 ⭐</em></div>`).join('') : '<p class="hint">Diesmal keine.</p>'}</div>`;
+  return `<div class="icon">⭐</div><h1 class="big-h">Bonus-Sterne</h1><div class="pbbon">${b.bonus.length ? b.bonus.map((a, k) => `<div style="animation-delay:${k*1.2}s"><span>${a.ic}</span><b>${a.n}</b><small>${a.mx} ${a.v[a.mx === 1 ? 0 : 1]}</small><em>${a.w.length ? `${a.w.map(i => `<i style="color:${PT_COL[i]}">${esc(s.pl[i].n)}</i>`).join(', ')} +1 ⭐` : 'niemand'}</em></div>`).join('') : '<p class="hint">Diesmal keine.</p>'}</div><p class="hint">Jede Partie werden 3 von ${Object.keys(PB_BON).length} Bonus-Sternen ausgelost.</p>`;
 }
 // genaue Beschreibung beim Drüberfahren oder Antippen
 function pbTip(s, i){
@@ -17473,10 +17650,15 @@ function pbTip(s, i){
     e: '<b>❓ Ereignis</b>Etwas Zufälliges passiert: Goldregen (+6), Robin Hood (der Reichste gibt dem Ärmsten 5), Teleport, Sturm (der Stern zieht um), Geschenk (ein Gegenstand), Steuer (alle −3) oder nochmal würfeln.',
     s: '<b>🛒 Shop</b>Schon beim Vorbeilaufen kannst du Gegenstände kaufen: ' + Object.values(PB_IT).map(x => `${x.ic} ${x.n} ${x.c} 🪙`).join(', ') + `. Höchstens ${PB_MAX} Stück.`,
     d: `<b>🦹 Dieb</b>Wer hier stehen bleibt, lässt den Dieb für sich klauen: ${5*m} Münzen vom reichsten Mitspieler, mit etwas Glück (12 %) sogar einen Stern.`,
-    w: '<b>🔄 Tausch</b>Wer hier stehen bleibt, tauscht den Platz mit einem zufälligen Mitspieler.'}[t] || '');
+    w: '<b>🔄 Tausch</b>Wer hier stehen bleibt, tauscht den Platz mit einem zufälligen Mitspieler.',
+    g: '<b>🎰 Glücksrad</b>Wer hier stehen bleibt, dreht am Rad: ' + PB_WH.map(x => `${x.ic} ${x.n}`).join(', ') + '.',
+    k: '<b>⚡ Boss</b>Wer hier stehen bleibt, weckt den Boss: nach der Runde kämpfen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern. Gewinnt der Boss, verliert jeder 5 Münzen.',
+    n: `<b>🏦 Bank</b>Wer vorbeiläuft, zahlt 3 Münzen ein. Wer hier stehen bleibt, bekommt alles. Gerade drin: ${b.bank} 🪙.`,
+    z: `<b>🚉 Bahnhof ${pbStName(n)}</b>Wer hier stehen bleibt, kann für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.`}[t] || '');
   const op = n.nx.length > 1 ? n.nx.map((z, k) => `${n.lab[k] || (k ? 'abbiegen' : 'weiter')}${n.toll[k] ? ` (${n.toll[k]} 🪙 Zoll)` : ''}${b.closed.includes(n.eg[k]) ? ' – gesperrt' : ''}`) : null;
   if (op) out.push(`<b>Abzweigung</b>${op.join(' oder ')}`);
   if (pbShut(b).has(i)) out.push('<b>Gesperrt</b>Dieser Weg ist gerade nicht befahrbar.');
+  s.pl.forEach((x, q) => { if (b.mag && b.mag[q] >= s.ri && b.pos[q] === i) out.push(`<b>🧲 Münzmagnet von ${pbN(q)}</b>Wer hier vorbeiläuft, zahlt ${pbN(q)} 2 Münzen.`); });
   if (b.traps[i] != null) out.push(`<b>🚧 Falle von ${pbN(b.traps[i])}</b>Wer hier stehen bleibt, zahlt ${pbN(b.traps[i])} 10 Münzen.`);
   const who = s.pl.map((p, k) => b.pos[k] === i ? esc(p.n) : '').filter(Boolean); if (who.length) out.push(`Hier steht: ${who.join(', ')}${who.length > 1 && t !== 'h' ? ' (Duell möglich)' : ''}`);
   return out.map(x => `<p>${x}</p>`).join('');
@@ -17494,7 +17676,7 @@ function pgBoardView(s, seats){
   const b = s.br, p = b.act, N = pbG(b.mi), M = PB_MAPS[b.mi], now = performance.now();
   const pl = P => `<polyline points="${P.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}"/>`, road = N.segs.map(sg => pl(sg.P)).join('');
   const shutS = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)), shut = shutS.map(sg => pl(sg.P)).join(''), shutIds = new Set(shutS.flatMap(sg => sg.ids.slice(1, -1)));
-  const blk = shutS.map(sg => { const m = N[sg.ids[Math.floor(sg.ids.length/2)]]; return `<div class="pbblk" style="left:${m.x}%;top:${m.y}%">${M.ev === 'tide' ? '🌊' : M.ev === 'tree' ? '🌲' : '⛔'}<small>gesperrt</small></div>`; }).join('');
+  const blk = shutS.map(sg => { const m = N[sg.ids[Math.floor(sg.ids.length/2)]]; return `<div class="pbblk" style="left:${m.x}%;top:${m.y}%">${M.ev === 'tide' ? '🌊' : M.blk || '⛔'}<small>gesperrt</small></div>`; }).join('');
   const arrows = N.segs.filter(sg => sg.ids.length >= 4).map(sg => { const k = Math.floor((sg.ids.length - 1)/2), a = N[sg.ids[k]], c = N[sg.ids[k + 1]], ang = Math.atan2(c.Y - a.Y, c.X - a.X)*180/Math.PI;
     return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2}) rotate(${ang.toFixed(0)})"><path d="M-1.3 -2 L1.5 0 L-1.3 2" /></g>`; }).join('');
   const tolls = N.segs.filter(sg => sg.toll).map(sg => { const a = N[sg.ids[0]], c = N[sg.ids[1]]; return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2})"><circle r="2.6"/><text y="1">${sg.toll}</text></g>`; }).join('');
@@ -17508,6 +17690,7 @@ function pgBoardView(s, seats){
     P.forEach((Q, k) => Q.slice(1).forEach(i => { if (PQ.pp[i] == null) PQ.pp[i] = k; }));
     badges = b.fk.to.map((t, k) => { const n = N[spot[k]]; return `<button class="pbbadge c${k}" data-bo="${t.id}" data-pi="${k}" style="left:${n.x}%;top:${n.y}%"${meAsk ? '' : ' disabled'}>${k + 1}</button>`; }).join('');
   }
+  if (a && a.k === 'train') nums = a.o.filter(o => o.id !== 'n').map(o => { const n = N[+o.id]; return `<span class="pbnum tr" style="left:${n.x}%;top:${n.y}%">🚂 ${pbStName(n)}</span>`; }).join('');
   if (a && a.k === 'zz' && a.rv) { const lab = {}; a.rv.forEach((L, v) => L.forEach(z => { (lab[z] = lab[z] || []).push(v + 1); }));
     nums = Object.keys(lab).map(z => `<span class="pbnum" style="left:${N[z].x}%;top:${N[z].y}%">${lab[z].join('·')}</span>`).join(''); }
   const starNew = now - pgMark('sn' + b.sn) < 2600;
@@ -17532,7 +17715,9 @@ function pgBoardView(s, seats){
       <p class="hint">${pgCdn('bt' + b.tk, pbW(30000))}</p>`; }
   else if (p >= 0 && b.st === 'pre') act = `<p class="hint">${pbN(p)} würfelt gleich …</p>`;
   const D = b.duel, rolling = b.dice.length && now - pgMark('roll' + b.roll) < 550;
-  const dice = D ? `<div class="pbduel"><span style="color:${PT_COL[D.a]}">${pbN(D.a)}</span>${pbDie(D.da)}<b>:</b>${pbDie(D.db)}<span style="color:${PT_COL[D.b]}">${pbN(D.b)}</span></div>` : `<div class="mxdice pbdice${rolling ? ' rolling' : ''}">${b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0)}</div>`;
+  const W = b.wheel, wel = W ? now - pgMark('wh' + W.n) : 0;
+  const wheel = W ? `<div class="pbwh${W.done || wel > 3100 ? ' dn' : ''}"><div class="pbwr" style="--rot:${1800 - W.r*60 - 30}deg;--ad:-${Math.round(wel)}ms">${PB_WH.map((x, k) => `<span style="transform:rotate(${k*60 + 30}deg)"><i>${x.ic}</i></span>`).join('')}</div><b class="pbwp">▼</b>${W.done ? `<em>${PB_WH[W.r].ic} ${PB_WH[W.r].n}</em>` : ''}</div>` : '';
+  const dice = W ? wheel : D ? `<div class="pbduel"><span style="color:${PT_COL[D.a]}">${pbN(D.a)}</span>${pbDie(D.da)}<b>:</b>${pbDie(D.db)}<span style="color:${PT_COL[D.b]}">${pbN(D.b)}</span></div>` : `<div class="mxdice pbdice${rolling ? ' rolling' : ''}">${b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0)}</div>`;
   const status = `<div class="bxst">${dice}<p class="brmsg">${b.msg}${b.st === 'walk' && b.left > 0 && !a ? ` <b>noch ${b.left} ${b.left === 1 ? 'Feld' : 'Felder'}</b>` : ''}</p><div class="bract">${act}</div></div>`;
   const board = `<div class="bxbw"><div class="bxbd${PQ.zoom ? ' zoom' : ''}" id="bxbd"><div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g>${paths}</svg>${tiles}${blk}${nums}${toks}${badges}${fx}<div class="pbtip" id="pbtip" hidden></div></div></div>
     <div class="bxbar"><button class="bxzm" id="bxzm">${PQ.zoom ? '🔎 Ganzes Brett' : '🔍 Brett vergrößern'}</button></div></div>`;
@@ -17540,7 +17725,7 @@ function pgBoardView(s, seats){
   const sc = i => b.stars[i]*10000 + b.coins[i], rk = s.pl.map((x, i) => i).sort((x, y) => sc(y) - sc(x)), place = []; rk.forEach((i, k) => { place[i] = k && sc(i) === sc(rk[k - 1]) ? place[rk[k - 1]] : k; });
   const ord = s.ord || s.pl.map((x, i) => i), nx = p >= 0 ? ord[ord.indexOf(p) + 1] : -1;
   const plist = `<div class="bxpl">${ord.map((i, k) => `<div class="bxp${i === p ? ' on' : ''}${pgMine(i) && !pgBot(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="o">${k + 1}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span>
-    <span class="nm"><b>${s.team ? `<i class="tm" style="background:${PB_TC[s.team.g[i]]}"></i>` : ''}${esc(s.pl[i].n)}</b><small>${i === p ? '🎲 ist dran' : i === nx ? 'als Nächstes' : ''}${b.items[i].length ? `<span class="it">${b.items[i].map(k2 => `<i title="${esc(PB_IT[k2].n)}">${PB_IT[k2].ic}</i>`).join('')}</span>` : ''}</small></span>
+    <span class="nm"><b>${s.team ? `<i class="tm" style="background:${PB_TC[s.team.g[i]]}"></i>` : ''}${esc(s.pl[i].n)}</b><small>${i === p ? '🎲 ist dran' : i === nx ? 'als Nächstes' : ''}${b.slow && b.slow[i] ? ' <i title="gebremst: würfelt nur 1 bis 3">🐌</i>' : ''}${b.mag && b.mag[i] >= s.ri ? ' <i title="Münzmagnet aktiv">🧲</i>' : ''}${b.items[i].length ? `<span class="it">${b.items[i].map(k2 => `<i title="${esc(PB_IT[k2].n)}">${PB_IT[k2].ic}</i>`).join('')}</span>` : ''}</small></span>
     <span class="st">⭐ ${b.stars[i]}</span><span class="co">🪙 ${b.coins[i]}</span><span class="rk">${place[i] + 1}.</span></div>`).join('')}</div>`;
   const L = b.log || [], hov = typeof matchMedia === 'function' && matchMedia('(hover:hover)').matches;
   const tick = `<div class="bxtk">${L.length ? `<ol class="bxtl">${L.slice(-4).reverse().map((e, k) => `<li${k ? '' : ' class="nw"'}><small>R${e.r}</small><span>${e.m}</span></li>`).join('')}</ol>` : ''}
@@ -19213,6 +19398,456 @@ PGAMES.memory = pgLocal({
     draw();
   },
 });
+/* =====================================================================
+   PARTY: Spiele aus dem Duell (Ketten, Schnick Schnack Schnuck, Billard), Fruit Ninja, Ballon aufpumpen
+   und die Boss-Kämpfe (alle zusammen gegen einen Boss, nur auf dem Brett).
+   ===================================================================== */
+
+/* ---------- Ketten zum Ausscheiden: alle antworten gleichzeitig, falsch oder zu langsam ist raus ---------- */
+function pgChain(isT){
+  const T = 10000;
+  const items = g => isT ? EV : CHAINS[g.ci].items;
+  const val = (g, k) => items(g)[k][1], nmk = (g, k) => items(g)[k][0];
+  const show = (g, v) => isT ? yr(v) : `${fmt(v)} ${CHAINS[g.ci].unit}`;
+  const margin = g => isT ? 0 : CHAINS[g.ci].margin;
+  const dist = (a, b) => isT ? Math.abs(a - b)/Math.max(12, CH_NOW - Math.max(a, b)) : Math.max(a, b)/Math.min(a, b);
+  const fair = (g, a, b) => isT ? Math.abs(a - b) >= 2 && dist(a, b) >= .02 : dist(a, b) >= margin(g);
+  const win = (g, k) => { const W = isT ? CH_T : CH_M, [lo, hi] = W[Math.min(k, W.length - 1)]; return isT ? [lo, hi] : [margin(g)*lo, margin(g)*hi]; };
+  const ease = (g, a, b) => { const d = dist(a, b), lo = isT ? .02 : Math.log(margin(g)), hi = isT ? .7 : Math.log(margin(g)*3.5); return clamp(Math.log((isT ? d : Math.log(d))/lo)/Math.log(hi/lo), 0, 1); };
+  // nächstes Glied: je länger die Kette, desto knapper (wie im Duell)
+  const pick = g => {
+    const rv = val(g, g.ref), all = items(g).map((x, k) => k).filter(k => !g.used.includes(k) && fair(g, rv, val(g, k)));
+    if (!all.length) return -1;
+    const [lo, hi] = win(g, g.lk), inW = all.filter(k => { const d = dist(rv, val(g, k)); return d >= lo && d <= hi; });
+    if (inW.length) return pickOne(inW);
+    const off = k => { const d = dist(rv, val(g, k)); return d < lo ? lo/d : d/hi; }, best = Math.min(...all.map(off));
+    return pickOne(all.filter(k => off(k) <= best*1.0001));
+  };
+  const fresh = g => { if (!isT) g.ci = R0(CHAINS.length); g.ref = R0(items(g).length); g.used = [g.ref]; };
+  const me = (s, seats) => seats.filter(k => k >= 0 && s.g.out[k] < 0 && !pgBot(k)).find(k => s.g.ans[k] == null && !PQ.taps['ck' + s.g.qn + ':' + k]);
+  return {
+    disc: isT ? 'zeitstrahl' : 'mehr', rep: 2, icon: isT ? '⏳' : '📊', name: isT ? 'Zeitstrahl-Kette' : 'Mehr-oder-weniger-Kette',
+    rule: `${isT ? 'Früher oder später?' : 'Mehr oder weniger?'} Alle antworten gleichzeitig und verdeckt, 10 Sekunden pro Glied. Wer falsch liegt oder zu langsam ist, fliegt raus. Mit jedem Glied liegen die ${isT ? 'Jahre' : 'Werte'} näher beieinander. Liegen alle falsch, bleiben alle drin. Wer übrig bleibt, gewinnt.`,
+    keys: 'Antwort antippen oder Auswahltasten 1 und 2 der eigenen Reihe.',
+    start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.oq = s.pl.map(() => 0); g.no = 0; g.lk = 0; g.qn = 0; fresh(g); this.ask(s); },
+    ask(s){
+      const g = s.g; let nx = pick(g); if (nx < 0) { fresh(g); nx = pick(g); }
+      g.nx = nx; g.used.push(nx); g.st = 'ask'; g.ans = s.pl.map(() => null); g.qn++; g.allbad = false;
+      const truth = val(g, nx) > val(g, g.ref) ? 1 : 0, e = ease(g, val(g, g.ref), val(g, nx)), qn = g.qn;
+      pgAlive(s, g).forEach(i => { if (!pgBot(i)) return; const L = pgLvl(i), pc = clamp(.52 + e*.4 + [-.1, 0, .08][L], .5, .97), t = 1500 + Math.random()*[5000, 3800, 2600][L];
+        pgT(() => this.input(s, i, {k: 'ans', a: Math.random() < pc ? truth : 1 - truth, q: qn}), t); });
+      pgPush(); pgT(() => this.show(s), T + 700);
+    },
+    input(s, i, a){ const g = s.g; if (a.k !== 'ans' || g.st !== 'ask' || a.q !== g.qn || g.out[i] >= 0 || g.ans[i] != null || (a.a !== 0 && a.a !== 1)) return;
+      g.ans[i] = a.a; pgPush(); if (pgAlive(s, g).every(k => g.ans[k] != null)) this.show(s); },
+    show(s){
+      const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
+      const truth = val(g, g.nx) > val(g, g.ref) ? 1 : 0, al = pgAlive(s, g), bad = al.filter(i => g.ans[i] !== truth);
+      g.truth = truth; g.lk++;
+      if (bad.length && bad.length < al.length) { g.no++; bad.forEach(i => { g.out[i] = g.no; g.oq[i] = g.qn; }); }
+      g.allbad = bad.length > 0 && bad.length === al.length;
+      g.allbad ? Snd.bad() : Snd.good(); pgPush();
+      pgT(() => { if (pgAlive(s, g).length <= 1 || g.lk >= 14) return pgOutRes(s, g); g.ref = g.nx; this.ask(s); }, 3400);
+    },
+    view(s, seats){
+      const g = s.g, sh = g.st === 'show', C = isT ? null : CHAINS[g.ci], lo = isT ? 'Früher' : C.lo, hi = isT ? 'Später' : C.hi;
+      const q = isT ? `War „${nmk(g, g.nx)}“ früher oder später als „${nmk(g, g.ref)}“?` : C.q.replace('{n}', `„${nmk(g, g.nx)}“`).replace('{r}', `„${nmk(g, g.ref)}“`);
+      const m = me(s, seats), myA = seats.filter(k => k >= 0).map(k => g.ans[k] != null ? g.ans[k] : PQ.taps['ck' + g.qn + ':' + k] ? PQ.taps['ck' + g.qn + ':' + k] - 1 : null).find(v => v != null);
+      return `<p class="hint">Glied ${g.lk + (sh ? 0 : 1)}${sh ? '' : ` · ${pgCdn('ck' + g.qn, T)}`}</p>
+        <div class="chain pgch"><div class="ccard"><b>${esc(nmk(g, g.ref))}</b><em>${esc(show(g, val(g, g.ref)))}</em></div><span class="cvs">→</span><div class="ccard new"><b>${esc(nmk(g, g.nx))}</b><em>${sh ? esc(show(g, val(g, g.nx))) : '?'}</em></div></div>
+        <h2 class="pgq pgcq">${esc(q)}</h2>
+        <div class="pgopt pgo2">${[lo, hi].map((t, k) => `<button class="pgo${sh && k === g.truth ? ' ok' : ''}${sh && myA === k && k !== g.truth ? ' bad' : ''}${!sh && myA === k ? ' sel' : ''}" data-o="${k}"${m == null || sh ? ' disabled' : ''}><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(t)}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] === k ? `<i style="--pc:${PT_COL[i]}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
+        ${sh && g.allbad ? '<p class="hint">Alle lagen falsch, also bleiben alle drin.</p>' : ''}
+        ${pgChips(s, i => g.out[i] >= 0 ? ['off', sh && g.oq[i] === g.qn ? (g.ans[i] == null ? 'zu langsam, raus' : 'falsch, raus') : 'raus'] : sh ? [g.ans[i] === g.truth ? 'on' : '', g.ans[i] === g.truth ? '✓' : g.ans[i] == null ? 'zu langsam' : '✗'] : [g.ans[i] != null ? 'on' : '', g.ans[i] != null ? 'hat gewählt' : ''])}`;
+    },
+    after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('ck' + g.qn);
+      main.querySelectorAll('.pgo').forEach(b => b.onclick = () => { const i = me(s, seats); if (i != null) this.local(s, i, {k: 'row', i: +b.dataset.o}); }); },
+    local(s, i, a){ const g = s.g; if (g.st !== 'ask' || a.k !== 'row' || a.i > 1 || g.out[i] >= 0 || g.ans[i] != null || PQ.taps['ck' + g.qn + ':' + i]) return;
+      if (performance.now() - (PQ.mk['ck' + g.qn] || performance.now()) > T) return;
+      PQ.taps['ck' + g.qn + ':' + i] = a.i + 1; Snd.tick(); pgSend(i, {k: 'ans', a: a.i, q: g.qn}); pgRender(); },
+  };
+}
+PGAMES.zeitstrahl = pgChain(true);
+PGAMES.mehr = pgChain(false);
+
+/* ---------- Schnick Schnack Schnuck: alle gleichzeitig, kommen genau zwei Zeichen vor, fliegen die Verlierer raus ---------- */
+const PG_SSP = [{ic: '✌️', n: 'Schere'}, {ic: '✊', n: 'Stein'}, {ic: '✋', n: 'Papier'}];
+const pgSspBeats = (a, b) => (a - b + 3) % 3 === 1;   // Stein schlägt Schere, Papier schlägt Stein, Schere schlägt Papier
+PGAMES.ssp = {
+  disc: 'ssp', rep: 2, icon: '✂️', name: 'Schnick Schnack Schnuck',
+  rule: 'Alle wählen gleichzeitig und verdeckt Schere, Stein oder Papier, 5 Sekunden pro Runde. Kommen genau zwei Zeichen vor, fliegen alle raus, die verloren haben. Kommt nur eins oder kommen alle drei vor, geht es nochmal. Wer nicht wählt, bekommt ein zufälliges Zeichen. Wer übrig bleibt, gewinnt.',
+  keys: 'Zeichen antippen oder Auswahltasten 1–3 der eigenen Reihe.',
+  start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.no = 0; g.r = 0; this.ask(s); },
+  ask(s){ const g = s.g, r = ++g.r; g.st = 'ask'; g.c = s.pl.map(() => null); g.rnd = []; g.lose = -1;
+    pgAlive(s, g).forEach(i => { if (pgBot(i)) pgT(() => this.input(s, i, {k: 'c', v: R0(3), r}), 800 + Math.random()*3000); });
+    pgPush(); pgT(() => this.show(s), 5600); },
+  input(s, i, a){ const g = s.g; if (a.k !== 'c' || g.st !== 'ask' || a.r !== g.r || g.out[i] >= 0 || g.c[i] != null || ![0, 1, 2].includes(a.v)) return;
+    g.c[i] = a.v; pgPush(); if (pgAlive(s, g).every(k => g.c[k] != null)) this.show(s); },
+  show(s){
+    const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
+    const al = pgAlive(s, g); al.forEach(i => { if (g.c[i] == null) { g.c[i] = R0(3); g.rnd.push(i); } });
+    const has = [0, 1, 2].filter(v => al.some(i => g.c[i] === v));
+    if (has.length === 2) { const [a, b] = has, lo = pgSspBeats(a, b) ? b : a; g.lose = lo; g.no++; al.filter(i => g.c[i] === lo).forEach(i => { g.out[i] = g.no; }); Snd.good(); } else Snd.tick();
+    pgPush(); pgT(() => { if (pgAlive(s, g).length <= 1 || g.r >= 25) return pgOutRes(s, g); this.ask(s); }, 3000);
+  },
+  view(s, seats){
+    const g = s.g, sh = g.st === 'show', al = s.pl.map((p, i) => i).filter(i => g.out[i] < 0 || (sh && g.out[i] === g.no && g.lose >= 0 && g.c[i] === g.lose));
+    const me = seats.filter(k => k >= 0 && g.out[k] < 0 && !pgBot(k)).find(k => g.c[k] == null && PQ.taps['ss' + g.r + ':' + k] == null);
+    const myC = seats.filter(k => k >= 0).map(k => g.c[k] != null ? g.c[k] : PQ.taps['ss' + g.r + ':' + k]).find(v => v != null);
+    return `<p class="hint">Runde ${g.r}${sh ? '' : ` · ${pgCdn('ss' + g.r, 5000)}`}</p>
+      ${sh ? `<h2 class="who">${g.lose >= 0 ? `${PG_SSP[g.lose].ic} ${PG_SSP[g.lose].n} verliert!` : 'Unentschieden, nochmal!'}</h2>
+        <div class="pgssp">${al.map(i => `<div class="${g.out[i] >= 0 ? 'off' : ''}" style="--pc:${PT_COL[i]}"><span>${PG_SSP[g.c[i]].ic}</span><b>${esc(s.pl[i].n.slice(0, 12))}</b>${g.rnd.includes(i) ? '<small>Zufall</small>' : ''}</div>`).join('')}</div>`
+      : `<div class="pgopt pgo3">${PG_SSP.map((x, k) => `<button class="pgo pgsp${myC === k ? ' sel' : ''}" data-o="${k}"${me == null ? ' disabled' : ''}><em>${pgKeyHint(seats, 'r' + k)}</em><span>${x.ic}</span>${x.n}</button>`).join('')}</div>`}
+      ${pgChips(s, i => g.out[i] >= 0 ? ['off', 'raus'] : sh ? ['on', ''] : [g.c[i] != null ? 'on' : '', g.c[i] != null ? 'hat gewählt' : ''])}`;
+  },
+  after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('ss' + g.r);
+    main.querySelectorAll('.pgsp').forEach(b => b.onclick = () => { const i = seats.filter(k => k >= 0 && g.out[k] < 0 && !pgBot(k)).find(k => g.c[k] == null && PQ.taps['ss' + g.r + ':' + k] == null); if (i != null) this.local(s, i, {k: 'row', i: +b.dataset.o}); }); },
+  local(s, i, a){ const g = s.g; if (g.st !== 'ask' || a.k !== 'row' || a.i > 2 || g.out[i] >= 0 || g.c[i] != null || PQ.taps['ss' + g.r + ':' + i] != null) return;
+    PQ.taps['ss' + g.r + ':' + i] = a.i; Snd.tick(); pgSend(i, {k: 'c', v: a.i, r: g.r}); pgRender(); },
+};
+
+/* ---------- Billard: gerade Spielerzahl 8-Ball in zwei Teams, ungerade 9-Ball jeder gegen jeden ---------- */
+PGAMES.billard = pgShot({
+  disc: 'billard', icon: '🎱', name: 'Billard', W: BD.W, H: BD.H, PULL: BD.PULL, FMS: 4*BD.DT*1000,
+  rule: 'Bei gerader Spielerzahl (und im Team-Minispiel) 8-Ball in zwei Teams, die Teams stoßen abwechselnd: erst die eigene Gruppe (Volle oder Halbe), dann die 8. Bei ungerader Spielerzahl 9-Ball jeder gegen jeden: immer zuerst die niedrigste Kugel treffen, wer die 9 versenkt, gewinnt. Wer richtig versenkt, bleibt dran. Nach einem Foul ist der Nächste dran, eine versenkte Weiße kommt zurück an den Anfang. Jede eigene versenkte Kugel ist ein Punkt.',
+  init(s, g){
+    BD.geo(); const n = s.pl.length, T = s.br && s.team;
+    g.mode = T || n % 2 === 0 ? '8' : '9'; g.b = BD.rack(g.mode); g.grp = [null, null]; g.brk = true; g.pot = []; g.pt = s.pl.map(() => 0); g.win = null; g.end = false; g.msg = ''; g.cap = pgR(30);
+    if (g.mode === '8') {
+      const tm = T ? T.g.slice() : (() => { const t = []; shuffle(s.pl.map((p, i) => i)).forEach((i, k) => { t[i] = k % 2; }); return t; })();
+      g.tm = tm; g.tq = [0, 1].map(t => shuffle(s.pl.map((p, i) => i).filter(i => tm[i] === t))); g.ti = [1, 1]; g.ct = R0(2); g.ti[1 - g.ct] = 0; g.np = g.tq[g.ct][0];
+    } else { g.q = pgRot(s, 0); g.k = 0; g.np = g.q[0]; }
+  },
+  nextP(g){ if (g.mode === '8') { g.ct = 1 - g.ct; const L = g.tq[g.ct], p = L[g.ti[g.ct] % L.length]; g.ti[g.ct]++; return p; } g.k = (g.k + 1) % g.q.length; return g.q[g.k]; },
+  next(s, g){ return g.win != null || g.end ? -1 : g.np; },
+  sim(s, g, b0, p, a, w, T, rec){ const [vx, vy] = bdVel(a, w), r = BD.sim(b0, vx, vy, rec); r.dur = r.fr.length*this.FMS; return r; },
+  land(s, g, r, p){
+    const tp = g.mode === '8' ? g.tm[p] : 0, out = bdRules({p: tp, mode: g.mode, b: g.b, g: g.grp, brk: g.brk}, r), nm = s.pl[p].n;
+    g.b = out.bs; g.grp = out.g; g.brk = false;
+    out.pots.forEach(id => { if (!g.pot.includes(id)) g.pot.push(id); }); g.pot = g.pot.filter(id => { const b = g.b.find(x => x.id === id); return b && b.f; });
+    if (!out.foul) g.pt[p] += out.pots.filter(id => id && id !== 8 && (g.mode === '9' || !g.grp[tp] || BD.grp(id) === g.grp[tp])).length;
+    if (out.win >= 0) { g.win = g.mode === '8' ? out.win : p; g.msg = `${nm} ${out.msg}.`; return; }
+    if (out.foul) { g.msg = `Foul von ${nm}: ${out.foul}.`; g.np = this.nextP(g); }
+    else if (out.keep) { g.msg = `${nm} ${out.msg || 'hat versenkt'} und bleibt dran.`; g.np = p; }
+    else { g.msg = out.msg ? `${nm} ${out.msg}.` : ''; g.np = this.nextP(g); }
+    if (g.n >= g.cap) {   // Stoß-Grenze: 8-Ball gewinnt, wer weniger übrig hat, 9-Ball zählen nur die Punkte
+      g.end = true;
+      if (g.mode === '8') { const left = [0, 1].map(t => g.grp[t] ? g.b.filter(b => !b.f && b.id && BD.grp(b.id) === g.grp[t]).length : 99); g.win = left[0] === left[1] ? -1 : left[0] < left[1] ? 0 : 1; } else g.win = -1;
+      g.msg = `Nach ${g.cap} Stößen ist Schluss.`;
+    }
+  },
+  won(g, i){ return g.mode === '8' ? g.win >= 0 && g.tm[i] === g.win : g.win === i; },
+  round(s, g){ pgResult(s.pl.map((x, i) => (this.won(g, i) ? 1000 : 0) + g.pt[i]), s.pl.map((x, i) => `${this.won(g, i) ? '🏆 ' : ''}${g.pt[i]} versenkt`)); return false; },
+  plan(s, g, p, lvl, T, done){
+    const tp = g.mode === '8' ? g.tm[p] : 0, S0 = {p: tp, mode: g.mode, b: g.b, g: g.grp, brk: g.brk}, c0 = g.b.find(b => b.id === 0), R = BD.R, cands = [];
+    if (g.brk) return done(Math.atan2(BD.FOOT[1] - c0.y, BD.FOOT[0] - c0.x) + gauss()*.004, 1);
+    for (const b of g.b) { if (b.f || !b.id || !bdLegal(S0, b.id)) continue;
+      for (const [px, py] of BD.aimPk) { const dx = px - b.x, dy = py - b.y, d = Math.hypot(dx, dy), gx = b.x - dx/d*2*R, gy = b.y - dy/d*2*R, a = Math.atan2(gy - c0.y, gx - c0.x);
+        const cut = Math.abs(((a - Math.atan2(dy, dx)) + 3*Math.PI) % (2*Math.PI) - Math.PI); if (cut > 1.25) continue; for (const w of [.32, .5, .72]) cands.push([a, w]); }
+      cands.push([Math.atan2(b.y - c0.y, b.x - c0.x), .45]); }
+    if (!cands.length) cands.push([Math.random()*6.28, .5]);
+    const sc = ([a, w]) => { const [vx, vy] = bdVel(a, w), o = bdRules(S0, BD.sim(g.b, vx, vy, false)); if (o.win === tp) return -1000; if (o.win >= 0) return 1000; return (o.foul ? 60 : 0) - (o.keep ? 60 + 10*o.pots.length : 0) + Math.random()*4; };
+    pgPlan(shuffle(cands).slice(0, 80), sc, [.03, .014, .006][lvl], [.18, .1, .05][lvl], done);
+  },
+  status(s, g){
+    const who = g.p != null && g.st !== 'done' ? ` · <b style="color:${PT_COL[g.p]}">${esc(s.pl[g.p].n)}</b> ist dran` : '';
+    const head = g.mode === '9' ? `9-Ball · nächste Kugel: ${BD.low(g.b)}` : `8-Ball · ${[0, 1].map(t => `<b style="color:${PB_TC[t]}">Team ${t ? 'Rot' : 'Blau'}</b>${g.grp[t] ? ` (${g.grp[t] === 's' ? 'Volle' : 'Halbe'})` : ''}`).join(' gegen ')}`;
+    return `${head}${who} · Stoß ${Math.min(g.n + 1, g.cap)} von ${g.cap}${g.msg ? `<br>${esc(g.msg)}` : ''}<br><span class="pgsk">${s.pl.map((p, i) => `<i style="--pc:${g.mode === '8' ? PB_TC[g.tm[i]] : PT_COL[i]}">${esc(p.n.slice(0, 10))} ${g.pt[i]}</i>`).join('')}</span>`;
+  },
+  evMs(e){ return e[0]*BD.DT*1000; },
+  sound(e){ if (e[1] === 'b') Snd.tone(1200, .03, 'triangle', .02 + .05*e[2]); else if (e[1] === 'r') Snd.tone(220, .04, 'sine', .03); else if (e[1] === 'p') Snd.tone(140, .12, 'sine', .07); return ''; },
+  draw(cv, s, g, pos, mt, aim, now){
+    const S = PQ.bdS = PQ.bdS || {}, B0 = g.st === 'roll' && g.shot ? g.shot.b0 : g.b;
+    S.mode = g.mode; S.b = pos && pos.length === 3*B0.length ? B0.map((b, j) => ({id: b.id, x: pos[3*j], y: pos[3*j + 1], f: pos[3*j + 2]})) : g.b;
+    S.p = g.mode === '8' && g.p != null ? g.tm[g.p] : 0; S.g = g.grp; S.bih = 0; S.brk = g.brk; S.pot = g.pot; S.ph = pos ? 'roll' : g.st === 'aim' ? 'aim' : g.st === 'done' ? 'done' : 'roll';
+    S.aim = aim; S.rec = null; S.lab = ''; S.nm = ['Team Blau', 'Team Rot'];
+    S.col = g.mode === '8' ? PB_TC : [g.p != null ? PT_COL[g.p] : PAL.p1, PAL.p2];
+    S.hud = g.mode === '9' ? ctx => { if (g.p != null && g.st !== 'done') pgHi(ctx, null, g.p, '', s); } : null;
+    bdDraw(cv, S, now);
+  },
+});
+
+/* ---------- Fruit Ninja: Obst zerschneiden, Bomben meiden; bei allen fliegt dasselbe Obst ---------- */
+const PG_FRUIT = ['🍉', '🍎', '🍊', '🍋', '🍐', '🍑', '🍍', '🥝'];
+PGAMES.fruit = Object.assign(pgSolo({
+  disc: 'fruit', icon: '🍉', name: 'Fruit Ninja', W: 600, H: 400, max: 40,
+  rule: 'Obst fliegt hoch, wischt mit Finger oder Maus hindurch und zerschneidet es: jedes Obst 1 Punkt, der Stern 5. Bomben kosten 10 Punkte. Bei allen fliegt dasselbe Obst. Nach 40 Sekunden gewinnt, wer mehr Punkte hat.',
+  keys: 'Maus oder Finger: mit gedrückter Taste über das Obst wischen. Tasten: Auswahltasten 1–4 schneiden eine Reihe (von oben nach unten).',
+  bot: [28, 42, 58], botT: () => 40500, fmt: v => `${v} Punkte`,
+  make(r){
+    const F = []; let t = .8;
+    while (t < 38.5) { const n = 1 + Math.floor(r()*(t > 20 ? 4 : 3));
+      for (let k = 0; k < n; k++) { const x0 = 80 + r()*440, z = r(), kind = z < .11 ? 'bomb' : z < .15 ? 'gold' : 'f';
+        F.push({t: t + k*.14, x0, vx: (300 - x0)*(.35 + r()*.5) + (r() - .5)*80, vy: -(620 + r()*190), kind, e: Math.floor(r()*PG_FRUIT.length), cut: 0}); }
+      t += .9 + r()*.7; }
+    return {F, t: 0, score: 0, fx: [], trail: [], lt: null, cd: 0, band: null,
+      pos(f){ const a = this.t - f.t; return [f.x0 + f.vx*a, 430 + f.vy*a + 450*a*a]; },
+      step(dt){ this.fx = this.fx.filter(f => (f.t -= dt) > 0); this.trail = this.trail.filter(p => this.t - p[2] < .18); if (this.cd > 0) this.cd -= dt; },
+      hit(f, x, y){ f.cut = this.t; const p = f.kind === 'bomb' ? -10 : f.kind === 'gold' ? 5 : 1; this.score = Math.max(0, this.score + p); this.fx.push({x, y, p, t: .7});
+        if (p < 0) Snd.bad(); else Snd.tone(520 + Math.random()*300, .05, 'triangle', .05); },
+      live(){ return this.F.filter(f => !f.cut && this.t >= f.t && this.t - f.t < 2.3); },
+      cutSeg(x0, y0, x1, y1){ for (const f of this.live()) { const [x, y] = this.pos(f), R = f.kind === 'bomb' ? 24 : 30, ex = x1 - x0, ey = y1 - y0, L2 = ex*ex + ey*ey || 1, k = clamp(((x - x0)*ex + (y - y0)*ey)/L2, 0, 1), dx = x0 + ex*k - x, dy = y0 + ey*k - y; if (dx*dx + dy*dy < R*R) this.hit(f, x, y); } },
+      touch(x, y, down){ const L = this.lt; if (down && L && Math.hypot(x - L[0], y - L[1]) >= 5) { this.cutSeg(L[0], L[1], x, y); this.lt = [x, y]; this.trail.push([x, y, this.t]); } else if (down && !L) { this.lt = [x, y]; this.trail.push([x, y, this.t]); } if (!down) this.lt = null; },
+      key(i){ if (i > 3 || this.cd > 0) return; this.cd = .45; const y0 = i*100; this.band = {y: y0, t: this.t}; for (const f of this.live()) { const [x, y] = this.pos(f); if (y >= y0 - 20 && y < y0 + 120 && x > -20 && x < 620) this.hit(f, x, y); } Snd.tone(900, .04, 'square', .03); },
+      press(){ this.key(1); } };
+  },
+  draw(x, S, col){
+    const g = x.createLinearGradient(0, 0, 0, 400); g.addColorStop(0, '#4a3220'); g.addColorStop(1, '#6b4a2c'); x.fillStyle = g; x.fillRect(0, 0, 600, 400);
+    x.strokeStyle = 'rgba(0,0,0,.18)'; x.lineWidth = 2; for (let k = 1; k < 6; k++) { x.beginPath(); x.moveTo(0, k*68); x.bezierCurveTo(200, k*68 - 12, 400, k*68 + 12, 600, k*68); x.stroke(); }
+    if (!S) return; S.t = S.t || 0;
+    if (S.band && S.t - S.band.t < .25) { x.fillStyle = `rgba(255,255,255,${.25*(1 - (S.t - S.band.t)/.25)})`; x.fillRect(0, S.band.y, 600, 100); }
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    for (const f of S.F) { if (S.t < f.t) continue; const a = S.t - f.t; if (a > 2.6) continue; const [px, py] = S.pos(f); if (py > 480) continue;
+      const em = f.kind === 'bomb' ? '💣' : f.kind === 'gold' ? '🌟' : PG_FRUIT[f.e];
+      if (f.cut) { const c = S.t - f.cut; if (c > .6) continue; x.globalAlpha = 1 - c/.6; x.font = '46px sans-serif';
+        if (f.kind === 'bomb') x.fillText('💥', px, py);
+        else for (const d of [-1, 1]) { x.save(); x.translate(px + d*(8 + c*70), py + c*90); x.rotate(d*c*3); x.beginPath(); x.rect(d < 0 ? -32 : 0, -32, 32, 64); x.clip(); x.fillText(em, 0, 0); x.restore(); }
+        x.globalAlpha = 1; continue; }
+      x.font = '50px sans-serif'; x.save(); x.translate(px, py); x.rotate(a*2*(f.vx > 0 ? 1 : -1)); x.fillText(em, 0, 0); x.restore(); }
+    if (S.trail && S.trail.length > 1) { x.strokeStyle = col; x.lineCap = 'round'; for (let k = 1; k < S.trail.length; k++) { const p = S.trail[k - 1], q = S.trail[k]; x.lineWidth = Math.max(1, 2 + 9*(1 - (S.t - q[2])/.18)); x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(q[0], q[1]); x.stroke(); } }
+    (S.fx || []).forEach(f => { x.fillStyle = f.p > 0 ? '#7dff9a' : '#ff6b7a'; x.font = '900 24px Nunito, sans-serif'; x.fillText((f.p > 0 ? '+' : '') + f.p, f.x, f.y - 40*(1 - f.t/.7)); });
+    x.textBaseline = 'alphabetic'; x.fillStyle = '#fff'; x.font = '900 28px Nunito, sans-serif'; x.textAlign = 'left'; x.fillText(S.score, 16, 38);
+    x.textAlign = 'right'; x.font = '900 22px Nunito, sans-serif'; x.fillText(Math.max(0, Math.ceil(40 - S.t)) + ' s', 584, 36);
+  },
+}), {only: true});
+
+/* ---------- Ballon aufpumpen: pumpen bringt Punkte, aber der Ballon platzt irgendwann (bei allen an derselben Stelle) ---------- */
+PGAMES.ballon = Object.assign(pgLocal({
+  disc: 'ballon', icon: '🎈', name: 'Ballon aufpumpen', max: 60, hint: 'Pumpen oder sichern',
+  rule: '3 Ballons nacheinander. Jedes Pumpen bringt einen Punkt, aber irgendwann platzt der Ballon (zwischen 6 und 35 Mal Pumpen), dann sind seine Punkte weg. Mit „Sichern“ behältst du sie und nimmst den nächsten Ballon. Bei allen platzen die Ballons an derselben Stelle. Wer nach 3 Ballons die meisten Punkte hat, gewinnt. Höchstens 60 Sekunden.',
+  keys: 'Pumpen: Knopf oder Buzzer. Sichern: Knopf oder Auswahltaste 1.',
+  init(s, g){ g.th = [0, 1, 2].map(() => 6 + R0(30)); },
+  bot(s, g, L){ let v = 0, ms = 1500; g.th.forEach(t => { const k = L === 0 ? 6 + R0(14) : L === 1 ? 12 + R0(9) : 14 + R0(6); if (k < t) v += k; ms += Math.min(k, t)*[420, 330, 260][L] + 900; }); return [v, ms]; },
+  fmt: v => `${v} Punkte`,
+  mount(L, s, g, i, nm){
+    const COL = ['#ff4d5e', '#3d8bff', '#ffc531'];
+    let b = 0, n = 0, tot = 0, busy = false, pop = false; const res = [];
+    const draw = () => {
+      const sz = Math.min(250, 70 + n*5.4);
+      L.el.innerHTML = `${nm}<div class="pgbal"><div class="pgbs">${[0, 1, 2].map(k => `<span class="${k === b && !L.done ? 'on' : ''}">${k < res.length ? (res[k] > 0 ? `🎈 ${res[k]}` : `💥 0`) : '🎈'}</span>`).join('')}</div>
+        <div class="pgbw">${L.done ? `<div class="pgbend">🏁<b>${tot}</b><small>Punkte</small></div>` : pop ? `<div class="pgbpop">💥<small>bei ${n}</small></div>` : `<div class="pgbb" style="width:${sz}px;height:${sz*1.18}px;--c:${COL[b % 3]}"><b>${n}</b></div>`}</div>
+        <p class="hint">Gesichert: <b>${tot}</b>${L.done ? '' : ` · Ballon ${b + 1} von 3`}</p>
+        ${L.done ? '' : `<div class="mbtns"><button class="btn pgbp"${busy ? ' disabled' : ''}>💨 Pumpen</button><button class="btn ghost pgbk"${n && !busy ? '' : ' disabled'}>💰 Sichern (+${n})</button></div>`}</div>`;
+      const P = L.el.querySelector('.pgbp'), K = L.el.querySelector('.pgbk');
+      if (P) P.onpointerdown = e => { e.preventDefault(); pump(); };
+      if (K) K.onclick = bank;
+    };
+    const next = () => { b++; n = 0; pop = false; busy = false; if (b >= 3) { L.send(tot); Snd.good(); } draw(); };
+    const pump = () => { if (L.done || busy) return; n++;
+      if (n >= g.th[b]) { busy = true; pop = true; res.push(0); Snd.bad(); vib(60); draw(); setTimeout(next, 1200); return; }
+      Snd.tone(260 + n*14, .05, 'sine', .05); draw(); };
+    const bank = () => { if (L.done || busy || !n) return; tot += n; res.push(n); Snd.tone(880, .08, 'triangle', .06); next(); };
+    L.onKey = a => { if (a.k === 'bz') pump(); else if (a.k === 'row' && a.i === 0) bank(); };
+    setTimeout(() => { if (!L.done && PQ.lc && PQ.lc[i] === L) { L.send(tot); draw(); } }, 59000);
+    draw();
+  },
+}), {only: true});
+
+/* ---------- Boss-Kämpfe: alle zusammen gegen einen Boss, nur auf dem Brett ----------
+   Jedes Gerät spielt für sich (gleicher Zufall, also gleiche Angriffe), schickt seinen Schaden alle 0,3 s an den Gastgeber.
+   Der Gastgeber zählt zusammen, rechnet Bots dazu und schickt den Stand als kleines Paket an alle. */
+function pgBossBar(x, W, hp, max, t, T){
+  x.fillStyle = 'rgba(0,0,0,.6)'; x.fillRect(10, 8, W - 20, 24); x.fillStyle = '#3a0d14'; x.fillRect(14, 12, W - 28, 16);
+  const f = clamp(hp/max, 0, 1); x.fillStyle = f > .5 ? '#ff4d5e' : f > .2 ? '#ff8a1f' : '#ffd54a'; x.fillRect(14, 12, (W - 28)*f, 16);
+  x.fillStyle = '#fff'; x.font = '900 14px Nunito, sans-serif'; x.textBaseline = 'middle'; x.textAlign = 'left'; x.fillText(`⚡ BOSS ${Math.ceil(hp)}`, 20, 20);
+  x.textAlign = 'right'; x.fillText(`${Math.max(0, Math.ceil(T - (t || 0)))} s`, W - 20, 20); x.textBaseline = 'alphabetic';
+}
+const pgBossTxt = (x, t, X, Y, sz, col) => { x.font = `900 ${sz}px Nunito, sans-serif`; x.textAlign = 'center'; x.fillStyle = 'rgba(0,0,0,.6)'; x.fillText(t, X + 2, Y + 2); x.fillStyle = col || '#fff'; x.fillText(t, X, Y); };
+function pgBoss(c){
+  return {
+    boss: true, only: true, disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys,
+    start(s){
+      const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.hp = Math.round(c.hp*s.pl.length); g.dm = s.pl.map(() => 0);
+      pgT(() => { g.st = 'run'; pgPush();
+        const tick = () => { if (s.g !== g || g.st !== 'run') return; s.pl.forEach((p, i) => { if (pgBot(i)) g.dm[i] += Math.max(0, c.bot[pgLvl(i)]*(1 + gauss()*.4))*.5; }); if (!this.chk(s)) { pgRT(['bh', g.seed, g.dm.map(v => Math.round(v*10)/10)]); pgT(tick, 500); } };
+        pgT(tick, 500); pgT(() => this.end(s, false), c.max*1000 + 1500);
+      }, 2000);
+    },
+    chk(s){ const g = s.g; if (g.dm.reduce((a, v) => a + v, 0) >= g.hp) { this.end(s, true); return true; } return false; },
+    input(s, i, a){ const g = s.g; if (a.k === 'dmg' && g.st === 'run' && Number.isFinite(a.v) && a.v > g.dm[i]) { g.dm[i] = Math.min(a.v, g.dm[i] + c.cap); this.chk(s); } },
+    end(s, won){ const g = s.g; if (g.st !== 'run') return; g.st = 'done'; PQ.solo = {}; pgBossEnd(g.dm.map(v => Math.round(v)), won); },
+    rt(s, d){ if (d[0] === 'bh' && d[1] === s.g.seed && Array.isArray(d[2])) PQ.bh = d[2]; },
+    view(s, seats){
+      const g = s.g, mine = seats.filter(i => i >= 0);
+      return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : `⚡ Alle zusammen gegen den Boss · ${pgCdn('bs' + g.seed, c.max*1000)}`}</p>
+        <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgb${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
+        <div class="pgchips pgbossd" id="pgbossd"></div>`;
+    },
+    after(s, seats){
+      const g = s.g, mine = seats.filter(i => i >= 0); if (g.st !== 'run') return;
+      pgMark('boss' + g.seed, () => { PQ.solo = {}; PQ.bh = null; mine.forEach((i, k) => { PQ.solo[i] = c.make(pgRng(g.seed), g, PT.role === 'local' ? k : 0); PQ.solo[i].sent = 0; PQ.solo[i].dmg = 0; }); });
+      mine.forEach(i => { const cv = $('#pgb' + i); if (!cv) return; const cxy = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left)/b.width*c.W, (e.clientY - b.top)/b.height*c.H]; };
+        cv.onpointerdown = e => { e.preventDefault(); Snd.init(); const S = PQ.solo[i]; if (!S || S.done) return; try { cv.setPointerCapture(e.pointerId); } catch(_) {} S.down = 1; if (S.touch) S.touch(...cxy(e), 1); else if (S.press) S.press(); };
+        cv.onpointermove = e => { const S = PQ.solo[i]; if (!S) return; if (S.touch && S.down) S.touch(...cxy(e), 1); else if (S.hover && e.pointerType === 'mouse') S.hover(...cxy(e)); };
+        cv.onpointerup = cv.onpointercancel = e => { const S = PQ.solo[i]; if (S && S.down) { S.down = 0; if (S.touch) S.touch(...cxy(e), e.type === 'pointercancel' ? -1 : 0); } }; });
+      cancelAnimationFrame(PQ.raf); let last = performance.now();
+      const loop = () => {
+        if (PQ.s !== s || s.ph !== 'play' || s.g !== g) return;
+        const now = performance.now(), dt = Math.min(.05, (now - last)/1000); last = now;
+        const B = PQ.bh || g.dm, tot = B.reduce((a, v) => a + v, 0);
+        mine.forEach(i => { const cv = $('#pgb' + i), S = PQ.solo[i]; if (!cv || !S) return;
+          const w = cv.clientWidth || 300, dpr = Math.min(2, devicePixelRatio || 1); if (cv.width !== Math.round(w*dpr)) { cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr*c.H/c.W); }
+          const x = cv.getContext('2d'); x.setTransform(cv.width/c.W, 0, 0, cv.width/c.W, 0, 0);
+          if (!S.done) { S.t = (S.t || 0) + dt; S.step(dt); if (S.t >= c.max) S.done = true; }
+          if (S.dmg > S.sent && (now - (S.st || 0) > 300 || S.done)) { S.st = now; S.sent = S.dmg; pgSend(i, {k: 'dmg', v: Math.round(S.dmg*10)/10}); }
+          const hp = Math.max(0, g.hp - (tot - (B[i] || 0) + Math.max(S.dmg, B[i] || 0)));
+          c.draw(x, S, PT_COL[i], hp/g.hp);
+          pgBossBar(x, c.W, hp, g.hp, S.t, c.max);
+          x.fillStyle = '#fff'; x.font = '900 16px Nunito, sans-serif'; x.textAlign = 'left'; x.fillText(`Dein Schaden: ${Math.round(S.dmg)}`, 14, c.H - 12);
+          if (hp <= 0) pgBossTxt(x, 'BESIEGT!', c.W/2, c.H/2, 46, '#ffd54a');
+          else if (S.done) pgBossTxt(x, 'Zeit um!', c.W/2, c.H/2, 40);
+        });
+        const el = $('#pgbossd'); if (el && now - (PQ.bdT || 0) > 300) { PQ.bdT = now; el.innerHTML = s.pl.map((p, i) => `<span style="--pc:${PT_COL[i]}"><b>${esc(p.n.slice(0, 12))}</b><small>⚔️ ${Math.round(mine.includes(i) && PQ.solo[i] ? Math.max(PQ.solo[i].dmg, B[i] || 0) : B[i] || 0)}</small></span>`).join(''); }
+        PQ.raf = requestAnimationFrame(loop);
+      };
+      loop();
+    },
+    local(s, i, a){ const S = PQ.solo && PQ.solo[i]; if (s.g.st !== 'run' || !S || S.done) return; if (a.k === 'bz') { if (S.press) S.press(); } else if (a.k === 'row' && S.key) S.key(a.i); },
+  };
+}
+
+// Boss-Hämmern: hauen, so schnell es geht, aber nicht, wenn der Boss die Stacheln ausfährt
+PGAMES.bham = pgBoss({
+  disc: 'bossham', icon: '👹', name: 'Boss-Hämmern', W: 400, H: 400, max: 25, hp: 95, bot: [3.2, 4.2, 5.2], cap: 25,
+  rule: 'Alle hauen zusammen auf den Boss ein, jeder Treffer ist 1 Schaden. Glüht er orange, fährt er gleich Stacheln aus: wer dann haut, ist kurz betäubt. Schafft ihr es in 25 Sekunden?',
+  keys: 'Buzzer oder auf den Boss tippen.',
+  make(r){
+    const A = []; for (let t = 2.6; t < 25; t += 2.4 + r()*1.8) A.push({t, warn: .9, dur: .8 + r()*.4});
+    return {A, t: 0, dmg: 0, stun: 0, shake: 0, fx: [],
+      state(){ const a = this.A.find(a => this.t >= a.t - a.warn && this.t < a.t + a.dur); return !a ? ['idle', 0] : this.t < a.t ? ['warn', (this.t - a.t + a.warn)/a.warn] : ['spike', 1]; },
+      step(dt){ if (this.stun > 0) this.stun -= dt; this.shake = Math.max(0, this.shake - dt*5); this.fx = this.fx.filter(f => (f.t -= dt) > 0); },
+      press(){ if (this.done || this.stun > 0) return; if (this.state()[0] === 'spike') { this.stun = 1.6; Snd.bad(); vib(80); return; }
+        this.dmg++; this.shake = 1; this.fx.push({x: 140 + Math.random()*120, y: 150 + Math.random()*90, t: .5}); Snd.tone(180 + Math.random()*90, .04, 'square', .04); } };
+  },
+  draw(x, S, col, f){
+    x.fillStyle = '#2a1238'; x.fillRect(0, 0, 400, 400); x.fillStyle = '#3b1a4f'; x.fillRect(0, 330, 400, 70);
+    if (!S) return;
+    const [st, p] = S.state(), sh = S.shake*7, bx = 200 + (Math.random() - .5)*sh, by = 210 + (Math.random() - .5)*sh;
+    if (st !== 'idle') { x.fillStyle = st === 'spike' ? '#ff3b4f' : `rgba(255,140,30,${.25 + .55*p})`;
+      for (let k = 0; k < 14; k++) { const an = k/14*Math.PI*2, r0 = 72, r1 = 72 + (st === 'spike' ? 58 : 18*p); x.beginPath(); x.moveTo(bx + Math.cos(an - .13)*r0, by + Math.sin(an - .13)*r0); x.lineTo(bx + Math.cos(an)*r1, by + Math.sin(an)*r1); x.lineTo(bx + Math.cos(an + .13)*r0, by + Math.sin(an + .13)*r0); x.fill(); } }
+    if (st === 'warn') { x.fillStyle = `rgba(255,140,30,${.2 + .3*p})`; x.beginPath(); x.arc(bx, by, 78, 0, 7); x.fill(); }
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = `${140 + S.shake*12}px sans-serif`; x.fillText('👹', bx, by); x.textBaseline = 'alphabetic';
+    S.fx.forEach(q => pgBossTxt(x, '+1', q.x, q.y - 40*(1 - q.t/.5), 22, '#ffd54a'));
+    pgBossTxt(x, st === 'spike' ? '🛑 NICHT HAUEN!' : st === 'warn' ? '⚠️ Gleich Stacheln!' : 'Hauen!', 200, 352, 22, st === 'idle' ? '#fff' : '#ffb04a');
+    if (S.stun > 0) { x.fillStyle = 'rgba(20,20,30,.55)'; x.fillRect(0, 0, 400, 400); pgBossTxt(x, `💫 Betäubt ${S.stun.toFixed(1)}`, 200, 110, 28); }
+  },
+});
+
+// Boss-Invaders: das Schiff schießt von selbst, ausweichen und unter dem Boss bleiben
+PGAMES.binv = pgBoss({
+  disc: 'bossinv', icon: '👾', name: 'Boss-Invaders', W: 400, H: 600, max: 30, hp: 64, bot: [1.6, 2.2, 2.8], cap: 20,
+  rule: 'Dein Schiff schießt von selbst, jeder Treffer am Boss ist 1 Schaden. Bleib unter dem Boss und weich seinen Schüssen aus: wer getroffen wird, ist kurz betäubt und schießt nicht. Alle zusammen haben 30 Sekunden.',
+  keys: 'Maus oder Finger: Schiff nach links und rechts ziehen. Tasten: Auswahltasten 1 und 2 nach links, 3 und 4 nach rechts.',
+  make(r){
+    const V = []; for (let t = 1.8; t < 30; t += .7 + r()*.6) V.push({t, k: Math.floor(r()*3), o: r()});
+    return {V, vi: 0, t: 0, dmg: 0, stun: 0, px: 200, tx: 200, sh: [], eb: [], fire: 0, fx: [],
+      bx(t){ return 200 + 120*Math.sin(t*.8) + 25*Math.sin(t*2.1); },
+      step(dt){
+        const t = this.t, bx = this.bx(t);
+        if (this.stun > 0) this.stun -= dt;
+        this.px += clamp(this.tx - this.px, -620*dt, 620*dt); this.px = clamp(this.px, 20, 380);
+        if (this.stun <= 0 && (this.fire -= dt) <= 0) { this.fire = .24; this.sh.push({x: this.px, y: 540}); }
+        for (const b of this.sh) { b.y -= 720*dt; const dx = (b.x - bx)/56, dy = (b.y - 112)/40; if (dx*dx + dy*dy < 1) { b.y = -99; this.dmg++; this.fx.push({x: b.x, y: 140, t: .4}); Snd.tone(600 + Math.random()*200, .03, 'square', .03); } }
+        this.sh = this.sh.filter(b => b.y > -20);
+        while (this.vi < this.V.length && this.V[this.vi].t <= t) { const v = this.V[this.vi++];
+          if (v.k === 0) for (let k = 0; k < 5; k++) { const a = Math.PI/2 + (k - 2)*.28 + (v.o - .5)*.2; this.eb.push({x: bx, y: 150, vx: Math.cos(a)*230, vy: Math.sin(a)*230}); }
+          else if (v.k === 1) for (let k = 0; k < 3; k++) { const a = Math.atan2(560 - 150, this.px - bx) + (k - 1)*.12; this.eb.push({x: bx, y: 150, vx: Math.cos(a)*270, vy: Math.sin(a)*270}); }
+          else for (let k = 0; k < 4; k++) this.eb.push({x: 40 + ((v.o + k*.25) % 1)*320, y: 150, vx: 0, vy: 210}); }
+        for (const b of this.eb) { b.x += b.vx*dt; b.y += b.vy*dt; if (this.stun <= 0 && Math.hypot(b.x - this.px, b.y - 560) < 18) { b.y = 999; this.stun = 1.2; Snd.bad(); vib(60); } }
+        this.eb = this.eb.filter(b => b.y < 620 && b.x > -20 && b.x < 420);
+        this.fx = this.fx.filter(f => (f.t -= dt) > 0);
+      },
+      touch(x, y, down){ if (down > 0) this.tx = x; }, hover(x){ this.tx = x; },
+      key(i){ this.tx = clamp(this.px + (i < 2 ? -70 : 70), 20, 380); } };
+  },
+  draw(x, S, col){
+    x.fillStyle = '#0d0b1a'; x.fillRect(0, 0, 400, 600);
+    x.fillStyle = 'rgba(255,255,255,.5)'; for (let k = 0; k < 40; k++) { const sy = ((k*97 + (S ? S.t : 0)*30*(1 + k % 3)) % 600); x.fillRect((k*53) % 400, sy, 2, 2); }
+    if (!S) return;
+    const bx = S.bx(S.t); x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = '96px sans-serif'; x.fillText('👾', bx, 112); x.textBaseline = 'alphabetic';
+    x.fillStyle = '#ffd54a'; for (const b of S.sh) x.fillRect(b.x - 2, b.y - 8, 4, 14);
+    x.fillStyle = '#ff4d5e'; for (const b of S.eb) { x.beginPath(); x.arc(b.x, b.y, 7, 0, 7); x.fill(); }
+    S.fx.forEach(q => pgBossTxt(x, '+1', q.x, q.y + 30*(1 - q.t/.4), 18, '#ffd54a'));
+    if (!(S.stun > 0 && Math.floor(S.t*10) % 2)) { x.fillStyle = col; x.beginPath(); x.moveTo(S.px, 540); x.lineTo(S.px - 18, 574); x.lineTo(S.px + 18, 574); x.closePath(); x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 2; x.stroke(); }
+    if (S.stun > 0) pgBossTxt(x, '💫 Getroffen!', 200, 500, 22);
+  },
+});
+
+// Boss-Kanone: schießen wie mit der Schleuder; das leuchtende Auge macht 5 Schaden, der Körper 2, der Schild blockt
+PGAMES.bkan = pgBoss({
+  disc: 'bosskan', icon: '🐉', name: 'Boss-Kanone', W: 600, H: 400, max: 30, hp: 28, bot: [.7, .95, 1.2], cap: 10,
+  rule: 'Ziehen und loslassen wie eine Schleuder, die Kanone schießt im Bogen. Ein Treffer am Körper des Drachen macht 2 Schaden, am leuchtenden Auge 5. Hält er den blauen Schild hoch, prallt alles ab. Alle zusammen haben 30 Sekunden.',
+  keys: 'Maus oder Finger: ziehen und loslassen. Tasten: Auswahltasten 1 und 2 Winkel, 3 und 4 Kraft, Buzzer schießt.',
+  make(r){
+    const SH = []; for (let t = 3 + r()*3; t < 30; t += 5 + r()*3) SH.push([t, t + 1.6]);
+    return {SH, t: 0, dmg: 0, balls: [], fx: [], rl: 0, ka: -.75, kp: .62, aim: null, ds: null,
+      by(t){ return 200 + 105*Math.sin(t*1.05); }, bx(t){ return 480 + 30*Math.sin(t*.6); },
+      shield(t){ return this.SH.some(([a, b]) => t >= a && t < b); },
+      fireA(a, p){ if (this.done || this.rl > 0) return; this.rl = .7; const v = 260 + p*640; this.balls.push({x: 60 + Math.cos(a)*42, y: 340 + Math.sin(a)*42, vx: Math.cos(a)*v, vy: Math.sin(a)*v}); Snd.tone(150, .1, 'square', .05); },
+      step(dt){
+        if (this.rl > 0) this.rl -= dt;
+        const bx = this.bx(this.t), by = this.by(this.t), shd = this.shield(this.t);
+        for (const b of this.balls) { b.vy += 600*dt; b.x += b.vx*dt; b.y += b.vy*dt;
+          const ex = bx - 24, ey = by - 18;
+          if (shd && Math.hypot(b.x - bx, b.y - by) < 86 && b.x < bx) { b.y = 999; this.fx.push({x: bx - 70, y: by, s: '🛡️', t: .6}); Snd.tone(1200, .05, 'triangle', .04); continue; }
+          if (Math.hypot(b.x - ex, b.y - ey) < 20) { b.y = 999; this.dmg += 5; this.fx.push({x: ex, y: ey, s: '+5', t: .8}); Snd.good(); continue; }
+          if (Math.hypot(b.x - bx, b.y - by) < 54) { b.y = 999; this.dmg += 2; this.fx.push({x: b.x, y: b.y, s: '+2', t: .6}); Snd.tone(300, .06, 'square', .05); } }
+        this.balls = this.balls.filter(b => b.y < 420 && b.x < 640 && b.x > -40);
+        this.fx = this.fx.filter(f => (f.t -= dt) > 0);
+      },
+      touch(x, y, down){ if (down > 0) { if (!this.ds) this.ds = [x, y]; const dx = this.ds[0] - x, dy = this.ds[1] - y; this.aim = {a: Math.atan2(dy, dx), p: clamp(Math.hypot(dx, dy)/200, 0, 1)}; }
+        else { const A = this.aim; this.ds = null; this.aim = null; if (down === 0 && A && A.p > .08) this.fireA(A.a, A.p); } },
+      key(i){ if (i === 0) this.ka = Math.max(-1.45, this.ka - .07); else if (i === 1) this.ka = Math.min(.1, this.ka + .07); else if (i === 2) this.kp = Math.max(.1, this.kp - .05); else if (i === 3) this.kp = Math.min(1, this.kp + .05); },
+      press(){ this.fireA(this.ka, this.kp); } };
+  },
+  draw(x, S, col){
+    const g = x.createLinearGradient(0, 0, 0, 400); g.addColorStop(0, '#ff9a5a'); g.addColorStop(1, '#5a2a6b'); x.fillStyle = g; x.fillRect(0, 0, 600, 400);
+    x.fillStyle = '#2b1a2e'; x.fillRect(0, 362, 600, 38);
+    if (!S) return;
+    const bx = S.bx(S.t), by = S.by(S.t), shd = S.shield(S.t), A = S.aim || {a: S.ka, p: S.kp};
+    // Flugbahn-Vorschau (kurz)
+    { const v = 260 + A.p*640; let px = 60 + Math.cos(A.a)*42, py = 340 + Math.sin(A.a)*42, vx = Math.cos(A.a)*v, vy = Math.sin(A.a)*v; x.fillStyle = 'rgba(255,255,255,.55)';
+      for (let k = 0; k < 14; k++) { for (let j = 0; j < 4; j++) { vy += 600*.01; px += vx*.01; py += vy*.01; } x.beginPath(); x.arc(px, py, 2.4, 0, 7); x.fill(); } }
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = '110px sans-serif'; x.save(); x.translate(bx, by); x.scale(-1, 1); x.fillText('🐉', 0, 0); x.restore();
+    const ex = bx - 24, ey = by - 18, pl = .5 + .5*Math.sin(S.t*8); x.strokeStyle = `rgba(255,230,80,${.5 + .5*pl})`; x.lineWidth = 3; x.beginPath(); x.arc(ex, ey, 13 + pl*3, 0, 7); x.stroke();
+    if (shd) { x.strokeStyle = 'rgba(90,180,255,.9)'; x.lineWidth = 7; x.beginPath(); x.arc(bx, by, 80, Math.PI*.6, Math.PI*1.4); x.stroke(); }
+    x.fillStyle = '#1d1a16'; for (const b of S.balls) { x.beginPath(); x.arc(b.x, b.y, 8, 0, 7); x.fill(); }
+    x.save(); x.translate(60, 340); x.rotate(A.a); x.fillStyle = col; x.fillRect(0, -10, 46, 20); x.strokeStyle = '#1d1a16'; x.lineWidth = 2; x.strokeRect(0, -10, 46, 20); x.restore();
+    x.fillStyle = '#1d1a16'; x.beginPath(); x.arc(60, 344, 18, 0, 7); x.fill();
+    x.fillStyle = 'rgba(0,0,0,.5)'; x.fillRect(20, 372, 80, 8); x.fillStyle = S.rl > 0 ? '#ff8a1f' : '#7dff9a'; x.fillRect(20, 372, 80*(S.rl > 0 ? 1 - S.rl/.7 : 1), 8);
+    x.textBaseline = 'alphabetic'; S.fx.forEach(q => pgBossTxt(x, q.s, q.x, q.y - 40*(1 - q.t/.8), 24, '#ffd54a'));
+  },
+});
+
+// Boss-Quiz: richtig = Schaden, falsch = der Boss heilt sich
+PGAMES.bquiz = {
+  boss: true, only: true, disc: 'bossquiz', icon: '🧙', name: 'Boss-Quiz',
+  rule: 'Der Boss stellt 8 Fragen, alle antworten gleichzeitig und verdeckt. Richtig: 2 Schaden, wer als Schnellster richtig liegt, macht 1 extra. Falsch: der Boss heilt sich um 1. Schafft ihr es, ihn vor der letzten Frage zu besiegen?',
+  keys: 'Antwort antippen oder Auswahltasten 1–4 der eigenen Reihe.',
+  start(s){ const g = s.g; g.k = 0; g.N = 8; g.hp0 = g.hp = Math.round(s.pl.length*7); g.dm = s.pl.map(() => 0); g.used = []; this.ask(s); },
+  ask(s){ const g = s.g, q = pgPickNew(MC, g.used), o = q[1].map((t, i) => [t, i]); shuffle(o);
+    g.Q = {t: q[0], o: o.map(x => x[0]), c: o.findIndex(x => x[1] === q[2])}; g.st = 'ask'; g.ans = s.pl.map(() => null); g.d = null;
+    s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < [.45, .65, .85][L], t = 2000 + Math.random()*[6000, 4500, 3000][L]; pgT(() => this.input(s, i, {k: 'ans', a: ok ? g.Q.c : pickOne([0, 1, 2, 3].filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
+    pgPush(); pgT(() => this.show(s), 12000); },
+  input(s, i, a){ const g = s.g; if (a.k === 'ans' && g.st === 'ask' && g.ans[i] == null && a.a >= 0 && a.a < 4 && Number.isFinite(a.t)) { g.ans[i] = {a: a.a | 0, t: clamp(a.t, 0, 20000)}; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
+  show(s){
+    const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
+    const ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].a === g.Q.c).sort((a, b) => g.ans[a].t - g.ans[b].t), bad = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].a !== g.Q.c);
+    g.d = s.pl.map(() => 0); ok.forEach((i, k) => { g.d[i] = 2 + (k ? 0 : 1); g.dm[i] += g.d[i]; });
+    const dmg = g.d.reduce((a, v) => a + v, 0); g.heal = bad.length; g.hp = clamp(g.hp - dmg + bad.length, 0, g.hp0);
+    dmg > bad.length ? Snd.good() : Snd.bad(); pgPush();
+    pgT(() => { if (g.hp <= 0) return pgBossEnd(g.dm, true, g.dm.map(v => `${v} Schaden`)); if (++g.k >= g.N) return pgBossEnd(g.dm, false); this.ask(s); }, 3200);
+  },
+  view(s, seats){
+    const g = s.g, Q = g.Q, sh = g.st === 'show', mine = seats.filter(i => i >= 0), myA = mine.length ? g.ans[mine[0]] : null, f = g.hp/g.hp0;
+    return `<div class="pgbhp"><span>🧙</span><div><i style="width:${f*100}%;background:${f > .5 ? '#ff4d5e' : f > .2 ? '#ff8a1f' : '#ffd54a'}"></i></div><b>${g.hp}</b></div>
+      <p class="hint">Frage ${g.k + 1} von ${g.N}${sh ? ` · ${g.d.some(v => v) ? `−${g.d.reduce((a, v) => a + v, 0)} Leben` : 'kein Treffer'}${g.heal ? `, der Boss heilt sich um ${g.heal}` : ''}` : ''}</p><h2 class="pgq">${esc(Q.t)}</h2>
+      <div class="pgopt">${Q.o.map((t, k) => `<button class="pgo${sh && k === Q.c ? ' ok' : ''}${sh && myA && myA.a === k && k !== Q.c ? ' bad' : ''}${!sh && myA && myA.a === k ? ' sel' : ''}" data-o="${k}"><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(t)}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] && g.ans[i].a === k ? `<i style="--pc:${PT_COL[i]}" title="${esc(p.n)}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
+      ${sh ? pgChips(s, i => [g.d[i] ? 'on' : '', g.d[i] ? `⚔️ ${g.d[i]}` : g.ans[i] ? '💚 heilt' : '']) : pgDots(s, i => !!g.ans[i])}`;
+  },
+  after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('bq' + g.k); main.querySelectorAll('.pgo').forEach(b => b.onclick = () => this.local(s, seats[0], {k: 'row', i: +b.dataset.o})); },
+  local(s, i, a){ const g = s.g; if (g.st !== 'ask' || a.k !== 'row' || a.i > 3 || PQ.taps['bq' + g.k + ':' + i]) return; PQ.taps['bq' + g.k + ':' + i] = 1; pgSend(i, {k: 'ans', a: a.i, t: Math.round(performance.now() - (PQ.mk['bq' + g.k] || performance.now()))}); },
+};
 </script>
 </body>
 </html>
