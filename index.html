@@ -14672,7 +14672,7 @@ function mLib(){
   $('#mtl').addEventListener('click', e => {
     const f = e.target.closest('.tfav'); if (f) { togFav(DISC[+f.dataset.f]); draw(); return; }
     const t = e.target.closest('.ttog'); if (t) { togOn(DISC[+t.dataset.i]); draw(); return; }
-    const p = e.target.closest('.tplay'); if (p && p.dataset.po) { const g = PGAMES[p.dataset.po]; $('#MOD').innerHTML = `<div class="modal"><div class="box mconf"><h2>${g.icon} ${g.name}</h2><p>${g.rule}</p><p class="mmodes2">Nur in der <b>🎲 Party</b> (3–6 Spieler), nicht im Duell.</p><div class="mbtns"><button class="btn ghost" id="cn">Schließen</button></div></div></div>`; $('#cn').onclick = () => { $('#MOD').innerHTML = ''; }; return; } if (p) mSheet(DISC[+p.dataset.i], togOn, draw);
+    const p = e.target.closest('.tplay'); if (p && p.dataset.po) { const g = PGAMES[p.dataset.po]; $('#MOD').innerHTML = `<div class="modal"><div class="box mconf"><h2>${g.icon} ${g.name}</h2><p>${g.rule}</p><p class="mmodes2">${g.boss ? 'Nur als <b>⚡ Boss-Kampf</b> auf dem Brett der <b>🎲 Party</b>: kommt, wenn jemand auf dem Boss-Feld stehen bleibt, und einmal pro Partie in einer zufälligen Runde.' : 'Nur in der <b>🎲 Party</b> (3–6 Spieler), nicht im Duell.'}</p><div class="mbtns"><button class="btn ghost" id="cn">Schließen</button></div></div></div>`; $('#cn').onclick = () => { $('#MOD').innerHTML = ''; }; return; } if (p) mSheet(DISC[+p.dataset.i], togOn, draw);
   });
   gs.addEventListener('input', draw);
   gs.addEventListener('keydown', e => { if (e.key === 'Escape') { gs.value = ''; draw(); gs.blur(); } else if (e.key === 'Enter') { const t = main.querySelector('.tplay[data-i]'); if (t) { e.preventDefault(); single(DISC[+t.dataset.i]); } } });
@@ -15017,10 +15017,10 @@ function openHelp(){
       <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. <b>👥 Team-Minispiel:</b> stehen nach der Runde Spieler auf Blau und auf Rot, spielt Blau gegen Rot (die übrigen werden aufgeteilt). Der Schnitt im Team zählt, jeder im Gewinnerteam bekommt 10 Münzen. Nie zweimal hintereinander.</li>
       <li>Die Karte verändert sich: die Torte dreht alle 3 Runden ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum, der Vulkan bricht aus (Lava sperrt einen Weg und macht blaue Felder rot), am Bahnhof geht eine Schranke zu. Die Zugbrücke der Burg geht alle 2 Runden hoch oder runter. Gesperrte Wege stehen oben in der Spalte.</li>
       <li><b>🎰 Glücksrad:</b> ${PB_WH.map(x => `${x.ic} ${esc(x.n)}`).join(', ')}. <b>🏦 Bank:</b> wer vorbeiläuft, zahlt 3 Münzen ein, wer stehen bleibt, bekommt alles. <b>🚉 Bahnhof:</b> für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.</li>
-      <li><b>⚡ Boss-Kampf:</b> wer auf dem Boss-Feld stehen bleibt, weckt den Boss, außerdem kommt er einmal pro Partie in einer zufälligen Runde. Dann spielen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern, gewinnt der Boss, verliert jeder 5 Münzen.</li>
+      <li><b>⚡ Boss-Kampf:</b> wer auf dem Boss-Feld stehen bleibt, weckt den Boss, außerdem kommt er einmal pro Partie in einer zufälligen Runde. Dann spielen alle zusammen gegen ihn. Nach ${PB_BOSSMAX} Kämpfen übers Boss-Feld verschwinden die Boss-Felder, mehr als 4 Boss-Kämpfe gibt es also nie. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern, gewinnt der Boss, verliert jeder 5 Münzen.</li>
       <li><b>🍀 Trost:</b> wer im Minispiel Letzter ist, bekommt 2 Münzen extra.</li>
       <li><b>🔥 Endspurt:</b> in den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt, der Letzte bekommt einen Gegenstand. <b>⭐ Letzte Chance:</b> in der letzten Runde kostet der Stern die Hälfte.</li>
-      <li><b>Bonus-Sterne</b> am Ende: jede Partie werden 3 von ${Object.keys(PB_BON).length} ausgelost, je +1 ⭐ für die meisten ${Object.values(PB_BON).map(x => esc(x.v[1])).join(', ')}.</li>
+      <li><b>Bonus-Sterne</b> am Ende: jede Partie werden 3 von ${Object.keys(PB_BON).length} Kategorien ausgelost, für jede gibt es +1 ⭐. Möglich sind: ${Object.values(PB_BON).map(x => `${x.ic} ${esc(x.t)}`).join(', ')}.</li>
       <li>Am Handy vergrößert „🔍 Brett vergrößern“ das Brett, es folgt dann der Figur, die gerade zieht.</li></ul>`}
     <h3>Anzeige</h3>
     <ul><li>Unter 🎨 lässt sich die Größe automatisch an den Bildschirm anpassen oder per Regler einstellen.</li></ul>
@@ -15306,7 +15306,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'b76b36b3f';
+const NET_BUILD = 'be1e7b28a';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16894,7 +16894,7 @@ function pgResultF(sc, txt){
 function pgBossEnd(dmg, won, txt){
   pgClear(); const s = PQ.s, b = s.br, mx = Math.max(1, ...dmg);
   const ord = dmg.map((v, i) => i).sort((x, y) => dmg[y] - dmg[x]), place = []; ord.forEach((i, k) => { place[i] = k && dmg[i] === dmg[ord[k - 1]] ? place[ord[k - 1]] : k; });
-  const gain = won ? dmg.map(d => Math.round(10 + 15*Math.max(0, d)/mx)) : dmg.map(() => -5), best = won ? ord[0] : -1;
+  const gain = won ? dmg.map(d => Math.round(10 + 15*Math.max(0, d)/mx)) : dmg.map((d, i) => -Math.min(5, b ? b.coins[i] : 5)), best = won ? ord[0] : -1;
   gain.forEach((g, i) => { if (b) { if (g > 0) pbAdd(i, g); else b.coins[i] = Math.max(0, b.coins[i] + g); } else s.pts[i] += Math.max(0, g); });
   if (b && best >= 0) { b.stars[best]++; b.mw[best]++; }
   s.ph = 'res'; s.res = {place, gain, tr: [], txt: txt || dmg.map(d => `${d} Schaden`), tot: b ? b.coins.slice() : s.pts.slice(), t: Date.now(), hold: false, boss: {won, best}};
@@ -17045,7 +17045,7 @@ const PGAMES = {
       const ok = s.pl.map((p, i) => i).filter(i => g.rt[i] != null).sort((a, b) => g.rt[a] - g.rt[b]);
       ok.forEach((i, k) => { g.sum[i] += s.pl.length - k; });
       pgPush();
-      pgT(() => { if (++g.d >= pgR(5)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.round(s); pgPush(); } }, 2200);
+      pgT(() => { if (++g.d >= pgR(5)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.round(s); pgPush(); } }, pbW(2200));
     },
     view(s, seats){
       const g = s.g, st = g.st;
@@ -17068,7 +17068,7 @@ const PGAMES = {
       pgT(() => { g.st = 'go'; pgPush();
         s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'cnt', n: Math.round([26, 33, 39][pgLvl(i)] + gauss()*3)}), 5300); });
         pgT(() => this.fin(s), 8000);
-      }, 1500); },
+      }, PG_CD); },
     input(s, i, a){ const g = s.g; if (a.k === 'cnt' && g.st === 'go' && g.cnt[i] == null && Number.isFinite(a.n)) { g.cnt[i] = clamp(a.n | 0, 0, 120); pgPush(); if (g.cnt.every(v => v != null)) this.fin(s); } },
     fin(s){ const g = s.g; if (g.st !== 'go') return; const c = g.cnt.map(v => v || 0); pgResult(c, c.map(v => v + '×')); },
     view(s, seats){
@@ -17117,7 +17117,7 @@ const PGAMES = {
       const ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].a === g.Q.c).sort((a, b) => g.ans[a].t - g.ans[b].t);
       ok.forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
       pgPush();
-      pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3000); },
+      pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, pbW(3000)); },
     view(s, seats){ const g = s.g, Q = g.Q, sh = g.st === 'show';
       const mine = seats.filter(i => i >= 0), myA = mine.length ? g.ans[mine[0]] : null;
       return `<p class="hint">Frage ${g.k + 1} von ${pgR(7)}</p><h2 class="pgq">${esc(Q.t)}</h2>
@@ -17141,11 +17141,11 @@ const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', 
 const PB_WH = [{ic: '🎉', n: 'Alle +5'}, {ic: '💰', n: 'Du +10'}, {ic: '💸', n: 'Du −8'}, {ic: '⚖️', n: 'Münzen gerecht verteilen'}, {ic: '🎁', n: 'Gegenstand'}, {ic: '🔀', n: 'Sterne tauschen'}];
 // Bonus-Sterne: pro Partie werden 3 davon ausgelost
 const PB_BON = {
-  mw: {ic: '🏆', n: 'Minispiel-Star', v: ['Minispiel-Sieg', 'Minispiel-Siege']}, got: {ic: '🪙', n: 'Münz-Star', v: ['Münze gesammelt', 'Münzen gesammelt']},
-  ev: {ic: '❓', n: 'Ereignis-Star', v: ['Ereignisfeld', 'Ereignisfelder']}, steps: {ic: '🏃', n: 'Lauf-Star', v: ['Feld gelaufen', 'Felder gelaufen']},
-  red: {ic: '🔴', n: 'Pech-Star', v: ['rotes Feld', 'rote Felder']}, blue: {ic: '🔵', n: 'Blau-Star', v: ['blaues Feld', 'blaue Felder']},
-  spent: {ic: '🛒', n: 'Shopping-Star', v: ['Münze ausgegeben', 'Münzen ausgegeben']}, dw: {ic: '⚔️', n: 'Duell-Star', v: ['Duell gewonnen', 'Duelle gewonnen']},
-  lastp: {ic: '🍀', n: 'Glückspilz-Star', v: ['Mal Letzter', 'Mal Letzter']}, wh: {ic: '🎰', n: 'Glücksrad-Star', v: ['Mal gedreht', 'Mal gedreht']},
+  mw: {ic: '🏆', n: 'Minispiel-Star', t: 'die meisten Minispiel-Siege', v: ['Minispiel-Sieg', 'Minispiel-Siege']}, got: {ic: '🪙', n: 'Münz-Star', t: 'die meisten gesammelten Münzen', v: ['Münze gesammelt', 'Münzen gesammelt']},
+  ev: {ic: '❓', n: 'Ereignis-Star', t: 'die meisten Ereignisfelder', v: ['Ereignisfeld', 'Ereignisfelder']}, steps: {ic: '🏃', n: 'Lauf-Star', t: 'die meisten gelaufenen Felder', v: ['Feld gelaufen', 'Felder gelaufen']},
+  red: {ic: '🔴', n: 'Pech-Star', t: 'die meisten roten Felder', v: ['rotes Feld', 'rote Felder']}, blue: {ic: '🔵', n: 'Blau-Star', t: 'die meisten blauen Felder', v: ['blaues Feld', 'blaue Felder']},
+  spent: {ic: '🛒', n: 'Shopping-Star', t: 'die meisten ausgegebenen Münzen', v: ['Münze ausgegeben', 'Münzen ausgegeben']}, dw: {ic: '⚔️', n: 'Duell-Star', t: 'die meisten gewonnenen Duelle', v: ['Duell gewonnen', 'Duelle gewonnen']},
+  lastp: {ic: '🍀', n: 'Glückspilz-Star', t: 'am häufigsten Letzter im Minispiel', v: ['Mal Letzter', 'Mal Letzter']}, wh: {ic: '🎰', n: 'Glücksrad-Star', t: 'am häufigsten am Glücksrad gedreht', v: ['Mal gedreht', 'Mal gedreht']},
 };
 const PB_IT = {
   dd: {ic: '🎲🎲', n: 'Doppelwürfel', c: 10, d: 'Du würfelst mit 2 Würfeln.'},
@@ -17153,14 +17153,15 @@ const PB_IT = {
   zz: {ic: '🎯', n: 'Zielwürfel', c: 8, d: 'Du suchst dir die Zahl von 1 bis 6 aus und siehst vorher, wo du landest.'},
   sw: {ic: '🔁', n: 'Platztausch', c: 15, d: 'Du tauschst den Platz mit einem Spieler deiner Wahl.'},
   fl: {ic: '🚧', n: 'Falle', c: 6, d: 'Du legst sie auf dein Feld. Wer dort stehen bleibt, zahlt dir 10 Münzen.'},
-  sh: {ic: '🛡️', n: 'Schild', c: 12, d: 'Schützt dich einmal vor Dieb, Falle, Tausch, Platztausch und einem verlorenen Duell. Wirkt von selbst.'},
+  sh: {ic: '🛡️', n: 'Schild', c: 12, d: 'Schützt dich einmal vor Dieb, Falle, Tausch, Platztausch, Bremse, Sterne-Tausch am Glücksrad und einem verlorenen Duell. Wirkt von selbst.'},
   rk: {ic: '🚀', n: 'Stern-Rakete', c: 35, d: 'Fliegt dich vor dem Würfeln direkt zum Stern, danach würfelst du normal.'},
   mg: {ic: '🧲', n: 'Münzmagnet', c: 12, d: 'Diese und nächste Runde zahlt dir jeder 2 Münzen, der an dir vorbeiläuft.'},
   bm: {ic: '🐌', n: 'Bremse', c: 8, d: 'Ein Mitspieler deiner Wahl würfelt beim nächsten Mal nur 1 bis 3.'},
 };
 const PB_MAX = 3;
 const PB_TC = ['#3d8bff', '#ff4d5e'];                                  // Teamfarben Blau und Rot
-const pbW = ms => Math.round(ms*((PQ.s && PQ.s.tempo) || 1));          // Wartezeiten nach dem Tempo aus der Lobby
+const pbW = ms => Math.round(ms*1.2*((PQ.s && PQ.s.tempo) || 1));      // Wartezeiten nach dem Tempo aus der Lobby (etwas entspannter als früher)
+const PG_CD = 3500;                                                    // „Gleich geht es los“ vor dem Start eines Spiels
 const pbStar = b => b.last ? Math.ceil(BR_STAR/2) : BR_STAR;           // letzte Runde: Stern zum halben Preis
 // Karten: ein Rundweg plus Abkürzungen (quadratische Bögen). Typen je Feld als Buchstaben.
 /* Karten als Straßennetz: Kreuzungen (Felder) und Wegstücke dazwischen, Fahrtrichtung wie gebaut.
@@ -17326,6 +17327,7 @@ function pgStarMove(){
   const b = PQ.s.br, shut = pbShut(b);
   const c = b.T.map((t, i) => t === 'b' && i !== b.star && !b.pos.includes(i) && !shut.has(i) ? i : -1).filter(i => i >= 0);
   if (!c.length) return;
+  const free = b.pos.filter(p => !shut.has(p)), all = c.filter(i => free.every(p => pbDist(b, p, i) < 99)); if (all.length) c.splice(0, c.length, ...all);
   const d = {}; c.forEach(i => { d[i] = Math.min(...b.pos.map(p => pbDist(b, p, i))); });
   const ok = [[8, 18], [6, 24], [4, 98]].map(([lo, hi]) => c.filter(i => d[i] >= lo && d[i] <= hi)).find(x => x.length);
   b.star = pickOne(ok || c); b.sn = (b.sn || 0) + 1;
@@ -17347,7 +17349,7 @@ const pbTeamTxt = s => [0, 1].map(t => `${t ? '🔴' : '🔵'} ${s.pl.map((p, i)
 function pgBoardRound(){
   const s = PQ.s, b = s.br, M = PB_MAPS[b.mi], N = pbG(b.mi), msg = [];
   s.ph = 'board'; s.g = null; s.res = null; s.team = null; s.boss = false; b.act = -1; b.ask = null; b.dice = []; b.duel = null; b.fk = null; b.rev = ''; b.wheel = null;
-  if (s.ri > 0 && s.ri % 2 === 0 && M.ev === 'bridge') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🏰 Die Zugbrücke geht runter: der Weg in die Burg ist frei!' : '🏰 Die Zugbrücke geht hoch: in die Burg kommt man nur noch, wer schon drin ist, kommt durchs Tor raus!'); if (c) b.rev = '🏰 Die Zugbrücke ist wieder unten.'; }
+  if (s.ri > 0 && s.ri % 2 === 0 && M.ev === 'bridge') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🏰 Die Zugbrücke geht runter: der Weg in die Burg ist frei!' : '🏰 Die Zugbrücke geht hoch: Niemand kommt mehr in die Burg. Wer drin ist, kommt nur noch durchs Tor raus (5 🪙 Zoll).'); if (c) b.rev = '🏰 Die Zugbrücke ist wieder unten.'; }
   if (s.ri > 0 && s.ri % 3 === 0) {
     if (M.ev === 'lava') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g];
       const tot = b.T.filter(t => t === 'b' || t === 'r').length, red = b.T.filter(t => t === 'r').length, k = Math.max(0, Math.min(3, Math.floor(tot*.35) - red));
@@ -17358,7 +17360,7 @@ function pgBoardRound(){
     if (M.ev === 'tide') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🌊 Ebbe: die untere Brücke ist wieder frei!' : '🌊 Flut: die untere Brücke steht unter Wasser!'); if (c) b.rev = '🌊 Ebbe: Die untere Brücke ist wieder frei.'; }
     if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt den Weg ${pbWhere(b)}!`); }
   }
-  if (b.T[b.star] !== 'b' || pbShut(b).has(b.star)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); }
+  { const sh = pbShut(b); if (b.T[b.star] !== 'b' || sh.has(b.star) || b.pos.some(p => !sh.has(p) && pbDist(b, p, b.star) >= 99)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); } }
   if (!b.end && s.rounds >= 4 && s.rounds - s.ri <= 3) {
     b.end = true; const sc = i => b.stars[i]*1000 + b.coins[i], last = s.pl.map((p, i) => i).sort((x, y) => sc(x) - sc(y))[0], k = pbGive(b, last);
     msg.push(`🔥 Endspurt! In den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt.${k ? ` ${pbN(last)} liegt hinten und bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.` : ''}`);
@@ -17377,8 +17379,10 @@ function pgBoardFrom(k0){
 function pbRoundEnd(){
   const s = PQ.s, b = s.br; b.act = -1; b.st = ''; b.duel = null; b.dice = []; b.ask = null; b.wheel = null;
   if (b.boss || s.ri === b.bossR) {   // Boss-Feld betreten oder die ausgeloste Boss-Runde: alle zusammen gegen den Boss
-    b.boss = false; if (s.ri === b.bossR) b.bossR = -1; s.team = null; s.boss = true;
-    pbSay('⚡ Boss-Kampf! Alle spielen zusammen gegen den Boss. Wer viel Schaden macht, bekommt mehr Münzen.', true); pgPush(); return pgT(pgPick, pbW(3500)); }
+    const tile = b.boss; b.boss = false; if (s.ri === b.bossR) b.bossR = -1; s.team = null; s.boss = true;
+    pbSay('⚡ Boss-Kampf! Alle spielen zusammen gegen den Boss. Wer viel Schaden macht, bekommt mehr Münzen.', true);
+    if (tile && (b.bossT = (b.bossT || 0) + 1) >= PB_BOSSMAX) { b.T = b.T.map(t => t === 'k' ? 'b' : t); pbSay(`⚡ Das ist der ${PB_BOSSMAX}. Boss vom Boss-Feld: die Boss-Felder verschwinden und werden blau.`, true); }
+    pgPush(); return pgT(pgPick, pbW(3500)); }
   s.team = pbTeams();
   if (s.team) pbSay(`👥 Team-Minispiel! ${pbTeamTxt(s)}`, true); else pbSay('Alle sind gezogen, jetzt das Minispiel!');
   pgPush(); pgT(pgPick, pbW(s.team ? 3500 : 1800));
@@ -17564,6 +17568,7 @@ function pbWheel(p, fin){
 }
 const pbStName = n => { const dx = n.x - 50, dy = n.y - 50; return Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'West' : 'Ost') : (dy < 0 ? 'Nord' : 'Süd'); };
 const PB_FARE = 3;
+const PB_BOSSMAX = 3;   // so viele Boss-Kämpfe übers Boss-Feld, danach verschwinden die Felder (dazu kommt höchstens die eine ausgeloste Boss-Runde)
 // Bahnhof: für 3 Münzen zu einem anderen Bahnhof fahren
 function pbTrain(p, fin){
   const s = PQ.s, b = s.br, N = pbG(b.mi), at = b.pos[p], st = b.T.map((t, i) => t === 'z' && i !== at ? i : -1).filter(i => i >= 0);
@@ -17620,7 +17625,7 @@ function pgBoardIn(s, i, a){
           pgPush(); botRoll(1000); }, 'bm'); }
     if (k === 'zz') { const R = (b.slow[i] ? [1, 2, 3] : [1, 2, 3, 4, 5, 6]).map(v => pbReach(b, b.pos[i], v, i));
       return pbAsk(i, '🎯 Welche Zahl?', R.map((r, v) => ({id: String(v + 1), l: String(v + 1), sub: r.star ? '⭐ erreichbar' : [...new Set(r.land.map(z => PB_EM[b.T[z]] || ''))].join(' ')})), '3',
-        () => { const k2 = R.findIndex(r => r.star); return String(k2 >= 0 ? k2 + 1 : 6); }, v => { b.fix = +v; pbSay(`🎯 ${pbN(i)} nimmt den Zielwürfel: ${v}.`, true); pgRoll(i); }, 'zz', {rv: R.map(r => r.land)}); }
+        () => { const k2 = R.findIndex(r => r.star); return String(k2 >= 0 ? k2 + 1 : R.length); }, v => { b.fix = +v; pbSay(`🎯 ${pbN(i)} nimmt den Zielwürfel: ${v}.`, true); pgRoll(i); }, 'zz', {rv: R.map(r => r.land)}); }
     if (k === 'sw') { const o = s.pl.map((x, q) => q).filter(q => q !== i), dist = q => pbDist(b, b.pos[q], b.star);
       return pbAsk(i, '🔁 Mit wem tauschen?', o.map(q => ({id: String(q), l: s.pl[q].n, sub: `${dist(q) < 99 ? dist(q) + ' Felder bis ⭐' : 'kein Weg zum ⭐'}${b.items[q].includes('sh') ? ' · 🛡️' : ''}`})), String(o[0]),
         () => String(o.slice().sort((x, y) => (b.items[x].includes('sh') - b.items[y].includes('sh')) || dist(x) - dist(y))[0]),
@@ -17652,7 +17657,7 @@ function pbTip(s, i){
     d: `<b>🦹 Dieb</b>Wer hier stehen bleibt, lässt den Dieb für sich klauen: ${5*m} Münzen vom reichsten Mitspieler, mit etwas Glück (12 %) sogar einen Stern.`,
     w: '<b>🔄 Tausch</b>Wer hier stehen bleibt, tauscht den Platz mit einem zufälligen Mitspieler.',
     g: '<b>🎰 Glücksrad</b>Wer hier stehen bleibt, dreht am Rad: ' + PB_WH.map(x => `${x.ic} ${x.n}`).join(', ') + '.',
-    k: '<b>⚡ Boss</b>Wer hier stehen bleibt, weckt den Boss: nach der Runde kämpfen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern. Gewinnt der Boss, verliert jeder 5 Münzen.',
+    k: `<b>⚡ Boss</b>Wer hier stehen bleibt, weckt den Boss: nach der Runde kämpfen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern. Gewinnt der Boss, verliert jeder 5 Münzen. Nach ${PB_BOSSMAX} Kämpfen übers Boss-Feld verschwinden die Boss-Felder${b.bossT ? ` (bisher ${b.bossT})` : ''}.`,
     n: `<b>🏦 Bank</b>Wer vorbeiläuft, zahlt 3 Münzen ein. Wer hier stehen bleibt, bekommt alles. Gerade drin: ${b.bank} 🪙.`,
     z: `<b>🚉 Bahnhof ${pbStName(n)}</b>Wer hier stehen bleibt, kann für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.`}[t] || '');
   const op = n.nx.length > 1 ? n.nx.map((z, k) => `${n.lab[k] || (k ? 'abbiegen' : 'weiter')}${n.toll[k] ? ` (${n.toll[k]} 🪙 Zoll)` : ''}${b.closed.includes(n.eg[k]) ? ' – gesperrt' : ''}`) : null;
@@ -17930,7 +17935,7 @@ PGAMES.lichtrad = {
     if (this.fix) { this.fix = false; pk.push(Array.from(this.occ).join('')); }
     pgRT(pk);
     const left = s.pl.filter((p, i) => g.dead[i] < 0).length;
-    if (left <= 1 || g.tk > 600) { g.st = 'done'; pgPush(); pgT(() => { const sc = g.dead.map(v => v < 0 ? 99999 : v); pgResult(sc, sc.map(v => v >= 99999 ? 'überlebt' : `${(v*this.DT/1000).toFixed(1)} s`)); }, 1500); return; }
+    if (left <= 1 || g.tk > 600) { g.st = 'done'; pgPush(); pgT(() => { const sc = g.dead.map(v => v < 0 ? 99999 : v); pgResult(sc, sc.map(v => v >= 99999 ? 'überlebt' : `${(v*this.DT/1000).toFixed(1)} s`)); }, pbW(1500)); return; }
     pgT(() => this.tick(s), this.DT);
   },
   input(s, i, a){
@@ -18095,7 +18100,7 @@ PGAMES.schaetzen = {
     const err = g.ans.map(v => v == null ? Infinity : Math.abs(v - g.Q.v)), ord = s.pl.map((p, i) => i).filter(i => isFinite(err[i])).sort((a, b) => err[a] - err[b]);
     let pl = 0; ord.forEach((i, k) => { if (k && err[i] > err[ord[k - 1]]) pl = k; g.sum[i] += s.pl.length - pl; });
     pgPush();
-    pgT(() => { if (++g.k >= pgR(6)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3500);
+    pgT(() => { if (++g.k >= pgR(6)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, pbW(3500));
   },
   view(s, seats){
     const g = s.g, sh = g.st === 'show', mine = seats.filter(i => i >= 0);
@@ -18130,7 +18135,7 @@ PGAMES.farbfalle = {
     pgT(() => { g.st = 'run'; pgPush();
       s.pl.forEach((p, i) => { if (!pgBot(i)) return; const L = pgLvl(i); seq.forEach(([w, c, at], k) => { const hit = w === c, r = Math.random(); if ((hit && r < [.6, .8, .93][L]) || (!hit && r < [.08, .04, .015][L])) pgT(() => pgIn(i, {k: 'bz', n: k}), at + [650, 520, 420][L] + Math.random()*200); }); });
       pgT(() => { pgResult(g.sc, g.sc.map(v => v + ' Pkt.')); }, g.end + 1200);
-    }, 1500);
+    }, PG_CD);
     g.hit = s.pl.map(() => ({}));
   },
   input(s, i, a){ const g = s.g; if (a.k !== 'bz' || g.st !== 'run' || !Number.isInteger(a.n) || !g.seq[a.n] || g.hit[i][a.n]) return; g.hit[i][a.n] = 1; const [w, c] = g.seq[a.n]; g.sc[i] += w === c ? 2 : -1; pgPush(); },
@@ -18164,7 +18169,7 @@ function pgSolo(c){
       pgT(() => { g.st = 'run'; pgPush();
         s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), [v, ms] = c.botF ? c.botF(L) : [Math.max(0, Math.round(c.bot[L] + gauss()*c.bot[L]*.3)), 0]; pgT(() => pgIn(i, {k: 'sc', v}), Math.min(c.max*1000, c.botF ? ms : c.botT(v))); } });
         pgT(() => this.fin(s), c.max*1000 + 4000);
-      }, 2000);
+      }, PG_CD);
     },
     input(s, i, a){ const g = s.g; if (a.k === 'gh' && g.st === 'run' && Array.isArray(a.d) && a.d.length < 12) { pgRT(['gh', i, a.d.map(v => +v || 0)]); return; }
       if (a.k === 'sp' && g.st === 'run' && c.spec && a.d && typeof a.d === 'object' && JSON.stringify(a.d).length < 18000) { pgRT(['sp', i, a.d]); return; }
@@ -18174,7 +18179,7 @@ function pgSolo(c){
     fin(s){ PQ.sp = {}; PQ.wt = null; const g = s.g; if (g.st !== 'run') return; const v = g.sc.map(x => x == null ? (c.low ? 1e9 : 0) : x); pgResult(v.map(x => c.low ? -x : x), v.map(x => c.fmt(x))); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
-      return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : c.hint || 'Jeder spielt dieselbe Strecke'} · ${c.rk ? `<span class="kbonly">${rtKeyHint(c.rk, 0)}</span>` : pgKeyHint(seats, 'bz')}</p>
+      return `<p class="hint">${g.st === 'cd' ? `Gleich geht es los … ${pgCdn('cd' + g.seed, PG_CD)}` : c.hint || 'Jeder spielt dieselbe Strecke'} · ${c.rk ? `<span class="kbonly">${rtKeyHint(c.rk, 0)}</span>` : pgKeyHint(seats, 'bz')}</p>
         <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
         ${c.spec && g.st === 'run' && mine.length && mine.every(i => PQ.solo && PQ.solo[i] && PQ.solo[i].done) ? `<div class="pgwatch"><span>👀 Zuschauen:</span>${s.pl.map((p, k) => mine.includes(k) || pgBot(k) ? '' : `<button class="pglv${PQ.wt === k ? ' sel' : ''}" data-wt="${k}" style="color:${PT_COL[k]}">${esc(p.n)}${g.sc[k] != null ? ' ✓' : ''}</button>`).join('') || '<em>nur Bots, nichts zu sehen</em>'}</div>` : ''}
         ${pgDots(s, i => g.sc[i] != null)}`;
@@ -18343,7 +18348,7 @@ PGAMES.unik = {
   input(s, i, a){ const g = s.g; if (a.k === 'n' && g.st === 'ask' && g.ch[i] == null && a.v >= 1 && a.v <= 5) { g.ch[i] = a.v | 0; pgPush(); if (g.ch.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
     g.ch.forEach((v, i) => { if (v != null && g.ch.filter(x => x === v).length === 1) g.sum[i] += v; });
-    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 3200); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, pbW(3200)); },
   view(s, seats){ const g = s.g, sh = g.st === 'show', mine = seats.filter(i => i >= 0);
     return `<p class="hint">Runde ${g.k + 1} von ${pgR(7)}</p>
       ${sh ? `<div class="pgun">${[1, 2, 3, 4, 5].map(v => { const who = s.pl.map((p, i) => i).filter(i => g.ch[i] === v); return `<div class="${who.length === 1 ? 'ok' : who.length ? 'bad' : ''}"><b>${v}</b>${who.map(i => `<i style="--pc:${PT_COL[i]}">${esc(s.pl[i].n)}</i>`).join('')}</div>`; }).join('')}</div>`
@@ -18469,7 +18474,7 @@ function pgShot(c){
     start(s){ const g = s.g; g.n = 0; g.r = 0; g.lab = ''; c.init(s, g); this.turn(s); },
     turn(s){
       const g = s.g, p = c.next(s, g);
-      if (p < 0) { g.st = 'done'; pgPush(); pgT(() => { if (c.round(s, g)) { this.turn(s); } }, 3000); return; }
+      if (p < 0) { g.st = 'done'; pgPush(); pgT(() => { if (c.round(s, g)) { this.turn(s); } }, pbW(3000)); return; }
       g.p = p; g.st = 'aim'; if (c.prep) c.prep(s, g, p);
       pgPush();
       const auto = () => { const T0 = pgClk() + 3500; c.plan(s, g, p, pgBot(p) ? pgLvl(p) : 0, T0, (a, w) => { const go = () => pgIn(p, {k: 'shot', a, w, T: T0, n: g.n + 1}); const d = T0 - pgClk(); d > 0 ? pgT(go, d) : go(); }); };
@@ -18647,7 +18652,7 @@ PGAMES.nim = {
     g.n -= a.n; g.last = {p: i, n: a.n}; g.tt++;
     if (g.n > 0) return this.turn(s);
     g.out[i] = ++g.no; g.st = 'out'; pgPush();
-    pgT(() => { if (pgAlive(s, g).length <= 1) pgOutRes(s, g); else this.pile(s); }, 2600);
+    pgT(() => { if (pgAlive(s, g).length <= 1) pgOutRes(s, g); else this.pile(s); }, pbW(2600));
   },
   view(s, seats){
     const g = s.g, me = g.st === 'turn' && pgMine(g.p) && !pgBot(g.p);
@@ -18673,7 +18678,7 @@ PGAMES.bombe = {
   },
   input(s, i, a){ const g = s.g; if (a.k !== 'pass' || g.st !== 'run' || i !== g.h || a.hn !== g.hn) return; g.pass++; g.h = pgCyc(g, k => g.out[k] < 0); this.hold(s); },
   boom(s){ const g = s.g; if (g.st !== 'run') return; g.st = 'boom'; g.out[g.h] = ++g.no; g.k = g.q.indexOf(g.h); pgPush(); Snd.crash && Snd.crash();
-    pgT(() => { if (pgAlive(s, g).length <= 1) pgOutRes(s, g); else this.round(s); }, 2600); },
+    pgT(() => { if (pgAlive(s, g).length <= 1) pgOutRes(s, g); else this.round(s); }, pbW(2600)); },
   pos(g){ const T = PQ.mk['bh' + g.hn] || performance.now(), u = (((performance.now() - T)/1000*(g.v + (PQ.bpen || 0)) + .5) % 2 + 2) % 2; return u <= 1 ? u : 2 - u; },
   view(s, seats){
     const g = s.g, me = g.st === 'run' && pgMine(g.h) && !pgBot(g.h);
@@ -18725,7 +18730,7 @@ PGAMES.maexchen = {
       const lied = g.cr < g.claim, los = lied ? g.cb : i;
       g.rv = {d: g.d, lied, los, by: i, cb: g.cb}; g.lv[los]--; if (g.lv[los] <= 0) g.out[los] = ++g.no;
       g.st = 'show'; g.tt++; pgPush();
-      pgT(() => { if (pgAlive(s, g).length <= 1) return pgOutRes(s, g); g.k = g.q.indexOf(los) - (g.out[los] < 0 ? 1 : 0); g.p = pgCyc(g, k => g.out[k] < 0); this.fresh(s); }, 4000);
+      pgT(() => { if (pgAlive(s, g).length <= 1) return pgOutRes(s, g); g.k = g.q.indexOf(los) - (g.out[los] < 0 ? 1 : 0); g.p = pgCyc(g, k => g.out[k] < 0); this.fresh(s); }, pbW(4000));
     }
   },
   view(s, seats){
@@ -18759,7 +18764,7 @@ PGAMES.kaese = {
   input(s, i, a){
     const g = s.g, K = this.K(g); if (a.k !== 'line' || g.st !== 'turn' || i !== g.p || a.tt !== g.tt || !Number.isInteger(a.l) || a.l < 0 || a.l >= K.N || g.L[a.l]) return;
     g.who[a.l] = i; g.last = a.l; const got = KK.play(K, g.L, g.B, a.l, i);
-    if (!g.L.includes(0)) { g.st = 'end'; g.tt++; pgPush(); const c = s.pl.map((p, k) => g.B.filter(v => v === k).length); return pgT(() => pgResult(c, c.map(v => v + ' Kästchen')), 1800); }
+    if (!g.L.includes(0)) { g.st = 'end'; g.tt++; pgPush(); const c = s.pl.map((p, k) => g.B.filter(v => v === k).length); return pgT(() => pgResult(c, c.map(v => v + ' Kästchen')), pbW(1800)); }
     if (!got) g.p = pgCyc(g, () => true);
     this.turn(s);
   },
@@ -18795,7 +18800,7 @@ PGAMES.karte = {
     const t = [g.c[1], g.c[2]]; g.dist = g.ans.map(v => v ? KM(v, t) : null);
     const ord = s.pl.map((p, i) => i).filter(i => g.dist[i] != null).sort((a, b) => g.dist[a] - g.dist[b]);
     let pl = 0; ord.forEach((i, k) => { if (k && g.dist[i] > g.dist[ord[k - 1]]) pl = k; g.sum[i] += s.pl.length - pl; });
-    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, 5000);
+    pgPush(); pgT(() => { if (++g.k >= pgR(7)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else { this.ask(s); pgPush(); } }, pbW(5000));
   },
   view(s, seats){
     const g = s.g, m = MAPS[g.m], c = g.c, mine = seats.filter(i => i >= 0), R = m.w*.016;
@@ -18925,7 +18930,7 @@ PGAMES.ordnen = {
     const right = g.L.filter(x => x.v < g.cur.v).length, ok = s.pl.map((p, i) => i).filter(i => g.ans[i] && g.ans[i].at === right).sort((a, b) => g.ans[a].t - g.ans[b].t);
     ok.forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
     g.res = {right, n: g.cur.n, ok}; g.L.splice(right, 0, g.cur); g.cur = null;
-    pgPush(); pgT(() => { if (++g.k >= pgR(8)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3200);
+    pgPush(); pgT(() => { if (++g.k >= pgR(8)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, pbW(3200));
   },
   view(s, seats){
     const g = s.g, R = g.res, me = g.st === 'ask' ? seats.filter(i => i >= 0).find(i => !g.ans[i] && !PQ.taps['or' + g.k + ':' + i]) : null;
@@ -18954,13 +18959,13 @@ function pgLocal(c){
       pgT(() => { g.st = 'run'; pgPush();
         s.pl.forEach((p, i) => { if (!pgBot(i)) return; const [v, ms] = c.bot(s, g, pgLvl(i)); pgT(() => pgIn(i, {k: 'sc', v}), Math.min(ms, c.max*1000)); });
         pgT(() => this.fin(s), c.max*1000 + 2500);
-      }, 2500);
+      }, PG_CD);
     },
     input(s, i, a){ const g = s.g; if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = a.v; pgPush(); if (g.sc.every(v => v != null)) this.fin(s); } },
     fin(s){ const g = s.g; if (g.st !== 'run') return; g.st = 'done'; const raw = g.sc.slice(); pgResult(raw.map(v => v == null ? -1e9 : c.low ? -v : v), raw.map(v => v == null ? 'nicht fertig' : c.fmt(v))); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
-      return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : `${c.hint || 'Jeder spielt für sich'} · ${pgCdn('lc' + g.seed, c.max*1000)}`}</p>
+      return `<p class="hint">${g.st === 'cd' ? `Gleich geht es los … ${pgCdn('cd' + g.seed, PG_CD)}` : `${c.hint || 'Jeder spielt für sich'} · ${pgCdn('lc' + g.seed, c.max*1000)}`}</p>
         <div class="pglocs n${mine.length}">${mine.map(i => `<div class="pgloc" id="pgl${i}" style="--pc:${PT_COL[i]}">${g.st === 'cd' ? `<b class="pglnm">${esc(s.pl[i].n)}</b><p class="hint">Achtung …</p>` : ''}</div>`).join('')}</div>${g.st === 'run' ? pgDots(s, i => g.sc[i] != null) : ''}`;
     },
     after(s, seats){
@@ -19052,7 +19057,7 @@ function pgType(c){
     input(s, i, a){ const g = s.g; if (a.k === 'ok' && g.st === 'ask' && g.ok[i] == null && Number.isFinite(a.t) && c.check(g.Q, String(a.a))) { g.ok[i] = a.t; pgPush(); if (g.ok.every(v => v != null)) this.show(s); } },
     show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
       s.pl.map((p, i) => i).filter(i => g.ok[i] != null).sort((a, b) => g.ok[a] - g.ok[b]).forEach((i, k) => { g.sum[i] += Math.max(1, s.pl.length - k); });
-      pgPush(); pgT(() => { if (++g.k >= pgR(c.rounds)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, 3000); },
+      pgPush(); pgT(() => { if (++g.k >= pgR(c.rounds)) pgResult(g.sum, g.sum.map(v => v + ' Pkt.')); else this.ask(s); }, pbW(3000)); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<p class="hint">${c.label} ${g.k + 1} von ${pgR(c.rounds)}${g.st === 'ask' ? ' · ' + pgCdn('ty' + g.k, c.limit) : ''}</p>${c.html(g)}
@@ -19095,7 +19100,7 @@ PGAMES.auktion = {
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
     const b = g.b.map(v => v || 0), mx = Math.max(...b), top = b.map((v, i) => i).filter(i => b[i] === mx); g.w = mx > 0 && top.length === 1 ? top[0] : -1;
     b.forEach((v, i) => { g.m[i] -= v; }); if (g.w >= 0) g.it[g.w]++;
-    pgPush(); pgT(() => { if (++g.k >= pgR(6)) { const sc = s.pl.map((p, i) => g.it[i]*1000 + g.m[i]); pgResult(sc, s.pl.map((p, i) => `${g.it[i]} Stück · ${g.m[i]} übrig`)); } else this.ask(s); }, 3500); },
+    pgPush(); pgT(() => { if (++g.k >= pgR(6)) { const sc = s.pl.map((p, i) => g.it[i]*1000 + g.m[i]); pgResult(sc, s.pl.map((p, i) => `${g.it[i]} Stück · ${g.m[i]} übrig`)); } else this.ask(s); }, pbW(3500)); },
   view(s, seats){
     const g = s.g, mine = seats.filter(i => i >= 0);
     return `<p class="hint">Gegenstand ${g.k + 1} von ${pgR(6)}${g.st === 'ask' ? ' · ' + pgCdn('au' + g.k, 20000) : ''}</p><h2 class="pgq">${esc(g.items[g.k])}</h2>
@@ -19447,7 +19452,7 @@ function pgChain(isT){
       if (bad.length && bad.length < al.length) { g.no++; bad.forEach(i => { g.out[i] = g.no; g.oq[i] = g.qn; }); }
       g.allbad = bad.length > 0 && bad.length === al.length;
       g.allbad ? Snd.bad() : Snd.good(); pgPush();
-      pgT(() => { if (pgAlive(s, g).length <= 1 || g.lk >= 14) return pgOutRes(s, g); g.ref = g.nx; this.ask(s); }, 3400);
+      pgT(() => { if (pgAlive(s, g).length <= 1 || g.lk >= 14) return pgOutRes(s, g); g.ref = g.nx; this.ask(s); }, pbW(3400));
     },
     view(s, seats){
       const g = s.g, sh = g.st === 'show', C = isT ? null : CHAINS[g.ci], lo = isT ? 'Früher' : C.lo, hi = isT ? 'Später' : C.hi;
@@ -19488,7 +19493,7 @@ PGAMES.ssp = {
     const al = pgAlive(s, g); al.forEach(i => { if (g.c[i] == null) { g.c[i] = R0(3); g.rnd.push(i); } });
     const has = [0, 1, 2].filter(v => al.some(i => g.c[i] === v));
     if (has.length === 2) { const [a, b] = has, lo = pgSspBeats(a, b) ? b : a; g.lose = lo; g.no++; al.filter(i => g.c[i] === lo).forEach(i => { g.out[i] = g.no; }); Snd.good(); } else Snd.tick();
-    pgPush(); pgT(() => { if (pgAlive(s, g).length <= 1 || g.r >= 25) return pgOutRes(s, g); this.ask(s); }, 3000);
+    pgPush(); pgT(() => { if (pgAlive(s, g).length <= 1 || g.r >= 25) return pgOutRes(s, g); this.ask(s); }, pbW(3000));
   },
   view(s, seats){
     const g = s.g, sh = g.st === 'show', al = s.pl.map((p, i) => i).filter(i => g.out[i] < 0 || (sh && g.out[i] === g.no && g.lose >= 0 && g.c[i] === g.lose));
@@ -19620,14 +19625,14 @@ PGAMES.ballon = Object.assign(pgLocal({
   bot(s, g, L){ let v = 0, ms = 1500; g.th.forEach(t => { const k = L === 0 ? 6 + R0(14) : L === 1 ? 12 + R0(9) : 14 + R0(6); if (k < t) v += k; ms += Math.min(k, t)*[420, 330, 260][L] + 900; }); return [v, ms]; },
   fmt: v => `${v} Punkte`,
   mount(L, s, g, i, nm){
-    const COL = ['#ff4d5e', '#3d8bff', '#ffc531'];
+    const COL = ['#ff4d5e', '#3d8bff', '#ffc531'], kp = Math.max(0, pgSeats().indexOf(i));
     let b = 0, n = 0, tot = 0, busy = false, pop = false; const res = [];
     const draw = () => {
       const sz = Math.min(250, 70 + n*5.4);
       L.el.innerHTML = `${nm}<div class="pgbal"><div class="pgbs">${[0, 1, 2].map(k => `<span class="${k === b && !L.done ? 'on' : ''}">${k < res.length ? (res[k] > 0 ? `🎈 ${res[k]}` : `💥 0`) : '🎈'}</span>`).join('')}</div>
         <div class="pgbw">${L.done ? `<div class="pgbend">🏁<b>${tot}</b><small>Punkte</small></div>` : pop ? `<div class="pgbpop">💥<small>bei ${n}</small></div>` : `<div class="pgbb" style="width:${sz}px;height:${sz*1.18}px;--c:${COL[b % 3]}"><b>${n}</b></div>`}</div>
         <p class="hint">Gesichert: <b>${tot}</b>${L.done ? '' : ` · Ballon ${b + 1} von 3`}</p>
-        ${L.done ? '' : `<div class="mbtns"><button class="btn pgbp"${busy ? ' disabled' : ''}>💨 Pumpen</button><button class="btn ghost pgbk"${n && !busy ? '' : ' disabled'}>💰 Sichern (+${n})</button></div>`}</div>`;
+        ${L.done ? '' : `<div class="mbtns"><button class="btn pgbp"${busy ? ' disabled' : ''}>💨 Pumpen ${kbp(kp, 'bz')}</button><button class="btn ghost pgbk"${n && !busy ? '' : ' disabled'}>💰 Sichern (+${n}) ${kbp(kp, 'r0')}</button></div>`}</div>`;
       const P = L.el.querySelector('.pgbp'), K = L.el.querySelector('.pgbk');
       if (P) P.onpointerdown = e => { e.preventDefault(); pump(); };
       if (K) K.onclick = bank;
@@ -19661,7 +19666,7 @@ function pgBoss(c){
       pgT(() => { g.st = 'run'; pgPush();
         const tick = () => { if (s.g !== g || g.st !== 'run') return; s.pl.forEach((p, i) => { if (pgBot(i)) g.dm[i] += Math.max(0, c.bot[pgLvl(i)]*(1 + gauss()*.4))*.5; }); if (!this.chk(s)) { pgRT(['bh', g.seed, g.dm.map(v => Math.round(v*10)/10)]); pgT(tick, 500); } };
         pgT(tick, 500); pgT(() => this.end(s, false), c.max*1000 + 1500);
-      }, 2000);
+      }, PG_CD);
     },
     chk(s){ const g = s.g; if (g.dm.reduce((a, v) => a + v, 0) >= g.hp) { this.end(s, true); return true; } return false; },
     input(s, i, a){ const g = s.g; if (a.k === 'dmg' && g.st === 'run' && Number.isFinite(a.v) && a.v > g.dm[i]) { g.dm[i] = Math.min(a.v, g.dm[i] + c.cap); this.chk(s); } },
@@ -19669,12 +19674,22 @@ function pgBoss(c){
     rt(s, d){ if (d[0] === 'bh' && d[1] === s.g.seed && Array.isArray(d[2])) PQ.bh = d[2]; },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
-      return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : `⚡ Alle zusammen gegen den Boss · ${pgCdn('bs' + g.seed, c.max*1000)}`}</p>
+      return `<p class="hint">${g.st === 'cd' ? `⚡ Gleich geht es los … ${pgCdn('cd' + g.seed, PG_CD)}` : `⚡ Alle zusammen gegen den Boss · ${pgCdn('bs' + g.seed, c.max*1000)}`}</p>
         <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgb${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
         <div class="pgchips pgbossd" id="pgbossd"></div>`;
     },
     after(s, seats){
-      const g = s.g, mine = seats.filter(i => i >= 0); if (g.st !== 'run') return;
+      const g = s.g, mine = seats.filter(i => i >= 0);
+      if (g.st === 'cd') {   // Vorschau: der Boss steht schon da, oben läuft der Countdown
+        cancelAnimationFrame(PQ.raf); const t0 = pgMark('cd' + g.seed), P = c.make(pgRng(g.seed), g, 0); P.t = 0; P.dmg = 0;
+        const pre = () => { if (PQ.s !== s || s.g !== g || g.st !== 'cd') return;
+          mine.forEach(i => { const cv = $('#pgb' + i); if (!cv) return; const w = cv.clientWidth || 300, dpr = Math.min(2, devicePixelRatio || 1); if (cv.width !== Math.round(w*dpr)) { cv.width = Math.round(w*dpr); cv.height = Math.round(w*dpr*c.H/c.W); }
+            const x = cv.getContext('2d'); x.setTransform(cv.width/c.W, 0, 0, cv.width/c.W, 0, 0); c.draw(x, P, PT_COL[i], 1); pgBossBar(x, c.W, g.hp, g.hp, 0, c.max);
+            x.fillStyle = 'rgba(0,0,0,.45)'; x.fillRect(0, 0, c.W, c.H); pgBossTxt(x, String(Math.max(1, Math.ceil((PG_CD - (performance.now() - t0))/1000))), c.W/2, c.H/2 + 20, 90, '#ffd54a'); });
+          PQ.raf = requestAnimationFrame(pre); };
+        return pre();
+      }
+      if (g.st !== 'run') return;
       pgMark('boss' + g.seed, () => { PQ.solo = {}; PQ.bh = null; mine.forEach((i, k) => { PQ.solo[i] = c.make(pgRng(g.seed), g, PT.role === 'local' ? k : 0); PQ.solo[i].sent = 0; PQ.solo[i].dmg = 0; }); });
       mine.forEach(i => { const cv = $('#pgb' + i); if (!cv) return; const cxy = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left)/b.width*c.W, (e.clientY - b.top)/b.height*c.H]; };
         cv.onpointerdown = e => { e.preventDefault(); Snd.init(); const S = PQ.solo[i]; if (!S || S.done) return; try { cv.setPointerCapture(e.pointerId); } catch(_) {} S.down = 1; if (S.touch) S.touch(...cxy(e), 1); else if (S.press) S.press(); };
@@ -19836,17 +19851,20 @@ PGAMES.bquiz = {
     g.d = s.pl.map(() => 0); ok.forEach((i, k) => { g.d[i] = 2 + (k ? 0 : 1); g.dm[i] += g.d[i]; });
     const dmg = g.d.reduce((a, v) => a + v, 0); g.heal = bad.length; g.hp = clamp(g.hp - dmg + bad.length, 0, g.hp0);
     dmg > bad.length ? Snd.good() : Snd.bad(); pgPush();
-    pgT(() => { if (g.hp <= 0) return pgBossEnd(g.dm, true, g.dm.map(v => `${v} Schaden`)); if (++g.k >= g.N) return pgBossEnd(g.dm, false); this.ask(s); }, 3200);
+    pgT(() => { if (g.hp <= 0) return pgBossEnd(g.dm, true, g.dm.map(v => `${v} Schaden`)); if (++g.k >= g.N) return pgBossEnd(g.dm, false); this.ask(s); }, pbW(3200));
   },
   view(s, seats){
-    const g = s.g, Q = g.Q, sh = g.st === 'show', mine = seats.filter(i => i >= 0), myA = mine.length ? g.ans[mine[0]] : null, f = g.hp/g.hp0;
+    const g = s.g, Q = g.Q, sh = g.st === 'show', mine = seats.filter(i => i >= 0), f = g.hp/g.hp0;
+    const myA = mine.map(i => g.ans[i] || (PQ.taps['bq' + g.k + ':' + i] ? {a: PQ.taps['bq' + g.k + ':' + i] - 1} : null)).find(Boolean) || null;
+    const open = !sh && mine.some(i => !pgBot(i) && !g.ans[i] && !PQ.taps['bq' + g.k + ':' + i]);
     return `<div class="pgbhp"><span>🧙</span><div><i style="width:${f*100}%;background:${f > .5 ? '#ff4d5e' : f > .2 ? '#ff8a1f' : '#ffd54a'}"></i></div><b>${g.hp}</b></div>
       <p class="hint">Frage ${g.k + 1} von ${g.N}${sh ? ` · ${g.d.some(v => v) ? `−${g.d.reduce((a, v) => a + v, 0)} Leben` : 'kein Treffer'}${g.heal ? `, der Boss heilt sich um ${g.heal}` : ''}` : ''}</p><h2 class="pgq">${esc(Q.t)}</h2>
-      <div class="pgopt">${Q.o.map((t, k) => `<button class="pgo${sh && k === Q.c ? ' ok' : ''}${sh && myA && myA.a === k && k !== Q.c ? ' bad' : ''}${!sh && myA && myA.a === k ? ' sel' : ''}" data-o="${k}"><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(t)}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] && g.ans[i].a === k ? `<i style="--pc:${PT_COL[i]}" title="${esc(p.n)}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
+      <div class="pgopt">${Q.o.map((t, k) => `<button class="pgo${sh && k === Q.c ? ' ok' : ''}${sh && myA && myA.a === k && k !== Q.c ? ' bad' : ''}${!sh && myA && myA.a === k ? ' sel' : ''}" data-o="${k}"${open ? '' : ' disabled'}><em>${pgKeyHint(seats, 'r' + k)}</em>${esc(t)}${sh ? `<span class="who">${s.pl.map((p, i) => g.ans[i] && g.ans[i].a === k ? `<i style="--pc:${PT_COL[i]}" title="${esc(p.n)}">${ptHead({av: p.av}, i)}</i>` : '').join('')}</span>` : ''}</button>`).join('')}</div>
       ${sh ? pgChips(s, i => [g.d[i] ? 'on' : '', g.d[i] ? `⚔️ ${g.d[i]}` : g.ans[i] ? '💚 heilt' : '']) : pgDots(s, i => !!g.ans[i])}`;
   },
-  after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('bq' + g.k); main.querySelectorAll('.pgo').forEach(b => b.onclick = () => this.local(s, seats[0], {k: 'row', i: +b.dataset.o})); },
-  local(s, i, a){ const g = s.g; if (g.st !== 'ask' || a.k !== 'row' || a.i > 3 || PQ.taps['bq' + g.k + ':' + i]) return; PQ.taps['bq' + g.k + ':' + i] = 1; pgSend(i, {k: 'ans', a: a.i, t: Math.round(performance.now() - (PQ.mk['bq' + g.k] || performance.now()))}); },
+  after(s, seats){ const g = s.g; if (g.st === 'ask') pgMark('bq' + g.k);
+    main.querySelectorAll('.pgo').forEach(b => b.onclick = () => { const i = seats.filter(k => k >= 0 && !pgBot(k)).find(k => !g.ans[k] && !PQ.taps['bq' + g.k + ':' + k]); if (i != null) this.local(s, i, {k: 'row', i: +b.dataset.o}); }); },
+  local(s, i, a){ const g = s.g; if (i == null || i < 0 || g.st !== 'ask' || a.k !== 'row' || a.i > 3 || g.ans[i] || PQ.taps['bq' + g.k + ':' + i]) return; PQ.taps['bq' + g.k + ':' + i] = a.i + 1; Snd.tick(); pgSend(i, {k: 'ans', a: a.i, t: Math.round(performance.now() - (PQ.mk['bq' + g.k] || performance.now()))}); pgRender(); },
 };
 </script>
 </body>
