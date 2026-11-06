@@ -15306,7 +15306,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'be1e7b28a';
+const NET_BUILD = 'be837cad5';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16541,7 +16541,7 @@ function ptView(){
   if (q('ptloc')) q('ptloc').onclick = ptAddLocal;
   const n2 = q('ptn2'); if (n2) n2.addEventListener('input', () => { const p = PT.pl.find(x => x.seat === 1); if (p) { p.name = ptClean(n2.value); P[1].name = p.name; } });
   main.querySelectorAll('.ptlvl').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => { const p = PT.pl[+g.dataset.l]; if (p) { p.lvl = +b.dataset.v; ptSync(); } }));
-  const nAll = Object.keys(PGAMES).length;
+  const nAll = Object.keys(PGAMES).filter(k => !PGAMES[k].boss).length;   // Boss-Spiele kommen nie in die Abstimmung
   if (q('ptcm')) { q('ptcm').onclick = () => { PT.nch = clamp(PT.nch - 1, 2, nAll); ptSync(); }; q('ptcp').onclick = () => { PT.nch = clamp(PT.nch + 1, 2, nAll); ptSync(); }; }
   main.querySelectorAll('#ptcs button').forEach(b => b.onclick = () => { const v = +b.dataset.v; PT.nch = v > 0 ? (PT.nch > 0 ? PT.nch : 3) : v; ptSync(); });
   if (q('ptgo')) q('ptgo').onclick = ptGo;
@@ -17001,8 +17001,10 @@ function pgRender(){
   document.body.classList.add('pgon');
   // Tasten: Sitz 0 und 1 (online immer Sitz 0)
   cur = {
-    buzz: p => { const i = seats[PT.role === 'local' ? p : 0]; if (i >= 0 && s.ph === 'order') { pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'intro') { if (!s.go && s.rdy && !s.rdy[i]) pgSend(i, {k: 'ready'}); return; } if (i >= 0 && s.ph === 'board') { if (s.br.act === i && !s.br.ask && s.br.st === 'pre') pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'bz'}, PT.role === 'local' ? p : 0); },
-    row: (p, k) => { const i = seats[PT.role === 'local' ? p : 0]; if (s.ph === 'pick') { const v = PT.role === 'local' ? i : voter(); if (v != null && v >= 0 && s.pk.opts[k]) vote(v, s.pk.opts[k]); return; } if (i >= 0 && s.ph === 'board') { const A = s.br.ask; if (A && A.p === i && A.o[k] && !A.o[k].dis && !PQ.taps['bo' + A.n]) { PQ.taps['bo' + A.n] = 1; pgSend(i, {k: 'opt', v: A.o[k].id, n: A.n}); } return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'row', i: k}, PT.role === 'local' ? p : 0); },
+    buzz: p => { const i = seats[PT.role === 'local' ? p : 0]; if (i >= 0 && s.ph === 'order') { pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'intro') { if (!s.go && s.rdy && !s.rdy[i]) pgSend(i, {k: 'ready'}); return; } if (i >= 0 && s.ph === 'board') { const A = s.br.ask; if (A && A.p === i && A.o.length > 5) { PQ.kpg = {n: A.n, p: pbKpg(A) + 1}; Snd.tick(); pgRender(); return; } if (s.br.act === i && !s.br.ask && s.br.st === 'pre') pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'bz'}, PT.role === 'local' ? p : 0); },
+    row: (p, k) => { const i = seats[PT.role === 'local' ? p : 0]; if (s.ph === 'pick') { const v = PT.role === 'local' ? i : voter(); if (v != null && v >= 0 && s.pk.opts[k]) vote(v, s.pk.opts[k]); return; } if (i >= 0 && s.ph === 'board') { const A = s.br.ask, b = s.br;
+        if (A) { const o = A.o[pbKpg(A)*5 + k]; if (A.p === i && o && !o.dis && !PQ.taps['bo' + A.n]) { PQ.taps['bo' + A.n] = 1; pgSend(i, {k: 'opt', v: o.id, n: A.n}); } return; }
+        if (b.act === i && b.st === 'pre' && !b.used && b.items[i][k] && b.items[i][k] !== 'sh') pgSend(i, {k: 'item', id: b.items[i][k]}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'row', i: k}, PT.role === 'local' ? p : 0); },
     key: k => { if (k === 'enter' && q('pgnx')) pgNext(); },
   };
 }
@@ -17671,12 +17673,15 @@ function pbTip(s, i){
 const pbDie = v => v ? DIE(v) : '<span class="mxdie dq"><b>?</b></span>';
 // Knöpfe einer Frage: wer gefragt ist, kann wählen, alle anderen sehen sie ausgegraut
 function pbOptView(a, me, st){
-  const off = o => !me || o.dis ? ' disabled' : '', kb = k => me && k < 5 ? ` ${kbp(st, 'r' + k)}` : '';
+  const pg = pbKpg(a), off = o => !me || o.dis ? ' disabled' : '', kb = k => me && Math.floor(k/5) === pg ? ` ${kbp(st, 'r' + k % 5)}` : '';
+  const more = me && a.o.length > 5 ? `<p class="hint kbonly pbkpg">${kbp(st, 'bz')} blättert: Tasten gerade für ${pg*5 + 1} bis ${Math.min(a.o.length, pg*5 + 5)} von ${a.o.length}</p>` : '';
   if (a.k === 'shop') return `<div class="pbshop">${a.o.filter(o => o.id !== 'x').map((o, k) => { const it = PB_IT[o.id];
       return `<button class="pbsc${o.dis ? ' no' : ''}" data-bo="${o.id}"${off(o)}><span class="pbsh"><span class="pbsi">${it.ic}</span><b>${it.n}</b></span><small>${esc(it.d)}</small><span class="pbsf"><em>${it.c} 🪙</em>${o.dis ? '<i>zu teuer</i>' : kb(k)}</span></button>`; }).join('')}</div>
-    <div class="mbtns pbopt"><button class="btn ghost" data-bo="x"${me ? '' : ' disabled'}>Nichts kaufen</button></div>`;
-  return `<div class="mbtns pbopt${a.k === 'zz' ? ' zz' : ''}">${a.o.map((o, k) => `<button class="btn${o.ghost ? ' ghost' : ''}${a.k === 'fork' ? ` pbfo c${k}` : ''}" data-bo="${esc(o.id)}"${a.k === 'fork' ? ` data-pi="${k}"` : ''}${off(o)}>${a.k === 'fork' ? `<i class="pbbn">${k + 1}</i>` : ''}<span>${esc(o.l)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</span>${kb(k)}</button>`).join('')}</div>`;
+    <div class="mbtns pbopt"><button class="btn ghost" data-bo="x"${me ? '' : ' disabled'}>Nichts kaufen${kb(a.o.findIndex(o => o.id === 'x'))}</button></div>${more}`;
+  return `<div class="mbtns pbopt${a.k === 'zz' ? ' zz' : ''}">${a.o.map((o, k) => `<button class="btn${o.ghost ? ' ghost' : ''}${a.k === 'fork' ? ` pbfo c${k}` : ''}" data-bo="${esc(o.id)}"${a.k === 'fork' ? ` data-pi="${k}"` : ''}${off(o)}>${a.k === 'fork' ? `<i class="pbbn">${k + 1}</i>` : ''}<span>${esc(o.l)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</span>${kb(k)}</button>`).join('')}</div>${more}`;
 }
+// welche 5 Knöpfe einer Frage gerade auf den Auswahltasten liegen (pro Gerät, Buzzer blättert weiter)
+const pbKpg = a => (PQ.kpg && PQ.kpg.n === a.n ? PQ.kpg.p : 0) % Math.max(1, Math.ceil(a.o.length/5));
 function pgBoardView(s, seats){
   const b = s.br, p = b.act, N = pbG(b.mi), M = PB_MAPS[b.mi], now = performance.now();
   const pl = P => `<polyline points="${P.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}"/>`, road = N.segs.map(sg => pl(sg.P)).join('');
@@ -17716,7 +17721,7 @@ function pgBoardView(s, seats){
   if (a) act = `<p class="brq">${meAsk ? '' : `<b style="color:${PT_COL[a.p]}">${pbN(a.p)}</b> überlegt: `}${esc(a.q)} · ${pgCdn('bq' + a.n, pbW(15000))}</p>${pbOptView(a, meAsk, pgSeat(seats, a.p))}`;
   else if (p >= 0 && b.st === 'pre' && mine) {
     act = `<div class="mbtns"><button class="btn brroll" id="pgroll" style="background:${PT_COL[p]};color:#fff">🎲 ${b.fix ? b.fix + ' ' : b.mul > 1 ? b.mul + ' Würfel ' : ''}Würfeln! ${kbp(seat, 'bz')}</button></div>
-      ${b.items[p].length && !b.used ? `<p class="hint">Vor dem Würfeln einen Gegenstand benutzen:</p><div class="pbits">${b.items[p].map(k => `<button class="pbic" data-it="${k}"${k === 'sh' ? ' disabled' : ''}><b>${PB_IT[k].ic} ${PB_IT[k].n}</b><small>${k === 'sh' ? 'wirkt von selbst' : esc(PB_IT[k].d)}</small></button>`).join('')}</div>` : ''}
+      ${b.items[p].length && !b.used ? `<p class="hint">Vor dem Würfeln einen Gegenstand benutzen:</p><div class="pbits">${b.items[p].map((k, j) => `<button class="pbic" data-it="${k}"${k === 'sh' ? ' disabled' : ''}><b>${PB_IT[k].ic} ${PB_IT[k].n}${k === 'sh' ? '' : ' ' + kbp(seat, 'r' + j)}</b><small>${k === 'sh' ? 'wirkt von selbst' : esc(PB_IT[k].d)}</small></button>`).join('')}</div>` : ''}
       <p class="hint">${pgCdn('bt' + b.tk, pbW(30000))}</p>`; }
   else if (p >= 0 && b.st === 'pre') act = `<p class="hint">${pbN(p)} würfelt gleich …</p>`;
   const D = b.duel, rolling = b.dice.length && now - pgMark('roll' + b.roll) < 550;
