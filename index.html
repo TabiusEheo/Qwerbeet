@@ -2070,6 +2070,108 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .pbn.fork::before{content:"⑂";position:absolute;right:-70%;top:-70%;width:62%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;background:#ffc531;color:#1d1a16;font:900 clamp(9px,calc(1.1vw / var(--z)),14px)/1 Nunito,sans-serif;text-shadow:none;box-shadow:0 0 0 1.5px #1d1a16;z-index:2;pointer-events:none}
 .pbc>div:not(.pbdice){display:flex;flex-direction:column;align-items:center}.pbc .bract{display:flex;flex-direction:column;align-items:center}.pbc .bract .mbtns,.pbc .pbits{justify-content:center}
 .pbc .bract .mbtns{display:flex!important;flex-wrap:wrap;justify-content:center;gap:10px}.pbc .bract .mbtns .btn{width:auto}
+.kr.k1{grid-template-columns:minmax(0,1fr) 80px}.pgkg{max-width:340px;margin:12px auto 0}.pgloc .kdice{margin-top:6px}
+.pglen{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:12px 0 4px;font-weight:800}
+.pglv{border:0;border-radius:12px;padding:8px 14px;font:inherit;font-weight:800;background:var(--card);color:var(--ink);box-shadow:var(--shs);cursor:pointer}
+.pglv.sel{box-shadow:0 0 0 3px var(--acc)}.pglv.on{background:var(--acc);color:#fff}.pglv em{font-style:normal;opacity:.7;margin-left:4px}.pglv:disabled{cursor:default}
+.pglin .mbtns{display:flex;justify-content:center;gap:10px}.pglin .mbtns .btn{width:auto;min-width:200px}
+.pgwatch{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin:10px 0;font-weight:800}.pgwatch em{font-style:normal;color:var(--muted);font-weight:600}
+/* ---------- Brett (Party): Spalte neben dem Brett, Spielerliste, letzte Ereignisse ---------- */
+.pgwrap.board{width:min(1560px,calc(100vw / var(--z) - 20px))}
+.pgwrap.board .pgcard.bxcard{max-width:none;padding:12px;text-align:left}
+.bxw{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"h" "st" "bd" "pl" "tk";gap:10px;align-items:start}
+.bxh{grid-area:h;display:flex;flex-direction:column;gap:6px;min-width:0}
+.bxst{grid-area:st}.bxbw{grid-area:bd;position:relative;min-width:0}.bxpl{grid-area:pl}.bxtk{grid-area:tk;min-width:0}
+@media (min-aspect-ratio:5/4) and (min-width:640px){
+  .bxw{grid-template-columns:minmax(0,1fr) clamp(250px,calc(25vw / var(--z)),340px);grid-template-areas:"bd h" "bd st" "bd pl" "bd tk";grid-template-rows:auto auto auto 1fr}
+  .bxbw{position:sticky;top:8px}
+  .bxbd:not(.zoom) .pbd{width:min(100%,calc((100vh / var(--z) - 172px)*1.6))!important}
+}
+@media (max-width:520px){.pgwrap.board{width:calc(100vw / var(--z) - 12px)}.pgwrap.board .pgcard.bxcard{padding:7px}}
+.bxt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bxt span{font:400 19px "Lilita One",sans-serif}.bxt b{color:var(--muted);font-size:13px;font-weight:900;white-space:nowrap}
+.bxb{border-radius:10px;padding:5px 10px;font-weight:900;font-size:13px;line-height:1.3}
+.bxb.end{background:#ff5a36;color:#fff}.bxb.last{background:#ffc531;color:#1d1a16}.bxb.cl{background:#2486c4;color:#fff}.bxb.rev{background:#f6a8c4;color:#1d1a16}
+.bxb.team{background:linear-gradient(90deg,#3d8bff,#ff4d5e);color:#fff}
+.bxst{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--track);border-radius:16px;padding:10px;text-align:center;min-height:150px}
+.bxst .brmsg{margin:0;font-weight:800;line-height:1.35}.bxst .brq{margin:0;font-weight:900}
+.bxst .bract{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bxst .mbtns{display:flex!important;flex-wrap:wrap;justify-content:center;gap:8px;margin:0}.bxst .mbtns .btn{width:auto;margin:0}
+.bxst .hint{margin:0}
+.pbopt .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px}
+.pbopt .btn span{display:flex;flex-direction:column;align-items:center;line-height:1.15}.pbopt .btn small{font-size:11px;font-weight:800;opacity:.85}
+.pbopt.zz .btn{min-width:58px;padding:6px 10px}
+.pbopt .btn:disabled,.pbsc:disabled{cursor:default}
+.pbbn{font-style:normal;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-weight:900;color:#1d1a16;box-shadow:0 0 0 2px #1d1a16}
+.pbfo.c0 .pbbn,.pbbadge.c0{background:#ffe066}.pbfo.c1 .pbbn,.pbbadge.c1{background:#7ee0ea}.pbfo.c2 .pbbn,.pbbadge.c2{background:#ffa8d2}
+.pbfo.hot{transform:translateY(-2px)}
+/* Gegenstände und Shop als Karten mit Beschreibung */
+.pbits,.pbshop{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px;width:100%}
+.pbic,.pbsc{position:relative;border:0;border-radius:12px;background:var(--card);color:var(--ink);box-shadow:var(--shs);padding:6px 8px;text-align:left;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.pbic b,.pbsc b{font-size:13px;line-height:1.2}.pbic small,.pbsc small{font-size:11px;line-height:1.25;color:var(--muted);font-weight:700}
+.pbsh{display:flex;align-items:flex-start;gap:5px}.pbsh b{flex:1;min-width:0;overflow-wrap:anywhere}.pbsi{font-size:15px;line-height:1.2}
+.pbsf{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:auto;padding-top:2px}.pbsf em{font-style:normal;font-weight:900;font-size:13px;white-space:nowrap;background:var(--track);border-radius:8px;padding:1px 7px}
+.pbsc i{font-style:normal;font-size:11px;font-weight:900;color:#ff3b4f}
+.pbsc.no,.pbic:disabled{opacity:.5}
+.pbic:not(:disabled):hover,.pbsc:not(:disabled):hover{background:color-mix(in srgb,var(--sun) 30%,var(--card))}
+/* Spieler in Zugreihenfolge */
+.bxpl{display:flex;flex-direction:column;gap:5px}
+.bxp{display:grid;grid-template-columns:16px 30px minmax(0,1fr) auto auto 24px;align-items:center;gap:6px;padding:4px 8px 4px 10px;border-radius:12px;background:var(--card);box-shadow:inset 5px 0 0 var(--pc),var(--shs);font-weight:800}
+.bxp .o{font-size:12px;color:var(--muted);text-align:center}.bxp .hd{width:30px;height:30px}.bxp .hd svg{width:100%;height:100%}
+.bxp .nm{display:flex;flex-direction:column;min-width:0}.bxp .nm b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.bxp .nm small{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:11px;color:var(--muted);min-height:1em}
+.bxp .it{display:inline-flex;gap:1px}.bxp .it i{font-style:normal;font-size:13px}
+.bxp .st,.bxp .co{font-size:13px;white-space:nowrap}.bxp .rk{font:400 15px "Lilita One",sans-serif;text-align:right}
+.bxp.on{background:color-mix(in srgb,var(--pc) 18%,var(--card));box-shadow:inset 0 0 0 3px var(--pc),var(--shs)}
+.bxp .tm,.pgr .tm{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;box-shadow:0 0 0 1.5px #fff}
+/* letzte Ereignisse */
+.bxtl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+.bxtl li{display:flex;gap:6px;font-size:13px;line-height:1.3;padding:4px 8px;border-radius:10px;background:var(--track)}
+.bxtl li small{font-weight:900;color:var(--muted);min-width:24px}.bxtl li.nw{background:color-mix(in srgb,var(--sun) 32%,var(--track))}
+.bxtk .pblog{max-width:none;margin:6px 0 0}.bxhint{margin:6px 0 0;text-align:left}
+/* Brett: Felder genau auf der Straße, Zoom, Figuren mit Farbsockel */
+.pbd .pbn{margin:0}
+.bxbd .pbd{margin:0 auto}
+.bxbar{display:flex;justify-content:flex-end;margin-top:6px}
+.bxzm{border:0;border-radius:10px;padding:4px 10px;background:var(--track);color:var(--ink);font:900 12px Nunito,sans-serif;cursor:pointer;box-shadow:var(--shs)}
+.bxbd.zoom{overflow:auto;max-height:calc(100vh / var(--z) - 150px);border-radius:18px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.bxbd.zoom .pbd{width:230%!important;max-width:none;margin:0}
+.pbk::before{content:"";position:absolute;left:10%;right:10%;bottom:-12%;height:30%;border-radius:50%;background:var(--pc);box-shadow:0 0 0 2px #fff,0 2px 0 2px rgba(0,0,0,.35);z-index:-1}
+.pbk.on{transform:translate(-50%,-72%) scale(1.15)}
+.pbk.on::after{content:"▼";position:absolute;left:50%;top:-58%;transform:translateX(-50%);font:900 clamp(11px,calc(1.5vw / var(--z)),19px)/1 Nunito,sans-serif;color:var(--pc);-webkit-text-stroke:1.5px #1d1a16;animation:pbbob .7s ease-in-out infinite alternate}
+@keyframes pbbob{to{transform:translate(-50%,30%)}}
+.pbsn{position:absolute;inset:-80%;border-radius:50%;border:3px solid #ffc531;pointer-events:none;animation:pbring 2.6s ease-out var(--ad,0ms) both}
+@keyframes pbring{0%{transform:scale(.3);opacity:1}70%{opacity:1}100%{transform:scale(1.6);opacity:0}}
+.pbfx{position:absolute;z-index:9;transform:translate(-50%,-180%);font:900 clamp(12px,calc(1.5vw / var(--z)),18px)/1.1 Nunito,sans-serif;padding:3px 8px;border-radius:10px;background:#fff;color:#1a9a50;box-shadow:0 0 0 2px #1d1a16;white-space:nowrap;pointer-events:none;animation:pbfx 2.6s ease-out var(--ad,0ms) both}
+.pbfx.bad{color:#e0233a}.pbfx.star{background:#ffc531;color:#1d1a16}
+@keyframes pbfx{0%{opacity:0;transform:translate(-50%,-110%) scale(.6)}12%{opacity:1;transform:translate(-50%,-170%) scale(1.12)}22%{transform:translate(-50%,-180%) scale(1)}80%{opacity:1;transform:translate(-50%,-230%)}100%{opacity:0;transform:translate(-50%,-260%)}}
+/* Abzweigung: Wege ① ② auf dem Brett */
+.pbl .pbpath{fill:none;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round;opacity:.9;stroke-dasharray:.1 5.2;transition:stroke-width .15s}
+.pbl .pbpath.c0{stroke:#ffe066}.pbl .pbpath.c1{stroke:#7ee0ea}.pbl .pbpath.c2{stroke:#ffa8d2}.pbl .pbpath.hot{stroke-width:6;stroke-dasharray:none;opacity:.75}
+.pbbadge{position:absolute;z-index:8;transform:translate(-50%,-50%);width:max(28px,4.4%);aspect-ratio:1;border:0;border-radius:50%;font:900 clamp(14px,calc(1.7vw / var(--z)),21px)/1 Nunito,sans-serif;color:#1d1a16;box-shadow:0 0 0 2.5px #1d1a16,0 3px 0 2.5px #1d1a16;cursor:pointer;padding:0;animation:pbbadge .9s ease-in-out infinite alternate}
+.pbbadge:disabled{cursor:default;animation:none;opacity:.9}.pbbadge.hot{transform:translate(-50%,-50%) scale(1.25);animation:none}
+@keyframes pbbadge{to{transform:translate(-50%,-50%) scale(1.14)}}
+.pbnum{position:absolute;z-index:7;transform:translate(-50%,-150%);background:#1d1a16;color:#fff;font:900 12px/1 Nunito,sans-serif;padding:3px 6px;border-radius:8px;white-space:nowrap;pointer-events:none}
+.pbduel{display:flex;align-items:center;gap:8px;font-weight:900}.pbduel b{font-size:22px}
+.pbdice.rolling .mxdie{animation:pbroll .5s ease-out}
+@keyframes pbroll{0%{transform:rotate(-200deg) scale(.5)}70%{transform:rotate(15deg) scale(1.1)}100%{transform:none}}
+/* Team-Minispiel, Ergebnis, Bereit */
+.pgteam{display:flex;flex-direction:column;align-items:center;gap:2px;width:fit-content;max-width:100%;margin:4px auto 10px;padding:7px 16px;border-radius:12px;font-weight:900;background:linear-gradient(90deg,#3d8bff,#ff4d5e);color:#fff;text-align:center}
+.pgteam small{font-weight:700;opacity:.92}.pgteam.w0{background:#3d8bff}.pgteam.w1{background:#ff4d5e}
+.pgtot{display:block;font-style:normal;font-size:12px;color:var(--muted);font-weight:800}
+.pgfin .pgr b em{display:block;font-style:normal;font-size:11px;color:var(--muted);font-weight:700}
+.btn.warn{background:#ff3b4f!important;color:#fff!important}
+.pgrdy{justify-content:center}.pgrdy .btn{width:auto;min-width:200px}
+/* Lobby: Bot-Stärke in einer Zeile, Karten gleich breit */
+.ptlvl{flex-wrap:nowrap!important;justify-content:center}.ptlvl button{min-width:0!important;padding:3px 7px!important}
+#ptmap,#pttempo{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:6px;width:100%}
+#ptmap button,#pttempo button{min-width:0}
+.mkv .mkr{flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:560px){.mkv .mkr{justify-content:flex-start}#ptcs{justify-content:flex-start}}
+.pgintro .pgrdy{display:flex!important;flex-wrap:wrap;justify-content:center;gap:8px}
+.pbn.pp.c0{box-shadow:0 0 0 3px #ffe066,0 0 0 5px #1d1a16!important}.pbn.pp.c1{box-shadow:0 0 0 3px #7ee0ea,0 0 0 5px #1d1a16!important}.pbn.pp.c2{box-shadow:0 0 0 3px #ffa8d2,0 0 0 5px #1d1a16!important}
+.pbn.pp.hot{transform:translate(-50%,-50%) scale(1.15)}
+@media (max-width:560px){#ptmap{grid-template-columns:repeat(2,1fr)}#pttempo button{font-size:13px;padding:7px 4px;white-space:nowrap}}
 </style>
 </head>
 <body>
@@ -2107,8 +2209,23 @@ function uiApply(){
   if (z === UIZ && document.body && document.body.style.zoom === (z === 1 ? '' : String(z))) return;
   UIZ = z; if (document.body) document.body.style.zoom = z === 1 ? '' : String(z);
   const r = document.documentElement.style; r.setProperty('--z', String(z)); r.setProperty('--gw', '660px'); r.setProperty('--hr', '1'); r.setProperty('--hu', '0');
+  uiProbe();
   dispatchEvent(new Event('resize'));
 }
+/* Safari (und ältere Browser) rechnen getBoundingClientRect im gezoomten Body ohne den Zoom, Maus und Finger aber mit.
+   Einmal messen und die Rechtecke dann passend hochrechnen, sonst trifft die Maus daneben (Spiegelmalen, Hühnerjagd …). */
+let UIQ = 1;
+const uiRect0 = Element.prototype.getBoundingClientRect;
+function uiProbe(){
+  UIQ = 1; if (!document.body || UIZ === 1) return;
+  const d = document.createElement('div'); d.style.cssText = 'position:fixed;left:100px;top:0;width:100px;height:1px;visibility:hidden;pointer-events:none';
+  document.body.appendChild(d); const w = uiRect0.call(d).width; d.remove();
+  if (w > 0 && Math.abs(w - 100*UIZ) > Math.abs(w - 100)) UIQ = UIZ*100/w;
+}
+Element.prototype.getBoundingClientRect = function(){
+  const r = uiRect0.call(this); if (UIQ === 1 || this === document.documentElement || this === document.body) return r;
+  return new DOMRect(r.x*UIQ, r.y*UIQ, r.width*UIQ, r.height*UIQ);
+};
 function uiSet(a, s){ if (a != null) UIA = !!a; if (s != null && Number.isFinite(+s)) UIS = Math.min(1.6, Math.max(.6, +s)); try { localStorage.setItem('qw-ui', JSON.stringify({a: UIA, s: UIS})); } catch(e) {} uiApply(); }
 let uiRT = 0; addEventListener('resize', e => { if (!UIA || !e.isTrusted) return; clearTimeout(uiRT); uiRT = setTimeout(uiApply, 150); });
 (() => { try { const o = JSON.parse(localStorage.getItem('qw-ui') || 'null'); if (o) { UIA = o.a !== false; UIS = Number.isFinite(+o.s) ? +o.s : 1; } } catch(e) {} const go = () => uiApply(); document.body ? go() : addEventListener('DOMContentLoaded', go); })();
@@ -14846,16 +14963,23 @@ function openHelp(){
     ${d ? '' : `<h3>Party (3–6 Spieler)</h3>
     <ul><li>Unter „Party“ einen Raum erstellen und den Link schicken, oder lokal an einem Gerät spielen. Freie Plätze füllt der Gastgeber mit Bots (drei Stärken).</li>
       <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, oder ♾️ nur Minispiele mit Punkten nach Platz.</li>
-      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Anzahl Minispiele zur Wahl (oder Zufall) und Länge der Minispiele (50–250 %, mehr oder weniger Runden und Durchgänge).</li>
-      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost.</li></ul>
+      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Länge der Minispiele (50–250 %), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und Anzahl Minispiele zur Wahl (oder Zufall).</li>
+      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang.</li>
+      <li><b>Vor dem Minispiel</b> stehen die Regeln da, bis alle ✋ Bereit getippt haben, höchstens 15 s. Dann zählt es 3, 2, 1 herunter.</li>
+      <li><b>Nach dem Minispiel</b> geht es nach 15 s von selbst weiter, der Gastgeber kann das anhalten. „Party beenden“ fragt nochmal nach.</li>
+      <li>Online piept und vibriert es, wenn du dran bist oder gefragt wirst.</li></ul>
     <h3>Brett</h3>
-    <ul><li>Reihum würfeln (1–6) und laufen. An einer Abzweigung wählst du den Weg über die ➜-Pfeile auf dem Brett oder die Knöpfe darüber.</li>
-      <li>Felder: ${Object.values(PB_T).filter(x => x.n !== 'Start').map(x => esc(x.n)).join(', ')}. Antippen oder darüberfahren zeigt, was ein Feld macht.</li>
-      <li><b>⭐ Stern:</b> beim Vorbeilaufen für ${BR_STAR} Münzen kaufen, danach wandert er weiter. Wer am Ende die meisten Sterne hat, gewinnt, bei Gleichstand entscheiden die Münzen.</li>
-      <li><b>🛒 Shop:</b> beim Vorbeilaufen einkaufen, höchstens ${PB_MAX} Gegenstände. Vor dem Würfeln einsetzen: ${Object.values(PB_IT).map(x => `${x.ic} ${esc(x.n)} (${x.c} 🪙)`).join(', ')}.</li>
-      <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. Manche Karten verändern sich von Runde zu Runde.</li>
-      <li><b>🔥 Endspurt:</b> die letzten 3 Runden zählen blaue und rote Felder doppelt, der Letzte bekommt einen Gegenstand.</li>
-      <li><b>Bonus-Sterne</b> am Ende: je +1 ⭐ für die meisten Minispiel-Siege, die meisten gesammelten Münzen und die meisten Ereignisfelder.</li></ul>`}
+    <ul><li>Reihum würfeln (1–6) und laufen. Neben dem Brett (am Handy darüber) stehen Würfel, Meldung und Knöpfe, darunter die Spieler in Zugreihenfolge mit Sternen, Münzen und Gegenständen und die letzten Ereignisse. Der ganze Verlauf lässt sich aufklappen.</li>
+      <li><b>Abzweigungen</b> haben ein gelbes ⑂. Läufst du drüber, zeigt das Brett die Wege als ① ② mit farbigen Feldern. Tippe die Nummer auf dem Brett oder den Knopf.</li>
+      <li>Felder: ${(u => Object.keys(PB_T).filter(t => t !== 'h' && u.has(t)))(new Set(PB_MAPS.flatMap((m, k) => pbG(k).map(n => n.t)))).map(t => esc(PB_T[t].n)).join(', ')}. Antippen oder darüberfahren zeigt, was ein Feld macht. Gewinne und Verluste stehen kurz an der Figur.</li>
+      <li><b>⭐ Stern:</b> beim Vorbeilaufen für ${BR_STAR} Münzen kaufen, in der letzten Runde für die Hälfte. Danach zieht er auf ein anderes Feld, meist 8–18 Felder vor dem nächsten Spieler, nie auf einen gesperrten Weg. Wer am Ende die meisten Sterne hat, gewinnt, bei Gleichstand entscheiden die Münzen.</li>
+      <li><b>🛒 Shop:</b> beim Vorbeilaufen oder Stehenbleiben einkaufen, höchstens ${PB_MAX} Gegenstände: ${Object.values(PB_IT).map(x => `${x.ic} ${esc(x.n)} (${x.c} 🪙)`).join(', ')}. Vor dem Würfeln einen benutzen, das 🛡️ Schild wirkt von selbst.</li>
+      <li><b>⚔️ Münzduell:</b> bleibst du auf dem Feld eines Mitspielers stehen, kannst du ihn herausfordern. Beide würfeln, der höhere Wurf gewinnt 5 Münzen (im Endspurt 10).</li>
+      <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. <b>👥 Team-Minispiel:</b> stehen nach der Runde Spieler auf Blau und auf Rot, spielt Blau gegen Rot (die übrigen werden aufgeteilt). Der Schnitt im Team zählt, jeder im Gewinnerteam bekommt 10 Münzen. Nie zweimal hintereinander.</li>
+      <li>Alle 3 Runden verändert sich die Karte: die Torte dreht ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum. Gesperrte Wege stehen oben in der Spalte.</li>
+      <li><b>🔥 Endspurt:</b> in den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt, der Letzte bekommt einen Gegenstand. <b>⭐ Letzte Chance:</b> in der letzten Runde kostet der Stern die Hälfte.</li>
+      <li><b>Bonus-Sterne</b> am Ende: je +1 ⭐ für die meisten Minispiel-Siege, die meisten gesammelten Münzen und die meisten Ereignisfelder.</li>
+      <li>Am Handy vergrößert „🔍 Brett vergrößern“ das Brett, es folgt dann der Figur, die gerade zieht.</li></ul>`}
     <h3>Anzeige</h3>
     <ul><li>Unter 🎨 lässt sich die Größe automatisch an den Bildschirm anpassen oder per Regler einstellen.</li></ul>
     <h3>Duell</h3>
@@ -15140,7 +15264,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'v21';
+const NET_BUILD = 'bf3e29dac';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -15228,15 +15352,38 @@ function netRx(c, d){
   else netRecv(d);
 }
 
+/* ---------- TURN-Server: Umweg für Netze, in denen keine Direktverbindung klappt (Mobilfunk, Firmen-WLAN …) ----------
+   Entweder feste Zugänge (urls, user, pass) oder Metered-API (app + key): dann holt das Spiel die Zugänge beim Start. */
+const NET_TURN = {app: '', key: '', urls: [], user: '', pass: ''};
+let NET_ICE = null;
+function netIce(){
+  if (NET_ICE) return Promise.resolve(NET_ICE);
+  const base = [{urls: 'stun:stun.l.google.com:19302'}];
+  const fixed = NET_TURN.urls.length && NET_TURN.user ? [{urls: NET_TURN.urls, username: NET_TURN.user, credential: NET_TURN.pass}] : [];
+  if (!NET_TURN.app || !NET_TURN.key) return Promise.resolve(NET_ICE = fixed.length ? [...base, ...fixed] : null);
+  const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null, to = setTimeout(() => ctl && ctl.abort(), 5000);
+  return fetch(`https://${NET_TURN.app}.metered.live/api/v1/turn/credentials?apiKey=${encodeURIComponent(NET_TURN.key)}`, ctl ? {signal: ctl.signal} : {})
+    .then(r => r.ok ? r.json() : Promise.reject()).then(l => { clearTimeout(to); NET_ICE = Array.isArray(l) && l.length ? [...base, ...l, ...fixed] : (fixed.length ? [...base, ...fixed] : null); return NET_ICE; })
+    .catch(() => { clearTimeout(to); return fixed.length ? [...base, ...fixed] : null; });
+}
+// verständliche Meldung zu einem PeerJS-Fehler
+function netErrTxt(e){
+  const t = e && e.type;
+  if (t === 'browser-incompatible') return 'Dieser Browser kann keine direkten Verbindungen. Probier Chrome, Safari oder Firefox.';
+  if (t === 'network' || t === 'socket-error' || t === 'socket-closed' || t === 'server-error') return 'Keine Verbindung zum Vermittlungs-Server. Internet prüfen und nochmal versuchen.';
+  if (t === 'webrtc' || t === 'negotiation-failed') return 'Raum gefunden, aber die Geräte kommen nicht direkt zueinander. Das Netz blockiert die Verbindung (oft Mobilfunk oder Firmen-WLAN). Anderes Netz probieren, z. B. WLAN statt Mobilfunk.';
+  return `Verbindungsfehler${t ? ` (${t})` : ''}. Nochmal versuchen.`;
+}
+const NET_NODIRECT = 'Raum gefunden, aber die Geräte kommen nicht direkt zueinander. Das Netz blockiert die Verbindung (oft Mobilfunk oder Firmen-WLAN). Anderes Netz probieren, z. B. WLAN statt Mobilfunk.';
 function netLoad(){
-  if (window.Peer) return Promise.resolve();
+  if (window.Peer) return netIce().then(() => {});
   if (NET.loading) return NET.loading;
   return NET.loading = new Promise((res, rej) => {
     const s = document.createElement('script');
     s.src = 'peerjs.min.js'; s.async = true;
     const fail = why => { clearTimeout(to); NET.loading = null; s.remove(); rej(new Error(why)); };
     const to = setTimeout(() => fail('timeout'), 12000);
-    s.onload = () => { clearTimeout(to); window.Peer ? res() : fail('nopeer'); };
+    s.onload = () => { clearTimeout(to); window.Peer ? netIce().then(() => res()) : fail('nopeer'); };
     s.onerror = () => fail('load');
     document.head.appendChild(s);
   });
@@ -15244,6 +15391,7 @@ function netLoad(){
 // Nur für Tests: ?peer=localhost:9000 nutzt einen eigenen Signalserver
 function netOpts(){
   const o = {debug: 0};
+  if (NET_ICE) o.config = {iceServers: NET_ICE};
   const q = new URLSearchParams(location.search).get('peer');
   if (q && /^(localhost|127\.0\.0\.1):\d{2,5}$/.test(q)) { const [host, port] = q.split(':'); Object.assign(o, {host, port: +port, path: '/', secure: false}); }
   return o;
@@ -15294,8 +15442,9 @@ function netRecv(raw){
 /* ---------- Verbindung ---------- */
 function netBind(c){
   NET.conn = c;
+  if (NET.role === 'guest' && !NET.on) { clearTimeout(NET.dT); NET.dT = setTimeout(() => { if (NET.conn === c && !NET.open && !NET.on) { netOvMsg(NET_NODIRECT); netOvState('join'); try { c.close(); } catch(e) {} } }, 15000); }
   c.on('open', () => {
-    if (NET.conn !== c) return;
+    if (NET.conn !== c) return; clearTimeout(NET.dT);
     NET.open = true; NET.lastRx = performance.now();
     netSend({t:'hi', b: NET_BUILD, name: NET.on ? P[1].name : NET.myName, av: NET.on ? HERO[1] : NET.myAv, tok: NET.tok});
   });
@@ -15344,8 +15493,8 @@ function netPeerErr(e){
   const t = e && e.type;
   if (t === 'unavailable-id' && NET.role === 'host' && !NET.on) { netNewRoom(++NET.tries); return; }
   if (t === 'peer-unavailable') { if (!NET.on) { netOvMsg('Raum nicht gefunden. Stimmt der Code, und ist der Raum noch offen?'); netOvState('join'); } return; }
-  if (t === 'browser-incompatible') { netOvMsg('Dieser Browser kann keine direkten Verbindungen. Probier Chrome, Safari oder Firefox.'); return; }
-  if (!NET.on) { netOvMsg('Keine Verbindung zum Server. Internet prüfen und nochmal versuchen.'); netOvState(NET.role === 'host' ? 'idle' : 'join'); }
+  if (t === 'browser-incompatible') { netOvMsg(netErrTxt(e)); return; }
+  if (!NET.on) { netOvMsg(netErrTxt(e)); netOvState(NET.role === 'host' ? 'idle' : 'join'); }
 }
 function netNewPeer(id){
   try { if (NET.peer) NET.peer.destroy(); } catch(e) {}
@@ -16088,7 +16237,8 @@ netFromLink();
    ===================================================================== */
 const PT_PREFIX = 'qwparty-', PT_MAX = 6;
 const PT_COL = ['#ff5a36', '#16b8c9', '#ffc531', '#8a63d2', '#1fae5b', '#ff6fb1'];
-const PT = {len: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
+const PT_TEMPO = [{v: .6, n: '⚡ Schnell'}, {v: 1, n: 'Normal'}, {v: 1.5, n: '🐢 Gemütlich'}];
+const PT = {len: 1, tempo: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
 const ptTok = (() => { let t = ''; try { t = sessionStorage.getItem('qw-ptok') || ''; } catch(e) {} if (!t) { t = Math.random().toString(36).slice(2, 12); try { sessionStorage.setItem('qw-ptok', t); } catch(e) {} } return t; })();
 const ptName = () => { try { return localStorage.getItem('qw-pname') || ''; } catch(e) { return ''; } };
 const ptSetName = n => { try { localStorage.setItem('qw-pname', n); } catch(e) {} };
@@ -16131,7 +16281,7 @@ function ptRoom(n){
     ptView(); ptBeat();
   });
   p.on('connection', c => { if (PT.peer === p) ptCand(c); });
-  p.on('error', e => { if (PT.peer !== p) return; if (e && e.type === 'unavailable-id' && !PT.code) { try { p.destroy(); } catch(x) {} ptRoom(n + 1); } else if (!PT.code) ptErr('Keine Verbindung zum Server. Internet prüfen und nochmal versuchen.'); });
+  p.on('error', e => { if (PT.peer !== p) return; if (e && e.type === 'unavailable-id' && !PT.code) { try { p.destroy(); } catch(x) {} ptRoom(n + 1); } else if (!PT.code) ptErr(netErrTxt(e)); });
   p.on('disconnected', () => setTimeout(() => { try { if (PT.peer === p && !p.destroyed && p.disconnected) p.reconnect(); } catch(x) {} }, 1500));
 }
 // Neue Verbindung: erst nach dem Hallo einem Platz zuordnen. Wer mit demselben Token kommt, bekommt seinen alten Platz zurück.
@@ -16177,7 +16327,7 @@ function ptSync(){
   if (PT.role === 'local') return ptView();
   if (PT.role !== 'host') return;
   const pub = ptPublic();
-  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, map: PT.map, len: PT.len, go: PT.started}); });
+  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, map: PT.map, len: PT.len, tempo: PT.tempo, go: PT.started}); });
   if (!PT.started) ptView();
 }
 // Herzschlag: der Gastgeber pingt, wer 7 Sekunden stumm ist, gilt als getrennt
@@ -16219,7 +16369,7 @@ function ptJoin(code){
       else if (PT.st === 'join' && PT.rejoin && PT.rejoin++ < 40) { PT.msg = 'Raum gerade nicht erreichbar, versuche es weiter …'; ptView(); setTimeout(() => { if (PT.st === 'join') ptConnect(); }, 2500); }
       // Code aus dem Hauptmenü: keine Party gefunden, vielleicht ist es ein Online-Duell
       else if (PT.st === 'join' && PT.duelFb) { const c = PT.code; ptStop(); menu('home'); netOpen(c); }
-      else ptErr('Raum nicht gefunden. Stimmt der Code, und ist der Raum noch offen?'); } else if (PT.st !== 'lobby') ptErr('Keine Verbindung zum Server. Internet prüfen und nochmal versuchen.'); });
+      else ptErr('Raum nicht gefunden. Stimmt der Code, und ist der Raum noch offen?'); } else if (PT.st !== 'lobby') ptErr(netErrTxt(e)); });
     p.on('disconnected', () => setTimeout(() => { try { if (PT.peer === p && !p.destroyed && p.disconnected) p.reconnect(); } catch(x) {} }, 1500));
     ptBeat();
   }, () => ptErr('Online geht nur auf der Webseite des Spiels.'));
@@ -16227,7 +16377,8 @@ function ptJoin(code){
 function ptConnect(){
   if (!PT.peer || PT.peer.destroyed) return;
   const c = PT.peer.connect(PT_PREFIX + PT.code, {reliable: true, serialization: 'raw'}); PT.host = c;
-  c.on('open', () => { if (PT.host === c) { PT.T = performance.now(); let sl = PT.me; if (sl < 0) { try { sl = +(sessionStorage.getItem('qw-pslot') || -1); } catch(e) {} }
+  if (PT.st === 'join') { clearTimeout(PT.dT); PT.dT = setTimeout(() => { if (PT.host === c && PT.st === 'join' && !c.open) { ptErr(NET_NODIRECT); try { c.close(); } catch(e) {} } }, 15000); }
+  c.on('open', () => { clearTimeout(PT.dT); if (PT.host === c) { PT.T = performance.now(); let sl = PT.me; if (sl < 0) { try { sl = +(sessionStorage.getItem('qw-pslot') || -1); } catch(e) {} }
     ptSend(c, {t: 'hi', b: NET_BUILD, tok: ptTok, name: ptName(), av: ptMyAv(), slot: Number.isInteger(sl) && sl >= 0 ? sl : undefined}); } });
   c.on('data', raw => {
     if (PT.host !== c || typeof raw !== 'string') return;
@@ -16236,7 +16387,7 @@ function ptConnect(){
     PT.lost = 0; { const bn = document.getElementById('ptban'); if (bn && /unterbrochen/.test(bn.textContent)) bn.hidden = true; }
     if (m.t === 'lob' && Array.isArray(m.pl)) {
       PT.pl = m.pl.slice(0, PT_MAX); PT.me = m.me | 0; try { sessionStorage.setItem('qw-pslot', String(PT.me)); } catch(e) {}
-      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(m.len, .5, 2.5);
+      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(m.len, .5, 2.5); if (Number.isFinite(m.tempo)) PT.tempo = clamp(m.tempo, .5, 2);
       if (m.go) PT.started = true;
       else { PT.started = false; PT.st = 'lobby'; PT.msg = ''; if (PQ.s) pgStop(); ptView(); }
     }
@@ -16249,7 +16400,7 @@ function ptConnect(){
   c.on('close', () => { if (PT.host === c && PT.role === 'guest') ptRetry(); });
 }
 function ptRetry(){
-  if (PT.role !== 'guest') return;
+  if (PT.role !== 'guest' || PT.st === 'err') return;
   if (!PT.lost) PT.lost = performance.now();
   if (PT.rtT) return;
   PT.msg = 'Verbindung zum Gastgeber unterbrochen, verbinde neu …';
@@ -16320,6 +16471,7 @@ function ptView(){
       ${PT.mode === 'board' ? `<div class="mkv"><span>Karte<small>${PT.map >= 0 ? esc(PB_MAPS[PT.map].d) : 'jedes Mal eine andere'}</small></span>${host ? `<div class="seg" id="ptmap">${PB_MAPS.map((m, k) => `<button data-v="${k}" class="${PT.map === k ? 'on' : ''}">${m.ic} ${m.n}</button>`).join('')}<button data-v="-1" class="${PT.map < 0 ? 'on' : ''}">🎲 Zufall</button></div>` : `<b>${PT.map >= 0 ? PB_MAPS[PT.map].ic + ' ' + PB_MAPS[PT.map].n : '🎲 Zufall'}</b>`}</div>` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Runden</span>${host ? `<div class="stepper"><button id="ptrm" aria-label="Weniger">−</button><input id="ptrn" type="number" min="1" max="50" value="${PT.rounds}"><button id="ptrp" aria-label="Mehr">+</button></div>` : `<b>${PT.rounds}</b>`}</div>` : ''}
       <div class="mkv"><span>Länge der Minispiele<small>Mehr oder weniger Runden und Durchgänge pro Minispiel</small></span>${host ? `<span class="mkr"><input type="range" min=".5" max="2.5" step=".1" value="${PT.len}" id="ptlen"><b>${Math.round(PT.len*100)}%</b></span>` : `<b>${Math.round(PT.len*100)}%</b>`}</div>
+      <div class="mkv"><span>Tempo<small>${PT.mode === 'board' ? 'Wie lange Meldungen stehen bleiben und wie schnell Bots ziehen' : 'Wie lange Ergebnisse und Ansagen stehen bleiben'}</small></span>${host ? `<div class="seg" id="pttempo">${PT_TEMPO.map(t => `<button data-v="${t.v}" class="${PT.tempo === t.v ? 'on' : ''}">${t.n}</button>`).join('')}</div>` : `<b>${(PT_TEMPO.find(t => t.v === PT.tempo) || PT_TEMPO[1]).n}</b>`}</div>
       <div class="mkv"><span>Spiele zur Wahl<small>${PT.nch === -1 ? 'jedes Minispiel wird ausgelost' : 'alle stimmen ab, „🎲 Zufall“ gibt es immer dazu'}</small></span>${host ? `<span class="mkr"><div class="stepper"><button id="ptcm"${PT.nch > 0 ? '' : ' disabled'}>−</button><input id="ptcn" value="${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '–'}" disabled><button id="ptcp"${PT.nch > 0 ? '' : ' disabled'}>+</button></div><div class="seg" id="ptcs"><button data-v="3" class="${PT.nch > 0 ? 'on' : ''}">Anzahl</button><button data-v="0" class="${PT.nch === 0 ? 'on' : ''}">Alle</button><button data-v="-1" class="${PT.nch === -1 ? 'on' : ''}">🎲 Zufall</button></div></span>` : `<b>${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '🎲 Zufall'}</b>`}</div>
       <p class="hint">${host ? (n >= 3 ? `${n} Spieler${loc ? '' : ' im Raum'}.` : `Noch ${3 - n} Spieler bis zum Start, mit Bots auffüllen.${loc ? '' : ' Zu zweit geht es über Online → Duell.'}`) : 'Warte, bis der Gastgeber startet.'}</p>
       <div class="mbtns">${host ? `<button class="btn" id="ptgo"${n >= 3 ? '' : ' disabled'}>Party starten</button>` : ''}<button class="btn ghost" id="ptleave">${loc ? 'Zurück' : 'Raum verlassen'}</button></div></div>`;
@@ -16341,6 +16493,7 @@ function ptView(){
   main.querySelectorAll('#ptmode button').forEach(b => b.onclick = () => { PT.mode = b.dataset.v; ptSync(); });
   const ln = q('ptlen'); if (ln) { ln.oninput = () => { ln.nextElementSibling.textContent = Math.round(+ln.value*100) + '%'; }; ln.onchange = () => { PT.len = clamp(+ln.value, .5, 2.5); ptSync(); }; }
   main.querySelectorAll('#ptmap button').forEach(b => b.onclick = () => { PT.map = +b.dataset.v; ptSync(); });
+  main.querySelectorAll('#pttempo button').forEach(b => b.onclick = () => { PT.tempo = +b.dataset.v; ptSync(); });
   const setR = v => { PT.rounds = clamp(Math.round(v) || 1, 1, 50); ptSync(); };
   if (q('ptrm')) { q('ptrm').onclick = () => setR(PT.rounds - 1); q('ptrp').onclick = () => setR(PT.rounds + 1); q('ptrn').addEventListener('change', e => setR(+e.target.value)); }
   if (q('ptloc')) q('ptloc').onclick = ptAddLocal;
@@ -16572,7 +16725,9 @@ function brView(){
    Eingaben laufen über pgSend: am Gastgeber direkt, beim Gast an den Gastgeber.
    Zeiten (Reaktion, Zeitgefühl, Quiz) misst jedes Gerät selbst ab dem Moment, in dem es die Anzeige zeigt.
    ===================================================================== */
-const PQ = {s: null, tm: [], mk: {}, taps: {}, raf: 0, botWas: null, last: ''};
+const PQ = {s: null, tm: [], mk: {}, taps: {}, botWas: null, last: ''};
+// immer nur eine Animationsschleife: ein neuer Frame bricht den alten ab (sonst laufen Durchgänge doppelt so schnell)
+{ let r = 0; Object.defineProperty(PQ, 'raf', {get: () => r, set: v => { if (r && r !== v) cancelAnimationFrame(r); r = v; }}); }
 // Länge der Minispiele (Lobby-Regler): Runden und Durchgänge mal Faktor
 const pgR = n => Math.max(1, Math.round(n*((PQ.s && PQ.s.len) || 1)));
 const pgHost = () => PT.role === 'host' || PT.role === 'local';
@@ -16597,7 +16752,7 @@ const pgMark = (k, fn) => { if (!(k in PQ.mk)) { PQ.mk[k] = performance.now(); i
 function pgBegin(){
   pgClear();
   if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.on = false; }
-  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: PT.len || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
+  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: PT.len || 1, len0: PT.len || 1, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
   if (PQ.s.mode === 'board') pgBoardInit(PQ.s, PT.map);
   pgOrder();
 }
@@ -16617,20 +16772,22 @@ function pgOrderIn(i){
     pgClear();
     s.ord = s.pl.map((p, k) => k).sort((a, b) => (s.or.d[b] + s.or.tb[b]/10) - (s.or.d[a] + s.or.tb[a]/10));
     pgPush();
-    pgT(() => s.br ? pgBoardRound() : pgPick(), 3200);
+    pgT(() => s.br ? pgBoardRound() : pgPick(), pbW(3500));
   } else pgPush();
 }
 // Minispiel aussuchen: reihum in der ausgewürfelten Reihenfolge
 // Minispiel aussuchen: alle stimmen gleichzeitig ab (15 s), die meisten Stimmen gewinnen, Gleichstand wird ausgelost
 function pgPick(){
   const s = PQ.s, ids = Object.keys(PGAMES).filter(k => k !== s.prev);
-  if (s.nch === -1) return pgIntro(pickOne(ids));   // Einstellung „Zufall“: gar nicht abstimmen
+  if (s.nch === -1) { s.len = s.len0 || s.len || 1; return pgIntro(pickOne(ids)); }   // Einstellung „Zufall“: gar nicht abstimmen
   const opts = s.nch > 0 ? shuffle(ids.slice()).slice(0, s.nch) : ids;
-  s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
+  s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
   pgPush();
   s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgPicked(i, pickOne(s.pk.opts)), 1500 + Math.random()*5000); });
   pgT(pgVoteEnd, 15000);
 }
+const PG_LV = [{n: 'Kurz', ic: '⚡', f: .6}, {n: 'Normal', ic: '⏱️', f: 1}, {n: 'Lang', ic: '🐢', f: 1.6}];
+function pgLenVote(i, v){ const s = PQ.s; if (s.ph !== 'pick' || s.pk.win || !PG_LV[v]) return; s.pk.lv[i] = v; pgPush(); }
 function pgPicked(i, id){
   const s = PQ.s; if (s.ph !== 'pick' || s.pk.win || s.pk.v[i] != null || !s.pk.opts.includes(id)) return;
   s.pk.v[i] = id; pgPush();
@@ -16642,17 +16799,23 @@ function pgVoteEnd(){
   const mx = Math.max(0, ...Object.values(c)), top = s.pk.opts.filter(id => (c[id] || 0) === mx);
   let id = pickOne(top); s.pk.win = id; s.pk.cnt = c;
   if (id === 'rnd') id = pickOne(Object.keys(PGAMES).filter(k => k !== s.prev));
+  { const lc = [0, 0, 0]; s.pk.lv.forEach(v => { if (v != null) lc[v]++; }); const m = Math.max(...lc), t = [0, 1, 2].filter(k => lc[k] === m); s.pk.lw = t.includes(1) ? 1 : pickOne(t); s.len = Math.round((s.len0 || 1)*PG_LV[s.pk.lw].f*100)/100; }
   s.pk.go = id; pgPush();
-  pgT(() => pgIntro(id), 2200);
+  pgT(() => pgIntro(id), pbW(2600));
 }
 function pgIntro(id){
   const s = PQ.s;
   s.prev = id;
-  const rp = PGAMES[id].rep ? pgR(PGAMES[id].rep) : 1;
-  s.ph = 'intro'; s.g = {id, t: Date.now(), rp: {n: rp, k: 0, sum: s.pl.map(() => 0)}}; s.res = null;
+  const G0 = PGAMES[id], inner = G0.inner != null ? G0.inner : (G0.inner = Object.values(G0).some(f => typeof f === 'function' && /pgR\(/.test(String(f))));
+  const rp = inner ? 1 : pgR(G0.rep || 1);
+  s.ph = 'intro'; s.g = {id, t: Date.now(), rp: {n: rp, k: 0, sum: s.pl.map(() => 0)}}; s.res = null; s.rdy = s.pl.map((p, i) => pgBot(i)); s.go = 0;
   pgPush();
-  pgT(() => { s.ph = 'play'; PGAMES[id].start(s); pgPush(); }, 4200);
+  if (s.rdy.every(Boolean)) return pgT(pgGo, 1500);
+  pgT(pgGo, pbW(15000));   // spätestens dann geht es los
 }
+// Regeln gelesen: wer bereit ist, tippt „Bereit“; sind alle bereit, zählt es 3, 2, 1 herunter
+function pgReady(i){ const s = PQ.s; if (s.ph !== 'intro' || s.go || !s.rdy) return; s.rdy[i] = true; if (s.rdy.every(Boolean)) pgGo(); else pgPush(); }
+function pgGo(){ const s = PQ.s; if (!s || s.ph !== 'intro' || s.go) return; pgClear(); s.go = Date.now(); pgPush(); const id = s.g.id; pgT(() => { if (PQ.s !== s || s.ph !== 'intro') return; s.ph = 'play'; PGAMES[id].start(s); pgPush(); }, 3000); }
 // Ergebnis eines Minispiels: höhere Wertung = besser, Gleichstand teilt sich den Platz
 function pgResult(sc, txt){
   pgClear();
@@ -16660,21 +16823,32 @@ function pgResult(sc, txt){
   { const s = PQ.s, g = s.g, rp = g && g.rp; if (rp && rp.n > 1) {
     const n = s.pl.length, o = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]), pl = []; o.forEach((i, k) => { pl[i] = k && sc[i] === sc[o[k - 1]] ? pl[o[k - 1]] : k; });
     pl.forEach((p, i) => { rp.sum[i] += n - p; }); rp.k++;
-    if (rp.k < rp.n) { const keep = {id: g.id, t: g.t, rp, show: {txt: txt || sc.map(String), pl}}; s.g = keep; pgPush(); pgT(() => { s.g = {id: keep.id, t: Date.now(), rp}; PGAMES[keep.id].start(s); pgPush(); }, 3200); return; }
-    return pgResultF(rp.sum, rp.sum.map(v => v + ' Pkt.'));
+    const keep = {id: g.id, t: g.t, rp, show: {txt: txt || sc.map(String), pl}}; s.g = keep; pgPush();
+    if (rp.k < rp.n) { pgT(() => { s.g = {id: keep.id, t: Date.now(), rp}; PGAMES[keep.id].start(s); pgPush(); }, pbW(4200)); return; }
+    return pgT(() => pgResultF(rp.sum, rp.sum.map(v => v + ' Pkt.')), pbW(4500));
   } }
   pgResultF(sc, txt);
 }
 function pgResultF(sc, txt){
-  const s = PQ.s, n = s.pl.length, pay = BR_PAY[n] || BR_PAY[6];
-  const ord = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]);
-  const place = []; ord.forEach((i, k) => { place[i] = k && sc[i] === sc[ord[k - 1]] ? place[ord[k - 1]] : k; });
-  const gain = place.map(p => pay[p] || 0);
-  gain.forEach((g, i) => { if (s.br) { s.br.coins[i] += g; s.br.got[i] += g; if (place[i] === 0) s.br.mw[i]++; } else s.pts[i] += g; });
-  s.ph = 'res'; s.res = {place, gain, txt: txt || sc.map(String)};
-  pgPush();
+  const s = PQ.s, n = s.pl.length, pay = BR_PAY[n] || BR_PAY[6], T = s.br && s.team;
+  let place, gain;
+  if (T) {   // Team-Minispiel: der Schnitt im Team zählt, jeder Gewinner bekommt 10, bei Gleichstand alle 3
+    const avg = t => { const m = s.pl.map((p, i) => i).filter(i => T.g[i] === t); return m.reduce((a, i) => a + sc[i], 0)/m.length; };
+    const a0 = avg(0), a1 = avg(1); T.win = a0 === a1 ? -1 : a0 > a1 ? 0 : 1;
+    place = s.pl.map((p, i) => T.win < 0 || T.g[i] === T.win ? 0 : 1); gain = place.map(x => T.win < 0 ? 3 : x ? 0 : 10);
+  } else {
+    const ord = sc.map((v, i) => i).sort((a, b) => sc[b] - sc[a]);
+    place = []; ord.forEach((i, k) => { place[i] = k && sc[i] === sc[ord[k - 1]] ? place[ord[k - 1]] : k; });
+    gain = place.map(p => pay[p] || 0);
+  }
+  gain.forEach((g, i) => { if (s.br) { s.br.coins[i] += g; s.br.got[i] += g; if (place[i] === 0 && !(T && T.win < 0)) s.br.mw[i]++; } else s.pts[i] += g; });
+  s.ph = 'res'; s.res = {place, gain, txt: txt || sc.map(String), tot: s.br ? s.br.coins.slice() : s.pts.slice(), t: Date.now(), hold: false};
+  pgAutoNext(); pgPush();
 }
-function pgNext(){ if (!pgHost() || !PQ.s) return; PQ.s.ri++; if (PQ.s.br) { if (PQ.s.ri >= PQ.s.rounds) pgFinish(); else pgBoardRound(); } else pgPick(); }
+// Ergebnis bleibt stehen, bis der Gastgeber weitermacht, spätestens nach 15 Sekunden (anhalten geht)
+function pgAutoNext(){ const s = PQ.s; if (!s || s.ph !== 'res' || !s.res || s.res.hold) return; const t = s.res.t; clearTimeout(PQ.autoT); PQ.autoT = pgT(() => { if (PQ.s === s && s.ph === 'res' && s.res && s.res.t === t && !s.res.hold) pgNext(); }, pbW(15000)); }
+function pgHold(){ const s = PQ.s; if (!pgHost() || !s || s.ph !== 'res' || !s.res) return; s.res.hold = true; clearTimeout(PQ.autoT); pgPush(); }
+function pgNext(){ if (!pgHost() || !PQ.s) return; clearTimeout(PQ.autoT); PQ.s.ri++; if (PQ.s.br) { if (PQ.s.ri >= PQ.s.rounds) pgFinish(); else pgBoardRound(); } else pgPick(); }
 function pgFinish(){ if (!pgHost() || !PQ.s) return; pgClear(); if (PQ.s.br && !PQ.s.br.bonus) return pgBonus(); PQ.s.ph = 'end'; pgPush(); }
 function pgLobby(){
   if (!pgHost()) return;
@@ -16684,7 +16858,7 @@ function pgLobby(){
 function pgStop(){ document.body.classList.remove('pgon'); pgClear(); cancelAnimationFrame(PQ.raf); PQ.s = null; PQ.mk = {}; if (PQ.botWas != null) { BOT.on = PQ.botWas; PQ.botWas = null; } }
 // Stand verteilen und selbst zeichnen
 function pgPush(){
-  const S = PQ.s; if (S && S.br && pgHost()) { const b = S.br, L = b.log || (b.log = []), m = b.msg; if (m && (!L.length || L[L.length - 1].m !== m)) { L.push({r: S.ri + 1, m}); if (L.length > 60) L.shift(); } }
+  const S = PQ.s; if (S && S.br && pgHost() && S.br.fx) { const t = Date.now(); S.br.fx = S.br.fx.filter(f => t - f.at < 5000); }
   if (PT.role === 'host') { PQ.seq = (PQ.seq || 0) + 1; const m = {t: 'pg', s: PQ.s, q: PQ.seq}; PT.pl.forEach(p => { if (p.c) ptSend(p.c, m); }); }
   pgRender();
 }
@@ -16696,6 +16870,8 @@ function pgIn(i, a){
   else if (s.ph === 'board') pgBoardIn(s, i, a);
   else if (s.ph === 'order' && a.k === 'roll') pgOrderIn(i);
   else if (s.ph === 'pick' && a.k === 'pick') pgPicked(i, String(a.id));
+  else if (s.ph === 'pick' && a.k === 'len') pgLenVote(i, a.v | 0);
+  else if (s.ph === 'intro' && a.k === 'ready') pgReady(i);
 }
 function pgSend(i, a){ if (i < 0) return; if (pgHost()) pgIn(i, a); else if (PT.host) ptSend(PT.host, {t: 'pi', a}); }
 
@@ -16704,7 +16880,7 @@ function pgRender(){
   if (mode !== 'party' || !PQ.s) return;
   const s = PQ.s, g = s.g, G0 = g && PGAMES[g.id], seats = pgSeats();
   const key = s.ph + ':' + s.ri + ':' + (g && g.rp ? g.rp.k : 0) + (g && g.show ? 's' : '');
-  if (key !== PQ.last) { const ch = PQ.last && PQ.last.split(':')[2] !== key.split(':')[2]; PQ.last = key; if (s.ph === 'intro' || (s.ph === 'play' && ch)) { PQ.mk = {}; PQ.taps = {}; PQ.grid = null; PQ.aim = {}; PQ.solo = {}; PQ.lc = {}; PQ.gh = {}; RTK[0].clear(); RTK[1].clear(); } }
+  if (key !== PQ.last) { const ch = PQ.last && PQ.last.split(':')[2] !== key.split(':')[2]; PQ.last = key; if (s.ph === 'intro' || (s.ph === 'play' && ch)) { PQ.mk = {}; PQ.taps = {}; PQ.grid = null; PQ.aim = {}; PQ.solo = {}; PQ.lc = {}; PQ.gh = {}; PQ.sp = {}; PQ.wt = null; PQ.spT = {}; PQ.spC = {}; RTK[0].clear(); RTK[1].clear(); } }
   // Stand als Tabelle unter dem Spiel, sortiert wie nach den Minispielen
   const scv = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i];
   const ordS = s.pl.map((p, i) => i).sort((a, b) => scv(b) - scv(a));
@@ -16719,46 +16895,70 @@ function pgRender(){
   } else if (s.ph === 'pick') {
     const P = s.pk, me = P.win ? null : seats.filter(i => i >= 0).find(i => P.v[i] == null && !PQ.taps['vt' + P.n + ':' + i]), seat = me == null ? 0 : pgSeat(seats, me);
     const mineV = seats.filter(i => i >= 0).map(i => P.v[i] || PQ.taps['vt' + P.n + ':' + i]).find(v => typeof v === 'string');
-    body = `<h2 class="who">${P.win ? (P.win === 'rnd' ? `🎲 Zufall: ${esc(PGAMES[P.go].name)}` : `${PGAMES[P.win].icon} ${esc(PGAMES[P.win].name)}`) : 'Abstimmen: welches Minispiel?'}</h2>
+    body = `${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}</div>` : ''}<h2 class="who">${P.win ? (P.win === 'rnd' ? `🎲 Zufall: ${esc(PGAMES[P.go].name)}` : `${PGAMES[P.win].icon} ${esc(PGAMES[P.win].name)}`) : 'Abstimmen: welches Minispiel?'}</h2>
       ${P.win ? '' : `<p class="hint">${me != null && seats[1] >= 0 ? `<b style="color:${PT_COL[me]}">${esc(s.pl[me].n)}</b> stimmt ab · ` : ''}${pgCdn('vt' + P.n, 15000)}</p>`}
       <div class="choices${P.opts.length > 3 ? ' many' : ''}">${P.opts.map((id, k) => `<button class="choice pgpick${P.win === id ? ' on' : ''}${!P.win && mineV === id ? ' sel' : ''}" data-id="${id}"${me != null ? '' : ' disabled'}><span class="ti">${id === 'rnd' ? '🎲' : PGAMES[id].icon}</span><b>${id === 'rnd' ? 'Zufall' : PGAMES[id].name}</b>${P.win ? `<em>${(P.cnt && P.cnt[id]) || 0} ${(P.cnt && P.cnt[id]) === 1 ? 'Stimme' : 'Stimmen'}</em>` : me != null && k < 5 ? `<em>${kbp(seat, 'r' + k)}</em>` : ''}</button>`).join('')}</div>
+      ${(() => { const me1 = seats.filter(i => i >= 0), myL = me1.map(i => P.lv && P.lv[i]).find(v => v != null), cnt = [0, 1, 2].map(k => (P.lv || []).filter(v => v === k).length);
+        return `<div class="pglen"><span>Länge:</span>${PG_LV.map((L, k) => `<button class="pglv${P.win ? (P.lw === k ? ' on' : '') : myL === k ? ' sel' : ''}" data-lv="${k}"${P.win || !me1.length ? ' disabled' : ''}>${L.ic} ${L.n}${cnt[k] ? ` <em>${cnt[k]}</em>` : ''}</button>`).join('')}</div>`; })()}
       ${P.win ? '<p class="hint">Gleich geht es los …</p>' : pgDots(s, i => P.v[i] != null)}`;
   } else if (s.ph === 'board') body = pgBoardView(s, seats);
-  else if (s.ph === 'intro') body = `<div class="pgintro"><div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p><div class="pgcd" id="pgcd"></div></div>`;
-  else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">Gleich geht es weiter …</p>`; }
+  else if (s.ph === 'intro') { const rd = s.rdy || [], wait = seats.filter(i => i >= 0 && !rd[i] && !pgBot(i));
+    body = `<div class="pgintro">${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
+      ${s.go ? '<div class="pgcd" id="pgcd"></div>' : `${wait.length ? `<div class="mbtns pgrdy">${wait.map(i => `<button class="btn pgrd" data-i="${i}" style="background:${PT_COL[i]};color:#fff">✋ ${seats[1] >= 0 ? esc(s.pl[i].n) + ': ' : ''}Bereit ${kbp(pgSeat(seats, i), 'bz')}</button>`).join('')}</div>` : '<p class="hint">Warte auf die anderen …</p>'}
+      ${pgDots(s, i => rd[i])}<p class="hint">Los geht es, wenn alle bereit sind, spätestens in ${pgCdn('rd' + s.g.t, pbW(15000))}</p>`}</div>`; }
+  else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
   else if (s.ph === 'play') body = (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
   else if (s.ph === 'res') {
     const ord = s.pl.map((p, i) => i).sort((a, b) => s.res.place[a] - s.res.place[b]);
-    body = `<div class="kick">${G0.icon} ${G0.name}</div><div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${s.res.place[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(s.res.txt[i]))}</small><span class="gn">+${s.res.gain[i]}${s.br ? ' 🪙' : ''}</span></div>`).join('')}</div>
-      ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgnx">${s.br ? (s.ri + 1 >= s.rounds ? 'Zum Ergebnis' : 'Weiter zum Brett') : 'Nächstes Minispiel'}${enterKb()}</button><button class="btn ghost" id="pgend">Party beenden</button></div>` : `<p class="hint">Der Gastgeber ${s.br ? 'macht weiter' : 'startet das nächste Minispiel'}.</p>`}`;
+    const T = s.br && s.team, R0s = s.res, tot = R0s.tot, auto = R0s.hold ? '' : pgCdn('ra' + R0s.t, pbW(15000));
+    body = `${G0 ? `<div class="kick">${G0.icon} ${G0.name}</div>` : ''}${T ? `<div class="pgteam${T.win < 0 ? '' : ' w' + T.win}">${T.win < 0 ? '👥 Unentschieden! Alle bekommen 3 🪙.' : `${T.win ? '🔴 Team Rot' : '🔵 Team Blau'} gewinnt! Jeder im Team bekommt 10 🪙.`}</div>` : ''}
+      <div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${T ? `<i class="tm" style="background:${PB_TC[T.g[i]]}"></i>` : `${R0s.place[i] + 1}.`}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(R0s.txt[i]))}</small><span class="gn">+${R0s.gain[i]}${s.br ? ' 🪙' : ''}${tot ? `<em class="pgtot">= ${tot[i]}${s.br ? ' 🪙' : ''}</em>` : ''}</span></div>`).join('')}</div>
+      ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgnx">${s.br ? (s.ri + 1 >= s.rounds ? 'Zum Ergebnis' : 'Weiter zum Brett') : 'Nächstes Minispiel'}${enterKb()}</button><button class="btn ghost${PQ.endArm > performance.now() ? ' warn' : ''}" id="pgend">${PQ.endArm > performance.now() ? 'Wirklich beenden?' : 'Party beenden'}</button></div>
+        ${auto ? `<p class="hint">Geht automatisch weiter in ${auto} · <button class="link" id="pghold">anhalten</button></p>` : ''}` : `<p class="hint">Der Gastgeber ${s.br ? 'macht weiter' : 'startet das nächste Minispiel'}${auto ? `, spätestens in ${auto}` : ''}.</p>`}`;
   } else if (s.ph === 'bonus') { body = pgBonusView(s);
   } else if (s.ph === 'end') {
-    const sc = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i];
-    const ord = s.pl.map((p, i) => i).sort((a, b) => sc(b) - sc(a));
-    body = `<div class="icon">🏆</div><h1 class="big-h">${esc(s.pl[ord[0]].n)} gewinnt die Party</h1><div class="pgres">${ord.map((i, k) => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${k + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b>${s.br ? `<small>🪙 ${s.br.coins[i]}</small><span class="gn">⭐ ${s.br.stars[i]}</span>` : `<span class="gn">${s.pts[i]}</span>`}</div>`).join('')}</div>
+    const sc = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i], B = s.br;
+    const ord = s.pl.map((p, i) => i).sort((a, b) => sc(b) - sc(a)), place = []; ord.forEach((i, k) => { place[i] = k && sc(i) === sc(ord[k - 1]) ? place[ord[k - 1]] : k; });
+    const win = ord.filter(i => place[i] === 0);
+    body = `<div class="icon">🏆</div><h1 class="big-h">${win.map(i => esc(s.pl[i].n)).join(' & ')} ${win.length > 1 ? 'gewinnen' : 'gewinnt'} die Party</h1><div class="pgres pgfin">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${place[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}${B ? `<em>🏆 ${B.mw[i]} · ⭐ ${B.sb[i] || 0} gekauft · 🪙 ${B.got[i]} gesammelt</em>` : ''}</b>${B ? `<small>🪙 ${B.coins[i]}</small><span class="gn">⭐ ${B.stars[i]}</span>` : `<span class="gn">${s.pts[i]}</span>`}</div>`).join('')}</div>${B ? '<p class="hint">Bei gleich vielen Sternen entscheiden die Münzen. 🏆 = gewonnene Minispiele.</p>' : ''}
       ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgre">Nochmal</button><button class="btn ghost" id="pglob">Zur Lobby</button></div>` : '<p class="hint">Warte auf den Gastgeber.</p>'}`;
   }
-  view(`<div class="pgwrap${s.ph === 'board' ? ' wide' : ''}"><div class="card cut pgcard">${s.ph === 'end' ? '' : (s.ph === 'order' ? '' : `<div class="kick">${s.br ? (s.ph === 'bonus' ? '🎲 Brett · Ende' : `🎲 Brett · Runde ${s.ri + 1} von ${s.rounds}`) : `♾️ Minispiel ${s.ri + 1}`}</div>`)}${body}${s.ph === 'board' || (!s.br && s.ph === 'pick') ? `<div class="kick pgtk">Stand</div>${board}` : ''}</div></div>`);
+  if (s.ph === 'board') view(`<div class="pgwrap board"><div class="card cut pgcard bxcard">${body}</div></div>`);
+  else view(`<div class="pgwrap"><div class="card cut pgcard">${s.ph === 'end' || s.ph === 'order' ? '' : `<div class="kick">${s.br ? (s.ph === 'bonus' ? '🎲 Brett · Ende' : `🎲 Brett · Runde ${s.ri + 1} von ${s.rounds}`) : `♾️ Minispiel ${s.ri + 1}`}</div>`}${body}${!s.br && s.ph === 'pick' ? `<div class="kick pgtk">Stand</div>${board}` : ''}</div></div>`);
+  pgAlert(s);
   const q = id => main.querySelector('#' + id);
   if (q('pgnx')) { q('pgnx').onclick = pgNext; enterTo('#pgnx'); }
-  if (q('pgend')) q('pgend').onclick = pgFinish;
+  if (q('pgend')) q('pgend').onclick = () => { if (PQ.endArm > performance.now()) { PQ.endArm = 0; pgFinish(); } else { PQ.endArm = performance.now() + 4000; pgRender(); setTimeout(() => { if (PQ.endArm && PQ.endArm <= performance.now()) { PQ.endArm = 0; pgRender(); } }, 4100); } };
+  if (q('pghold')) q('pghold').onclick = pgHold;
+  main.querySelectorAll('.pgrd').forEach(x => x.onclick = () => pgSend(+x.dataset.i, {k: 'ready'}));
   if (q('pgre')) q('pgre').onclick = pgBegin;
   if (q('pglob')) q('pglob').onclick = pgLobby;
-  if (s.ph === 'intro') { const T = pgMark('intro' + s.ri); cancelAnimationFrame(PQ.raf); const tick = () => { const e = q('pgcd'); if (!e || PQ.s !== s || s.ph !== 'intro') return; const r = Math.max(0, Math.ceil((4000 - (performance.now() - T))/1000)); e.textContent = r ? `Gleich geht es los … ${r}` : 'Los!'; PQ.raf = requestAnimationFrame(tick); }; tick(); }
+  if (s.ph === 'intro' && s.go) { const T = pgMark('go' + s.go); cancelAnimationFrame(PQ.raf); const tick = () => { const e = q('pgcd'); if (!e || PQ.s !== s || s.ph !== 'intro') return; const r = Math.max(0, Math.ceil((2900 - (performance.now() - T))/1000)); e.textContent = r ? `Gleich geht es los … ${r}` : 'Los!'; PQ.raf = requestAnimationFrame(tick); }; tick(); }
   if (s.ph === 'play' && G0.after && !g.show) G0.after(s, seats);
   if (s.ph === 'board') pgBoardAfter(s, seats);
   main.querySelectorAll('.pgor').forEach(b => b.onclick = () => pgSend(+b.dataset.i, {k: 'roll'}));
   const vote = (i, id) => { if (i == null || i < 0 || s.ph !== 'pick' || s.pk.win || s.pk.v[i] != null || PQ.taps['vt' + s.pk.n + ':' + i]) return; PQ.taps['vt' + s.pk.n + ':' + i] = id; Snd.tick(); pgSend(i, {k: 'pick', id}); pgRender(); };
   const voter = () => seats.filter(i => i >= 0).find(i => s.pk && s.pk.v[i] == null && !PQ.taps['vt' + s.pk.n + ':' + i]);
-  main.querySelectorAll('.pgpick').forEach(b => b.onclick = () => vote(voter(), b.dataset.id));
+  const tap = (el, fn) => { el.onpointerdown = e => { if (e.button) return; e.preventDefault(); fn(); }; el.onclick = e => { if (e.detail === 0) fn(); }; };
+  main.querySelectorAll('.pgpick').forEach(b => tap(b, () => vote(voter(), b.dataset.id)));
+  main.querySelectorAll('.pglv').forEach(b => tap(b, () => { if (s.ph !== 'pick' || s.pk.win) return; Snd.tick(); seats.filter(i => i >= 0).forEach(i => pgSend(i, {k: 'len', v: +b.dataset.lv})); }));
   document.body.classList.add('pgon');
   // Tasten: Sitz 0 und 1 (online immer Sitz 0)
   cur = {
-    buzz: p => { const i = seats[PT.role === 'local' ? p : 0]; if (i >= 0 && s.ph === 'order') { pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'board') { if (s.br.act === i && !s.br.ask && s.br.st === 'pre') pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'bz'}, PT.role === 'local' ? p : 0); },
-    row: (p, k) => { const i = seats[PT.role === 'local' ? p : 0]; if (s.ph === 'pick') { const v = PT.role === 'local' ? i : voter(); if (v != null && v >= 0 && s.pk.opts[k]) vote(v, s.pk.opts[k]); return; } if (i >= 0 && s.ph === 'board') { if (s.br.ask && s.br.ask.p === i && s.br.ask.o[k]) pgSend(i, {k: 'opt', v: s.br.ask.o[k].id, n: s.br.ask.n}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'row', i: k}, PT.role === 'local' ? p : 0); },
+    buzz: p => { const i = seats[PT.role === 'local' ? p : 0]; if (i >= 0 && s.ph === 'order') { pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'intro') { if (!s.go && s.rdy && !s.rdy[i]) pgSend(i, {k: 'ready'}); return; } if (i >= 0 && s.ph === 'board') { if (s.br.act === i && !s.br.ask && s.br.st === 'pre') pgSend(i, {k: 'roll'}); return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'bz'}, PT.role === 'local' ? p : 0); },
+    row: (p, k) => { const i = seats[PT.role === 'local' ? p : 0]; if (s.ph === 'pick') { const v = PT.role === 'local' ? i : voter(); if (v != null && v >= 0 && s.pk.opts[k]) vote(v, s.pk.opts[k]); return; } if (i >= 0 && s.ph === 'board') { const A = s.br.ask; if (A && A.p === i && A.o[k] && !A.o[k].dis && !PQ.taps['bo' + A.n]) { PQ.taps['bo' + A.n] = 1; pgSend(i, {k: 'opt', v: A.o[k].id, n: A.n}); } return; } if (i >= 0 && s.ph === 'play' && G0.local) G0.local(s, i, {k: 'row', i: k}, PT.role === 'local' ? p : 0); },
     key: k => { if (k === 'enter' && q('pgnx')) pgNext(); },
   };
 }
+// online: Ton und Vibration, wenn du dran bist oder gefragt wirst; ist der Tab im Hintergrund, steht es im Titel
+function pgAlert(s){
+  const b = s.br, me = i => i >= 0 && pgMine(i) && !pgBot(i); let k = '';
+  if (s.ph === 'board' && b) { if (b.ask && me(b.ask.p)) k = 'a' + b.ask.n; else if (b.act >= 0 && b.st === 'pre' && me(b.act)) k = 't' + b.tk; }
+  if (k && k !== PQ.alK && PT.role !== 'local') { Snd.init(); Snd.go(); vib(90); if (document.hidden) { PQ.title = PQ.title || document.title; document.title = '🎲 Du bist dran!'; } }
+  PQ.alK = k;
+  if (b) { const st = b.stars.reduce((a, v) => a + v, 0); if (PQ.stS != null && st > PQ.stS && s.ph === 'board') { Snd.init(); Snd.win(); } PQ.stS = s.ph === 'order' ? 0 : st; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && PQ.title) { document.title = PQ.title; PQ.title = null; } });
 // Zahl in einer Zeile für jeden Spieler: wer hat schon, wer fehlt
 const pgDots = (s, done) => `<div class="pgdots">${s.pl.map((p, i) => `<span class="${done(i) ? 'ok' : ''}" style="--pc:${PT_COL[i]}">${ptHead({av: p.av}, i)}</span>`).join('')}</div>`;
 const pgKeyHint = (seats, kk) => PT.role === 'local' && seats[1] >= 0 ? `${kbp(0, kk)} / ${kbp(1, kk)}` : kbp(0, kk);
@@ -16876,17 +17076,23 @@ const PGAMES = {
 const pgT0 = (fn, ms) => { const t = setTimeout(fn, ms); PQ.tm.push(t); return t; };
 
 /* ---------- Brett für 3–6 Spieler: Karten mit Abzweigungen, Shop und Gegenständen, Endspurt, Bonus-Sterne ----------
-   Der Gastgeber hält den Stand in s.br und entscheidet alles. Entscheidungen (Abzweigung, Shop, Stern, Ziel) laufen
-   über b.ask: die Knöpfe sieht nur, wer gefragt ist; nach 15 Sekunden gilt die Vorgabe. */
-const PB_T = {h: {ic: '🏁', n: 'Start'}, b: {ic: '+3', n: 'Blau: +3 Münzen'}, r: {ic: '−3', n: 'Rot: −3 Münzen'}, e: {ic: '❓', n: 'Ereignis'}, s: {ic: '🛒', n: 'Shop'}, d: {ic: '🦹', n: 'Dieb'}, w: {ic: '🔄', n: 'Tausch'}, o: {ic: '⛵', n: 'Boot'}};
+   Der Gastgeber hält den Stand in s.br und entscheidet alles. Entscheidungen (Abzweigung, Shop, Stern, Ziel, Duell) laufen
+   über b.ask: wählen kann nur, wer gefragt ist, die anderen sehen dieselben Knöpfe ausgegraut; nach Ablauf gilt die Vorgabe. */
+const PB_T = {h: {ic: '🏁', n: 'Start'}, b: {ic: '+3', n: 'Blau: +3 Münzen'}, r: {ic: '−3', n: 'Rot: −3 Münzen'}, e: {ic: '❓', n: 'Ereignis'}, s: {ic: '🛒', n: 'Shop'}, d: {ic: '🦹', n: 'Dieb'}, w: {ic: '🔄', n: 'Tausch'}};
+const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', w: '🔄'};
 const PB_IT = {
   dd: {ic: '🎲🎲', n: 'Doppelwürfel', c: 10, d: 'Du würfelst mit 2 Würfeln.'},
   tt: {ic: '🎲🎲🎲', n: 'Dreifachwürfel', c: 18, d: 'Du würfelst mit 3 Würfeln.'},
-  zz: {ic: '🎯', n: 'Zielwürfel', c: 8, d: 'Du suchst dir die Zahl von 1 bis 6 selbst aus.'},
+  zz: {ic: '🎯', n: 'Zielwürfel', c: 8, d: 'Du suchst dir die Zahl von 1 bis 6 aus und siehst vorher, wo du landest.'},
   sw: {ic: '🔁', n: 'Platztausch', c: 15, d: 'Du tauschst den Platz mit einem Spieler deiner Wahl.'},
-  fl: {ic: '🚧', n: 'Falle', c: 6, d: 'Du legst sie auf dein Feld. Wer dort landet, zahlt dir 10 Münzen.'},
+  fl: {ic: '🚧', n: 'Falle', c: 6, d: 'Du legst sie auf dein Feld. Wer dort stehen bleibt, zahlt dir 10 Münzen.'},
+  sh: {ic: '🛡️', n: 'Schild', c: 12, d: 'Schützt dich einmal vor Dieb, Falle, Tausch, Platztausch und einem verlorenen Duell. Wirkt von selbst.'},
+  rk: {ic: '🚀', n: 'Stern-Rakete', c: 35, d: 'Fliegt dich vor dem Würfeln direkt zum Stern, danach würfelst du normal.'},
 };
 const PB_MAX = 3;
+const PB_TC = ['#3d8bff', '#ff4d5e'];                                  // Teamfarben Blau und Rot
+const pbW = ms => Math.round(ms*((PQ.s && PQ.s.tempo) || 1));          // Wartezeiten nach dem Tempo aus der Lobby
+const pbStar = b => b.last ? Math.ceil(BR_STAR/2) : BR_STAR;           // letzte Runde: Stern zum halben Preis
 // Karten: ein Rundweg plus Abkürzungen (quadratische Bögen). Typen je Feld als Buchstaben.
 /* Karten als Straßennetz: Kreuzungen (Felder) und Wegstücke dazwischen, Fahrtrichtung wie gebaut.
    Gebaut wird auf 160 × 100 (Seitenverhältnis des Bretts), gespeichert in Prozent. */
@@ -16979,37 +17185,88 @@ function pbG(mi){
 }
 const pbOpts = (b, i) => { const n = pbG(b.mi)[i]; return n.nx.map((z, k) => ({z, k})).filter(o => !b.closed.includes(n.eg[o.k])); };
 const pbNext = (b, i) => pbOpts(b, i).map(o => o.z);
-function pbDist(b, a, z){ if (a === z) return 0; const N = pbG(b.mi), seen = new Set([a]); let q = [a], d = 0; while (q.length && d < 90) { d++; const nq = []; for (const i of q) for (const j of [...pbNext(b, i), ...(N[i].boat != null ? [N[i].boat] : [])]) { if (j === z) return d; if (!seen.has(j)) { seen.add(j); nq.push(j); } } q = nq; } return 99; }
+function pbDist(b, a, z){ if (a === z) return 0; const seen = new Set([a]); let q = [a], d = 0; while (q.length && d < 90) { d++; const nq = []; for (const i of q) for (const j of pbNext(b, i)) { if (j === z) return d; if (!seen.has(j)) { seen.add(j); nq.push(j); } } q = nq; } return 99; }
+// Felder auf gesperrten Wegstücken (Baum, Flut)
+const pbShut = b => { const N = pbG(b.mi); return new Set(N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)).flatMap(sg => sg.ids.slice(1, -1))); };
+// genau n Schritte ab a: wo kann man landen, kommt man unterwegs am Stern vorbei (Zoll nur mit genug Münzen)
+function pbReach(b, a, n, p){
+  const N = pbG(b.mi), land = new Set(); let star = false;
+  const go = (i, k) => { if (!k) { land.add(i); return; } const h = N[i]; for (const o of pbOpts(b, i)) { if (b.coins[p] < (h.toll[o.k] || 0)) continue; if (o.z === b.star) star = true; go(o.z, k - 1); } };
+  go(a, n); return {land: [...land], star};
+}
+// Weg ab einer Abzweigung, bis zur nächsten oder höchstens 6 Felder (Vorschau beim Wählen)
+function pbPath(b, at, z){ const out = [at, z]; let i = z; while (out.length < 7) { const nx = pbNext(b, i); if (nx.length !== 1) break; i = nx[0]; out.push(i); } return out; }
+// Torte: Ring in Fahrtrichtung, damit die Felder beim Drehen wirklich der Reihe nach weiterrutschen
+const pbRing = N => { const all = N.map((n, i) => n.spin ? i : -1).filter(i => i >= 0), ring = [], seen = new Set(); let c = all[0];
+  while (c != null && !seen.has(c)) { seen.add(c); ring.push(c); c = N[c].nx.find(z => N[z].spin && !seen.has(z)); } return ring.length === all.length ? ring : all; };
 function pgBoardInit(s, sel){
   const n = s.pl.length, mi = sel >= 0 && PB_MAPS[sel] ? sel : R0(PB_MAPS.length), N = pbG(mi);
-  s.br = {mi, T: N.map(x => x.t), pos: Array(n).fill(N.start || 0), coins: Array(n).fill(BR_START), stars: Array(n).fill(0), items: s.pl.map(() => []), star: -1, act: -1, dice: [], msg: '', ask: null, st: '',
-    traps: {}, closed: [], mw: Array(n).fill(0), got: Array(n).fill(0), ev: Array(n).fill(0), end: false, bonus: null, an: 0, tk: 0, again: false};
+  s.br = {mi, T: N.map(x => x.t), pos: Array(n).fill(N.start || 0), coins: Array(n).fill(BR_START), stars: Array(n).fill(0), items: s.pl.map(() => []), star: -1, sn: 0, act: -1, dice: [], roll: 0, msg: '', ask: null, st: '',
+    traps: {}, closed: [], mw: Array(n).fill(0), got: Array(n).fill(0), ev: Array(n).fill(0), sb: Array(n).fill(0), end: false, last: false, bonus: null, an: 0, tk: 0, again: false,
+    log: [], fx: [], fxn: 0, rev: '', duel: null, fk: null};
   pgStarMove();
 }
-function pgStarMove(){ const b = PQ.s.br, c = b.T.map((t, i) => t === 'b' && i !== b.star && !b.pos.includes(i) ? i : -1).filter(i => i >= 0); b.star = pickOne(c); }
+// Stern umsetzen: freies blaues Feld, nie auf einem gesperrten Weg, möglichst 8–18 Schritte vor dem nächsten Spieler
+function pgStarMove(){
+  const b = PQ.s.br, shut = pbShut(b);
+  const c = b.T.map((t, i) => t === 'b' && i !== b.star && !b.pos.includes(i) && !shut.has(i) ? i : -1).filter(i => i >= 0);
+  if (!c.length) return;
+  const d = {}; c.forEach(i => { d[i] = Math.min(...b.pos.map(p => pbDist(b, p, i))); });
+  const ok = [[8, 18], [6, 24], [4, 98]].map(([lo, hi]) => c.filter(i => d[i] >= lo && d[i] <= hi)).find(x => x.length);
+  b.star = pickOne(ok || c); b.sn = (b.sn || 0) + 1;
+}
 const pbN = i => esc(PQ.s.pl[i].n);
 const pbGive = (b, i) => { if (b.items[i].length >= PB_MAX) return ''; const k = pickOne(Object.keys(PB_IT)); b.items[i].push(k); return k; };
-// Rundenbeginn: Karte verändert sich, Endspurt
+const pbAdd = (i, v) => { const b = PQ.s.br; if (v > 0) b.got[i] += v; b.coins[i] = Math.max(0, b.coins[i] + v); };
+// Meldung zeigen; wichtige Ereignisse kommen zusätzlich in den Verlauf (und damit in die Liste neben dem Brett)
+function pbSay(m, log){ const s = PQ.s, b = s.br; b.msg = m; if (log) { b.log.push({r: s.ri + 1, m}); if (b.log.length > 200) b.log.shift(); } }
+// kurze Anzeige an der Figur: +3 🪙, −20 🪙, +1 ⭐ …
+function pbFx(i, t, k){ const b = PQ.s.br; b.fx.push({id: ++b.fxn, p: i, t, k: k || (/^[−-]/.test(t) ? 'bad' : 'good'), at: Date.now()}); if (b.fx.length > 14) b.fx.shift(); }
+// Schild: fängt einen Angriff ab und ist dann weg
+function pbShield(i){ const it = PQ.s.br.items[i], k = it.indexOf('sh'); if (k < 0) return false; it.splice(k, 1); pbFx(i, '🛡️', 'star'); return true; }
+const pbWhere = ['links in den Wald', 'von oben in den Wald', 'in der Mitte nach unten'];
+function pbClosedTxt(b){ const M = PB_MAPS[b.mi]; if (!b.closed.length) return ''; if (M.ev === 'tide') return '🌊 Flut: Die untere Brücke ist gesperrt.'; if (M.ev === 'tree') return `🌲 Ein Baum sperrt den Weg ${pbWhere[b.closed[0]] || ''}.`; return ''; }
+const pbTeamTxt = s => [0, 1].map(t => `${t ? '🔴' : '🔵'} ${s.pl.map((p, i) => s.team.g[i] === t ? esc(p.n) : '').filter(Boolean).join(', ')}`).join(' gegen ');
+// Rundenbeginn: Karte verändert sich, Endspurt, letzte Chance
 function pgBoardRound(){
   const s = PQ.s, b = s.br, M = PB_MAPS[b.mi], N = pbG(b.mi), msg = [];
-  s.ph = 'board'; s.g = null; s.res = null; b.act = -1; b.ask = null; b.dice = [];
+  s.ph = 'board'; s.g = null; s.res = null; s.team = null; b.act = -1; b.ask = null; b.dice = []; b.duel = null; b.fk = null; b.rev = '';
   if (s.ri > 0 && s.ri % 3 === 0) {
-    if (M.ev === 'spin') { const ring = N.map((n, i) => n.spin ? i : -1).filter(i => i >= 0), ty = ring.map(i => b.T[i]); ring.forEach((i, k) => { b.T[i] = ty[(k + 2) % ty.length]; }); if (b.T[b.star] !== 'b') pgStarMove(); msg.push('🎂 Die Torte dreht sich: die Felder im inneren Ring rutschen weiter!'); }
-    if (M.ev === 'tide') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🌊 Ebbe: die untere Brücke ist wieder frei!' : '🌊 Flut: die untere Brücke steht unter Wasser!'); }
-    if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt einen Weg${g === 0 ? ' links im Wald' : g === 1 ? ' von oben in den Wald' : ' in der Mitte'}!`); }
+    if (M.ev === 'spin') { const ring = pbRing(N), ty = ring.map(i => b.T[i]); ring.forEach((i, k) => { b.T[i] = ty[(k + 2) % ty.length]; }); msg.push('🎂 Die Torte dreht sich: die Felder im inneren Ring rutschen weiter!'); b.rev = '🎂 Der innere Ring hat sich gedreht.'; }
+    if (M.ev === 'tide') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🌊 Ebbe: die untere Brücke ist wieder frei!' : '🌊 Flut: die untere Brücke steht unter Wasser!'); if (c) b.rev = '🌊 Ebbe: Die untere Brücke ist wieder frei.'; }
+    if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt den Weg ${pbWhere[g]}!`); }
+    if (b.T[b.star] !== 'b' || pbShut(b).has(b.star)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); }
   }
   if (!b.end && s.rounds >= 4 && s.rounds - s.ri <= 3) {
     b.end = true; const sc = i => b.stars[i]*1000 + b.coins[i], last = s.pl.map((p, i) => i).sort((x, y) => sc(x) - sc(y))[0], k = pbGive(b, last);
-    msg.push(`🔥 Endspurt! Die letzten 3 Runden zählen blaue und rote Felder doppelt.${k ? ` ${pbN(last)} liegt hinten und bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.` : ''}`);
+    msg.push(`🔥 Endspurt! In den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt.${k ? ` ${pbN(last)} liegt hinten und bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.` : ''}`);
   }
-  if (msg.length) { b.msg = msg.join(' '); pgPush(); return pgT(() => pgBoardFrom(0), 3500); }
+  if (!b.last && s.rounds >= 3 && s.ri === s.rounds - 1) { b.last = true; msg.push(`⭐ Letzte Chance: In dieser Runde kostet der Stern nur ${pbStar(b)} Münzen!`); }
+  if (msg.length) { msg.forEach(m => pbSay(m, true)); b.msg = msg.join(' '); pgPush(); return pgT(() => pgBoardFrom(0), pbW(4500)); }
   pgBoardFrom(0);
 }
 function pgBoardFrom(k0){
-  const s = PQ.s, b = s.br, n = s.pl.length;
+  const s = PQ.s, n = s.pl.length;
   s.ph = 'board'; s.g = null; s.res = null;
-  const step = k => { if (k >= n) { b.act = -1; b.st = ''; b.msg = 'Alle sind gezogen, jetzt das Minispiel!'; pgPush(); pgT(pgPick, 1600); return; } pgTurn(s.ord[k], () => step(k + 1)); };
+  const step = k => { if (k >= n) return pbRoundEnd(); pgTurn(s.ord[k], () => step(k + 1)); };
   step(k0);
+}
+// alle sind gezogen: Team-Minispiel oder jeder gegen jeden
+function pbRoundEnd(){
+  const s = PQ.s, b = s.br; b.act = -1; b.st = ''; b.duel = null; b.dice = []; b.ask = null;
+  s.team = pbTeams();
+  if (s.team) pbSay(`👥 Team-Minispiel! ${pbTeamTxt(s)}`, true); else pbSay('Alle sind gezogen, jetzt das Minispiel!');
+  pgPush(); pgT(pgPick, pbW(s.team ? 3500 : 1800));
+}
+// Teams nach Feldfarbe: wer auf Blau steht gegen wer auf Rot steht, die übrigen füllen auf; nie zweimal hintereinander
+function pbTeams(){
+  const s = PQ.s, b = s.br;
+  if (s.prevTeam) { s.prevTeam = false; return null; }
+  const g = b.pos.map(p => b.T[p] === 'b' ? 0 : b.T[p] === 'r' ? 1 : -1);
+  if (!g.includes(0) || !g.includes(1)) return null;
+  const cnt = [0, 1].map(t => g.filter(x => x === t).length);
+  shuffle(g.map((x, i) => x < 0 ? i : -1).filter(i => i >= 0)).forEach(i => { const t = cnt[0] < cnt[1] ? 0 : cnt[1] < cnt[0] ? 1 : R0(2); g[i] = t; cnt[t]++; });
+  s.prevTeam = true; return {g, win: null};
 }
 // neuer Gastgeber: laufende Phase neu anstoßen (ein angefangenes Minispiel startet von vorn)
 function pgResume(){
@@ -17018,125 +17275,182 @@ function pgResume(){
   if (s.ph === 'order') pgOrder();
   else if (s.ph === 'pick') pgPick();
   else if ((s.ph === 'intro' || s.ph === 'play') && s.g) pgIntro(s.g.id);
-  else if (s.ph === 'board') { const b = s.br; b.ask = null; b.dice = []; const k = b.act >= 0 ? Math.max(0, s.ord.indexOf(b.act)) : s.ord.length; pgBoardFrom(k); }
+  else if (s.ph === 'board') { const b = s.br; b.ask = null; b.dice = []; b.fk = null; b.duel = null; const k = b.act >= 0 ? Math.max(0, s.ord.indexOf(b.act)) : s.ord.length; pgBoardFrom(k); }
   else if (s.ph === 'bonus') { s.ph = 'end'; pgPush(); }
+  else if (s.ph === 'res') { pgPush(); pgAutoNext(); }
   else pgPush();
 }
-// Frage an einen Spieler: o = [{id, l}], nach 15 s gilt def; Bots antworten mit bot()
-function pbAsk(p, q, o, def, bot, cb){
-  const b = PQ.s.br, n = ++b.an; b.ask = {p, q, o, n}; PQ.bcb = v => { if (!b.ask || b.ask.n !== n) return; b.ask = null; PQ.bcb = null; cb(v); };
+// Frage an einen Spieler: o = [{id, l, sub, dis, ghost}], nach Ablauf gilt def; Bots antworten mit bot(); x: Zusatzdaten für die Anzeige
+function pbAsk(p, q, o, def, bot, cb, kind, x){
+  const b = PQ.s.br, n = ++b.an; b.ask = {p, q, o, n, k: kind || '', ...(x || {})}; PQ.bcb = v => { if (!b.ask || b.ask.n !== n) return; b.ask = null; PQ.bcb = null; cb(v); };
   pgPush();
-  if (pgBot(p)) pgT(() => PQ.bcb && PQ.bcb(bot()), 900 + Math.random()*700);
-  pgT(() => { if (b.ask && b.ask.n === n && PQ.bcb) PQ.bcb(def); }, 15000);
+  if (pgBot(p)) pgT(() => PQ.bcb && PQ.bcb(bot()), pbW(900) + Math.random()*pbW(800));
+  pgT(() => { if (b.ask && b.ask.n === n && PQ.bcb) PQ.bcb(def); }, pbW(15000));
 }
 function pgTurn(p, done){
   const s = PQ.s, b = s.br, tk = ++b.tk;
-  b.act = p; b.dice = []; b.ask = null; b.st = 'pre'; b.mul = 1; b.fix = 0; b.used = false; b.msg = `${pbN(p)} ist dran.`; PQ.bdone = done;
+  b.act = p; b.dice = []; b.ask = null; b.st = 'pre'; b.mul = 1; b.fix = 0; b.used = false; b.duel = null; b.fk = null; pbSay(`${pbN(p)} ist dran.`); PQ.bdone = done;
   pgPush();
-  if (pgBot(p)) pgT(() => pbBotPre(p), 1000 + Math.random()*700);
-  else pgT(() => { if (b.tk === tk && b.st === 'pre' && !b.ask) pgRoll(p); }, 30000);
+  if (pgBot(p)) pgT(() => pbBotPre(p), pbW(1000) + Math.random()*pbW(700));
+  else pgT(() => { if (b.tk === tk && b.st === 'pre' && !b.ask) pgRoll(p); }, pbW(30000));
 }
 function pbBotPre(p){
   const s = PQ.s, b = s.br; if (b.act !== p || b.st !== 'pre') return;
   const it = b.items[p], L = pgLvl(p), d = pbDist(b, b.pos[p], b.star);
   const use = k => { pgBoardIn(s, p, {k: 'item', id: k}); };
   if (!b.used && L > 0) {
+    if (it.includes('rk') && b.coins[p] >= pbStar(b) && d > 6) return use('rk');
     if (it.includes('zz') && d >= 1 && d <= 6) return use('zz');
     if (it.includes('tt') && d > 7) return use('tt');
     if (it.includes('dd') && d > 5) return use('dd');
-    if (it.includes('sw')) { const best = s.pl.map((x, i) => i).filter(i => i !== p).sort((x, y) => pbDist(b, b.pos[x], b.star) - pbDist(b, b.pos[y], b.star))[0]; if (best != null && pbDist(b, b.pos[best], b.star) + 4 < d) return use('sw'); }
+    if (it.includes('sw')) { const best = s.pl.map((x, i) => i).filter(i => i !== p && !b.items[i].includes('sh')).sort((x, y) => pbDist(b, b.pos[x], b.star) - pbDist(b, b.pos[y], b.star))[0]; if (best != null && pbDist(b, b.pos[best], b.star) + 4 < d) return use('sw'); }
     if (it.includes('fl') && Math.random() < .5) return use('fl');
   }
-  pgT(() => { if (b.act === p && b.st === 'pre' && !b.ask) pgRoll(p); }, 700);
+  pgT(() => { if (b.act === p && b.st === 'pre' && !b.ask) pgRoll(p); }, pbW(700));
 }
 function pgRoll(p){
   const s = PQ.s, b = s.br; if (b.act !== p || b.st !== 'pre' || b.ask) return;
   b.dice = b.fix ? [b.fix] : Array.from({length: b.mul}, () => 1 + R0(6)); const n = b.dice.reduce((a, v) => a + v, 0);
-  b.st = 'walk'; b.msg = `${pbN(p)} würfelt ${b.dice.length > 1 ? b.dice.join(' + ') + ' = ' : 'eine '}${n}.`; pgPush();
-  pgT(() => pgWalk(p, n), 900);
+  b.st = 'walk'; b.roll = (b.roll || 0) + 1; pbSay(`${pbN(p)} würfelt ${b.dice.length > 1 ? b.dice.join(' + ') + ' = ' : 'eine '}${n}.`); pgPush();
+  pgT(() => pgWalk(p, n), pbW(900));
 }
 function pgWalk(p, n){
   const s = PQ.s, b = s.br; b.left = n;
   if (n <= 0) return pgLand(p);
-  const N = pbG(b.mi), here = N[b.pos[p]], op = pbOpts(b, b.pos[p]).filter(o => b.coins[p] >= (here.toll[o.k] || 0)), nx = op.map(o => o.z);
+  const N = pbG(b.mi), here = N[b.pos[p]], all = pbOpts(b, b.pos[p]), op = all.filter(o => b.coins[p] >= (here.toll[o.k] || 0));
+  if (!op.length) { pbSay(`${pbN(p)} kommt hier nicht weiter.`); return pgLand(p); }
   const go = (id, k) => {
-    const c = k != null ? here.toll[k] || 0 : 0; if (c) { b.coins[p] -= c; b.msg = `${pbN(p)} zahlt ${c} Münzen Zoll.`; }
+    const c = k != null ? here.toll[k] || 0 : 0; if (c) { b.coins[p] -= c; pbFx(p, `−${c} 🪙`); pbSay(`${pbN(p)} zahlt ${c} Münzen Zoll.`, true); }
     b.pos[p] = id; b.left = n - 1; pgPush();
-    const cont = () => pgT(() => pgWalk(p, n - 1), 230);
-    pgT(() => { if (id === b.star) return pgStarAsk(p, cont); if (b.T[id] === 's' && n > 1) return pbShop(p, cont, true); cont(); }, 260);
+    const cont = () => pgT(() => pgWalk(p, n - 1), pbW(230));
+    pgT(() => { if (id === b.star) return pgStarAsk(p, cont); if (b.T[id] === 's' && n > 1) return pbShop(p, cont, true); cont(); }, pbW(260));
   };
   if (op.length > 1) {
-    const o = op.map(q => ({id: String(q.k), l: (here.lab[q.k] || (q.k ? 'abbiegen' : 'weiter')) + (here.toll[q.k] ? ` · ${here.toll[q.k]} 🪙 Zoll` : '')}));
-    b.msg = `${pbN(p)} steht an einer Abzweigung, noch ${n} ${n === 1 ? 'Schritt' : 'Schritte'}.`;
+    const o = op.map(q => ({id: String(q.k), l: here.lab[q.k] || (q.k ? 'abbiegen' : 'weiter'), sub: here.toll[q.k] ? `${here.toll[q.k]} 🪙 Zoll` : ''}));
+    pbSay(`${pbN(p)} steht an einer Abzweigung, noch ${n} ${n === 1 ? 'Feld' : 'Felder'}.`);
     b.fk = {at: b.pos[p], to: op.map(q => ({id: String(q.k), z: q.z}))};
-    return pbAsk(p, 'Wohin?', o, o[0].id, () => { const L = pgLvl(p), ds = op.map(q => pbDist(b, q.z, b.star) + (here.toll[q.k] ? 2 : 0)); return String((Math.random() < [.4, .15, .05][L] ? pickOne(op) : op[ds.indexOf(Math.min(...ds))]).k); }, v => { b.fk = null; const q = op.find(q => String(q.k) === v) || op[0]; go(q.z, q.k); });
+    return pbAsk(p, 'Wohin?', o, o[0].id, () => { const L = pgLvl(p), ds = op.map(q => pbDist(b, q.z, b.star) + (here.toll[q.k] ? 2 : 0)); return String((Math.random() < [.4, .15, .05][L] ? pickOne(op) : op[ds.indexOf(Math.min(...ds))]).k); },
+      v => { b.fk = null; const q = op.find(q => String(q.k) === v) || op[0]; go(q.z, q.k); }, 'fork');
   }
-  go(nx[0], op[0] ? op[0].k : null);
+  // Abzweigung mit Zoll, aber zu wenig Münzen: kurz sagen, warum es nur einen Weg gibt
+  if (all.length > op.length && all.length > 1) { pbSay(`${pbN(p)} hat nicht genug Münzen für den Zoll und nimmt den anderen Weg.`); pgPush(); return pgT(() => go(op[0].z, op[0].k), pbW(1200)); }
+  go(op[0].z, op[0].k);
 }
 function pgStarAsk(p, cont){
-  const s = PQ.s, b = s.br;
-  if (b.coins[p] < BR_STAR) { b.msg = `⭐ Der Stern kostet ${BR_STAR} Münzen, ${pbN(p)} hat nur ${b.coins[p]}.`; pgPush(); return pgT(cont, 1300); }
-  b.msg = `⭐ ${pbN(p)} ist am Stern!`;
-  pbAsk(p, `⭐ Stern für ${BR_STAR} Münzen kaufen?`, [{id: 'y', l: 'Kaufen'}, {id: 'n', l: 'Nein'}], 'n', () => 'y', v => {
-    if (v === 'y' && b.coins[p] >= BR_STAR) { b.coins[p] -= BR_STAR; b.stars[p]++; b.msg = `⭐ ${pbN(p)} kauft einen Stern!`; pgStarMove(); Snd.good && Snd.good(); }
-    else b.msg = `${pbN(p)} lässt den Stern liegen.`;
-    pgPush(); pgT(cont, 1300);
-  });
+  const s = PQ.s, b = s.br, cost = pbStar(b);
+  if (b.coins[p] < cost) { pbSay(`⭐ Der Stern kostet ${cost} Münzen, ${pbN(p)} hat nur ${b.coins[p]}.`); pgPush(); return pgT(cont, pbW(1500)); }
+  pbSay(`⭐ ${pbN(p)} ist am Stern!`);
+  pbAsk(p, `⭐ Stern für ${cost} Münzen kaufen?`, [{id: 'y', l: `⭐ Kaufen · ${cost} 🪙`}, {id: 'n', l: 'Nein', ghost: 1}], 'n', () => 'y', v => {
+    if (v === 'y' && b.coins[p] >= cost) { b.coins[p] -= cost; b.stars[p]++; b.sb[p]++; pbFx(p, '+1 ⭐', 'star'); pbFx(p, `−${cost} 🪙`); pbSay(`⭐ ${pbN(p)} kauft einen Stern! Der Stern zieht weiter.`, true); pgStarMove(); }
+    else pbSay(`${pbN(p)} lässt den Stern liegen.`, true);
+    pgPush(); pgT(cont, pbW(1700));
+  }, 'star');
 }
 function pbShop(p, cont, pass){
-  const s = PQ.s, b = s.br, o = Object.entries(PB_IT).filter(([k, it]) => b.coins[p] >= it.c).map(([k, it]) => ({id: k, l: `${it.ic} ${it.n} · ${it.c} 🪙`}));
-  if (b.items[p].length >= PB_MAX || !o.length) { b.msg = `🛒 ${pbN(p)} ${b.items[p].length >= PB_MAX ? 'hat schon 3 Gegenstände' : 'hat nicht genug Münzen für den Shop'}.`; pgPush(); return pgT(cont, 1200); }
-  b.msg = `🛒 ${pbN(p)} ${pass ? 'kommt am Shop vorbei' : 'ist im Shop'}.`;
-  pbAsk(p, '🛒 Was kaufst du?', [...o, {id: 'x', l: 'Nichts'}], 'x', () => { const L = pgLvl(p), sp = b.coins[p] - BR_STAR; const c = o.filter(x => PB_IT[x.id].c <= (L ? sp : b.coins[p])).sort((x, y) => PB_IT[y.id].c - PB_IT[x.id].c); return c.length && Math.random() < [.4, .7, .85][L] ? (c.find(x => x.id === 'tt' || x.id === 'dd') || c[0]).id : 'x'; }, v => {
-    if (v !== 'x' && PB_IT[v] && b.coins[p] >= PB_IT[v].c && b.items[p].length < PB_MAX) { b.coins[p] -= PB_IT[v].c; b.items[p].push(v); b.msg = `🛒 ${pbN(p)} kauft ${PB_IT[v].ic} ${PB_IT[v].n}.`; }
-    else b.msg = `🛒 ${pbN(p)} kauft nichts.`;
-    pgPush(); pgT(cont, 1100);
-  });
+  const s = PQ.s, b = s.br, full = b.items[p].length >= PB_MAX, can = Object.values(PB_IT).some(it => b.coins[p] >= it.c);
+  if (pass && (full || !can)) return cont();      // beim Vorbeilaufen nicht aufhalten, wenn eh nichts geht
+  if (full || !can) { pbSay(`🛒 ${pbN(p)} ${full ? `hat schon ${PB_MAX} Gegenstände` : 'hat nicht genug Münzen für den Shop'}.`); pgPush(); return pgT(cont, pbW(1400)); }
+  pbSay(`🛒 ${pbN(p)} ${pass ? 'kommt am Shop vorbei' : 'ist im Shop'}.`);
+  const o = [...Object.entries(PB_IT).map(([k, it]) => ({id: k, l: `${it.ic} ${it.n}`, dis: b.coins[p] < it.c ? 1 : 0})), {id: 'x', l: 'Nichts kaufen', ghost: 1}];
+  pbAsk(p, '🛒 Was kaufst du?', o, 'x', () => {
+    const L = pgLvl(p), cost = pbStar(b), budget = L ? b.coins[p] - cost : b.coins[p];
+    const pr = ['rk', 'tt', 'dd', 'sh', 'zz', 'sw', 'fl'].filter(k => PB_IT[k].c <= budget && (k !== 'rk' || b.coins[p] - PB_IT.rk.c >= cost) && !b.items[p].includes(k));
+    return pr.length && Math.random() < [.4, .7, .85][L] ? (L ? pr[0] : pickOne(pr)) : 'x';
+  }, v => {
+    if (v !== 'x' && PB_IT[v] && b.coins[p] >= PB_IT[v].c && b.items[p].length < PB_MAX) { b.coins[p] -= PB_IT[v].c; b.items[p].push(v); pbFx(p, `−${PB_IT[v].c} 🪙`); pbSay(`🛒 ${pbN(p)} kauft ${PB_IT[v].ic} ${PB_IT[v].n}.`, true); }
+    else pbSay(`🛒 ${pbN(p)} kauft nichts.`);
+    pgPush(); pgT(cont, pbW(1300));
+  }, 'shop');
 }
+// stehen bleiben: erst eine Falle (eigene Meldung), dann das Feld, dann vielleicht ein Duell
 function pgLand(p){
+  const s = PQ.s, b = s.br, at = b.pos[p];
+  if (b.traps[at] != null && b.traps[at] !== p) {
+    const o = b.traps[at]; delete b.traps[at];
+    if (pbShield(p)) pbSay(`🚧 Falle von ${pbN(o)}, aber ${pbN(p)} hat ein 🛡️ Schild.`, true);
+    else { const x = Math.min(10, b.coins[p]); pbAdd(p, -x); pbAdd(o, x); if (x) { pbFx(p, `−${x} 🪙`); pbFx(o, `+${x} 🪙`); } pbSay(`🚧 Falle! ${pbN(p)} zahlt ${x} Münzen an ${pbN(o)}.`, true); }
+    b.st = 'land'; pgPush();
+    return pgT(() => pbTile(p), pbW(1800));
+  }
+  pbTile(p);
+}
+function pbFin(p){ const b = PQ.s.br; b.st = 'land'; pgPush(); pgT(() => pbDuel(p, () => { b.duel = null; const d = PQ.bdone; PQ.bdone = null; if (d) d(); }), pbW(1800)); }
+function pbTile(p){
   const s = PQ.s, b = s.br, at = b.pos[p], t = b.T[at], m = b.end ? 2 : 1, others = s.pl.map((x, i) => i).filter(i => i !== p);
-  const fin = () => { b.st = 'land'; pgPush(); pgT(() => { const d = PQ.bdone; PQ.bdone = null; if (d) d(); }, 1600); };
-  const add = (i, v) => { if (v > 0) b.got[i] += v; b.coins[i] = Math.max(0, b.coins[i] + v); };
-  let pre = '';
-  if (b.traps[at] != null && b.traps[at] !== p) { const o = b.traps[at], x = Math.min(10, b.coins[p]); add(p, -x); add(o, x); delete b.traps[at]; pre = `🚧 Falle! ${pbN(p)} zahlt ${x} Münzen an ${pbN(o)}. `; }
-  if (t === 'b') { add(p, 3*m); b.msg = pre + `🔵 ${pbN(p)} bekommt ${3*m} Münzen.`; return fin(); }
-  if (t === 'r') { const x = Math.min(3*m, b.coins[p]); add(p, -x); b.msg = pre + `🔴 ${pbN(p)} verliert ${x} Münzen.`; return fin(); }
-  if (t === 'h') { b.msg = pre + `${pbN(p)} steht auf dem Start.`; return fin(); }
-  if (t === 's') { b.msg = pre; return pbShop(p, fin, false); }
+  const fin = () => pbFin(p);
+  if (t === 'b') { pbAdd(p, 3*m); pbFx(p, `+${3*m} 🪙`); pbSay(`🔵 ${pbN(p)} bekommt ${3*m} Münzen.`, true); return fin(); }
+  if (t === 'r') { const x = Math.min(3*m, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); pbSay(`🔴 ${pbN(p)} verliert ${x} Münzen.`, true); return fin(); }
+  if (t === 'h') { pbSay(`${pbN(p)} steht auf dem Start.`); return fin(); }
+  if (t === 's') return pbShop(p, fin, false);
   if (t === 'd') {
     const st = others.filter(i => b.stars[i] > 0);
-    if (st.length && Math.random() < .12) { const o = st.reduce((a, i) => b.stars[i] > b.stars[a] ? i : a, st[0]); b.stars[o]--; b.stars[p]++; b.msg = pre + `🦹 Der Dieb schlägt zu: ${pbN(p)} klaut ${pbN(o)} einen Stern!`; return fin(); }
-    const o = others.reduce((a, i) => b.coins[i] > b.coins[a] ? i : a, others[0]), x = Math.min(5*m, b.coins[o]); add(o, -x); b.coins[p] += x; b.msg = pre + `🦹 Der Dieb klaut für ${pbN(p)}: ${x} Münzen von ${pbN(o)}.`; return fin();
+    if (st.length && Math.random() < .12) { const o = st.reduce((a, i) => b.stars[i] > b.stars[a] ? i : a, st[0]);
+      if (pbShield(o)) { pbSay(`🦹 Der Dieb will ${pbN(o)} einen Stern klauen, aber ${pbN(o)} hat ein 🛡️ Schild.`, true); return fin(); }
+      b.stars[o]--; b.stars[p]++; pbFx(p, '+1 ⭐', 'star'); pbFx(o, '−1 ⭐'); pbSay(`🦹 Der Dieb schlägt zu: ${pbN(p)} klaut ${pbN(o)} einen Stern!`, true); return fin(); }
+    const o = others.reduce((a, i) => b.coins[i] > b.coins[a] ? i : a, others[0]);
+    if (pbShield(o)) { pbSay(`🦹 Der Dieb kommt nicht an ${pbN(o)} heran: 🛡️ Schild!`, true); return fin(); }
+    const x = Math.min(5*m, b.coins[o]); pbAdd(o, -x); pbAdd(p, x); if (x) { pbFx(p, `+${x} 🪙`); pbFx(o, `−${x} 🪙`); }
+    pbSay(`🦹 Der Dieb klaut für ${pbN(p)}: ${x} Münzen von ${pbN(o)}.`, true); return fin();
   }
-  if (t === 'o') { const N = pbG(b.mi), z = N[at].boat; if (z == null) return fin();
-    b.msg = pre + `⛵ ${pbN(p)} ist am Boot.`;
-    return pbAsk(p, `⛵ Mit dem Boot ${N[at].isle ? 'zurück zum Festland' : 'zur Insel'}?`, [{id: 'y', l: 'Übersetzen'}, {id: 'n', l: 'Bleiben'}], 'n', () => pbDist(b, z, b.star) < pbDist(b, at, b.star) ? 'y' : 'n', v => {
-      if (v === 'y') { b.pos[p] = z; b.msg = `⛵ ${pbN(p)} fährt mit dem Boot ${N[z].isle ? 'zur Insel' : 'zurück zum Festland'}.`; } else b.msg = `${pbN(p)} bleibt an Land.`; fin(); }); }
-  if (t === 'w') { const o = pickOne(others); [b.pos[p], b.pos[o]] = [b.pos[o], b.pos[p]]; b.msg = pre + `🔄 Tausch! ${pbN(p)} und ${pbN(o)} tauschen die Plätze.`; return fin(); }
+  if (t === 'w') { const o = pickOne(others);
+    if (pbShield(o)) { pbSay(`🔄 Tausch mit ${pbN(o)}? Nein, ${pbN(o)} hat ein 🛡️ Schild.`, true); return fin(); }
+    [b.pos[p], b.pos[o]] = [b.pos[o], b.pos[p]]; pbFx(p, '🔄', 'star'); pbFx(o, '🔄', 'star'); pbSay(`🔄 Tausch! ${pbN(p)} und ${pbN(o)} tauschen die Plätze.`, true); return fin(); }
   // Ereignis
   b.ev[p]++;
   const ev = pickOne(['gold', 'robin', 'tele', 'storm', 'item', 'again', 'tax']);
   if (ev === 'robin') { const all = s.pl.map((x, i) => i), r = all.reduce((a, i) => b.coins[i] > b.coins[a] ? i : a, 0), q = all.reduce((a, i) => b.coins[i] < b.coins[a] ? i : a, 0), x = Math.min(5, b.coins[r]);
-    if (r !== q && x) { b.coins[r] -= x; b.coins[q] += x; b.msg = pre + `❓ Robin Hood: ${pbN(r)} gibt ${x} Münzen an ${pbN(q)}.`; return fin(); } }
-  if (ev === 'tele') { const c = b.T.map((x, i) => i).filter(i => i !== at && i !== b.star); b.pos[p] = pickOne(c); b.msg = pre + `❓ Teleport! ${pbN(p)} wird woandershin gebeamt.`; return fin(); }
-  if (ev === 'storm') { pgStarMove(); b.msg = pre + '❓ Sturm! Der Stern weht auf ein anderes Feld.'; return fin(); }
-  if (ev === 'item') { const k = pbGive(b, p); if (k) { b.msg = pre + `❓ Geschenk: ${pbN(p)} bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.`; return fin(); } }
-  if (ev === 'tax') { s.pl.forEach((x, i) => { b.coins[i] = Math.max(0, b.coins[i] - 3); }); b.msg = pre + '❓ Steuer! Alle verlieren 3 Münzen.'; return fin(); }
-  if (ev === 'again' && !b.again) { b.again = true; b.msg = pre + `❓ Glückswurf: ${pbN(p)} darf nochmal würfeln!`; pgPush(); const d = PQ.bdone; return pgT(() => pgTurn(p, () => { b.again = false; d(); }), 1500); }
-  add(p, 6); b.msg = pre + `❓ Goldregen: ${pbN(p)} bekommt 6 Münzen.`; fin();
+    if (r !== q && x) { b.coins[r] -= x; b.coins[q] += x; pbFx(r, `−${x} 🪙`); pbFx(q, `+${x} 🪙`); pbSay(`❓ Robin Hood: ${pbN(r)} gibt ${x} Münzen an ${pbN(q)}.`, true); return fin(); } }
+  if (ev === 'tele') { const shut = pbShut(b), c = b.T.map((x, i) => i).filter(i => i !== at && i !== b.star && !shut.has(i)); b.pos[p] = pickOne(c); pbFx(p, '✨', 'star'); pbSay(`❓ Teleport! ${pbN(p)} wird woandershin gebeamt.`, true); return fin(); }
+  if (ev === 'storm') { pgStarMove(); pbSay('❓ Sturm! Der Stern weht auf ein anderes Feld.', true); return fin(); }
+  if (ev === 'item') { const k = pbGive(b, p); if (k) { pbFx(p, PB_IT[k].ic, 'star'); pbSay(`❓ Geschenk: ${pbN(p)} bekommt ${PB_IT[k].ic} ${PB_IT[k].n}.`, true); return fin(); } }
+  if (ev === 'tax') { s.pl.forEach((x, i) => { if (b.coins[i]) pbFx(i, `−${Math.min(3, b.coins[i])} 🪙`); b.coins[i] = Math.max(0, b.coins[i] - 3); }); pbSay('❓ Steuer! Alle verlieren 3 Münzen.', true); return fin(); }
+  if (ev === 'again' && !b.again) { b.again = true; pbSay(`❓ Glückswurf: ${pbN(p)} darf nochmal würfeln!`, true); pgPush(); const d = PQ.bdone; return pgT(() => pgTurn(p, () => { b.again = false; d(); }), pbW(1600)); }
+  pbAdd(p, 6); pbFx(p, '+6 🪙'); pbSay(`❓ Goldregen: ${pbN(p)} bekommt 6 Münzen.`, true); fin();
+}
+// Münzduell: wer auf dem Feld eines anderen stehen bleibt, kann ihn herausfordern; beide würfeln, der höhere Wurf gewinnt den Einsatz
+function pbDuel(p, done){
+  const s = PQ.s, b = s.br, at = b.pos[p], stake = 5*(b.end ? 2 : 1);
+  if (b.T[at] === 'h' || b.coins[p] <= 0) return done();
+  const opp = s.pl.map((x, i) => i).filter(i => i !== p && b.pos[i] === at && b.coins[i] > 0);
+  if (!opp.length) return done();
+  pbSay(`⚔️ ${pbN(p)} trifft ${opp.map(pbN).join(' und ')}!`);
+  const o = [...opp.map(i => ({id: String(i), l: `⚔️ Duell gegen ${s.pl[i].n}`, sub: `hat ${b.coins[i]} 🪙${b.items[i].includes('sh') ? ' · 🛡️ Schild' : ''}`})), {id: 'n', l: 'Kein Duell', ghost: 1}];
+  pbAsk(p, `⚔️ Münzduell um ${stake} 🪙? Beide würfeln, der höhere Wurf gewinnt.`, o, 'n', () => {
+    const L = pgLvl(p), c = opp.filter(i => !b.items[i].includes('sh') && b.coins[i] >= 3).sort((x, y) => b.coins[y] - b.coins[x]);
+    return c.length && Math.random() < [.5, .7, .85][L] ? String(c[0]) : 'n';
+  }, v => {
+    if (v === 'n') { pbSay(`${pbN(p)} verzichtet auf das Duell.`); pgPush(); return pgT(done, pbW(900)); }
+    const q = +v, da = 1 + R0(6), dq = 1 + R0(6);
+    b.duel = {a: p, b: q, da, db: dq}; b.st = 'duel';
+    if (da === dq) pbSay(`⚔️ Duell ${da} : ${dq} zwischen ${pbN(p)} und ${pbN(q)}: unentschieden, keiner zahlt.`, true);
+    else { const w = da > dq ? p : q, l = w === p ? q : p;
+      if (pbShield(l)) pbSay(`⚔️ Duell ${da} : ${dq}: ${pbN(w)} gewinnt, aber ${pbN(l)} hat ein 🛡️ Schild.`, true);
+      else { const x = Math.min(stake, b.coins[l]); pbAdd(l, -x); pbAdd(w, x); pbFx(w, `+${x} 🪙`); pbFx(l, `−${x} 🪙`); pbSay(`⚔️ Duell ${da} : ${dq}! ${pbN(w)} gewinnt ${x} Münzen von ${pbN(l)}.`, true); } }
+    pgPush(); pgT(done, pbW(2600));
+  }, 'duel');
 }
 function pgBoardIn(s, i, a){
   const b = s.br;
-  if (a.k === 'opt' && b.ask && b.ask.p === i && a.n === b.ask.n && b.ask.o.some(o => o.id === String(a.v)) && PQ.bcb) return PQ.bcb(String(a.v));
+  if (a.k === 'opt' && b.ask && b.ask.p === i && a.n === b.ask.n && b.ask.o.some(o => o.id === String(a.v) && !o.dis) && PQ.bcb) return PQ.bcb(String(a.v));
   if (b.act !== i || b.st !== 'pre' || b.ask) return;
   if (a.k === 'roll') return pgRoll(i);
-  if (a.k === 'item' && !b.used && b.items[i].includes(a.id)) {
+  if (a.k === 'item' && !b.used && a.id !== 'sh' && b.items[i].includes(a.id)) {
     const k = a.id, it = b.items[i]; it.splice(it.indexOf(k), 1); b.used = true;
-    if (k === 'dd' || k === 'tt') { b.mul = k === 'dd' ? 2 : 3; b.msg = `${PB_IT[k].ic} ${pbN(i)} würfelt mit ${b.mul} Würfeln.`; pgPush(); if (pgBot(i)) pgT(() => pgRoll(i), 900); return; }
-    if (k === 'fl') { b.traps[b.pos[i]] = i; b.msg = `🚧 ${pbN(i)} legt eine Falle.`; pgPush(); if (pgBot(i)) pgT(() => pgRoll(i), 900); return; }
-    if (k === 'zz') return pbAsk(i, '🎯 Welche Zahl?', [1, 2, 3, 4, 5, 6].map(v => ({id: String(v), l: String(v)})), '3', () => { const d = pbDist(b, b.pos[i], b.star); return String(d >= 1 && d <= 6 ? d : 6); }, v => { b.fix = +v; pgRoll(i); });
-    if (k === 'sw') { const o = s.pl.map((x, q) => q).filter(q => q !== i);
-      return pbAsk(i, '🔁 Mit wem tauschen?', o.map(q => ({id: String(q), l: s.pl[q].n})), String(o[0]), () => String(o.sort((x, y) => pbDist(b, b.pos[x], b.star) - pbDist(b, b.pos[y], b.star))[0]), v => { const q = +v; [b.pos[i], b.pos[q]] = [b.pos[q], b.pos[i]]; b.msg = `🔁 ${pbN(i)} tauscht mit ${pbN(q)}.`; pgPush(); if (pgBot(i)) pgT(() => pgRoll(i), 1000); }); }
+    const botRoll = ms => { if (pgBot(i)) pgT(() => pgRoll(i), pbW(ms || 900)); };
+    if (k === 'dd' || k === 'tt') { b.mul = k === 'dd' ? 2 : 3; pbSay(`${PB_IT[k].ic} ${pbN(i)} würfelt mit ${b.mul} Würfeln.`, true); pgPush(); return botRoll(); }
+    if (k === 'fl') { b.traps[b.pos[i]] = i; pbSay(`🚧 ${pbN(i)} legt eine Falle.`, true); pgPush(); return botRoll(); }
+    if (k === 'rk') { b.pos[i] = b.star; pbFx(i, '🚀', 'star'); pbSay(`🚀 ${pbN(i)} fliegt mit der Rakete zum Stern!`, true); pgPush();
+      return pgT(() => pgStarAsk(i, () => { pbSay(`${pbN(i)} würfelt jetzt.`); pgPush(); botRoll(600); }), pbW(1300)); }
+    if (k === 'zz') { const R = [1, 2, 3, 4, 5, 6].map(v => pbReach(b, b.pos[i], v, i));
+      return pbAsk(i, '🎯 Welche Zahl?', R.map((r, v) => ({id: String(v + 1), l: String(v + 1), sub: r.star ? '⭐ erreichbar' : [...new Set(r.land.map(z => PB_EM[b.T[z]] || ''))].join(' ')})), '3',
+        () => { const k2 = R.findIndex(r => r.star); return String(k2 >= 0 ? k2 + 1 : 6); }, v => { b.fix = +v; pbSay(`🎯 ${pbN(i)} nimmt den Zielwürfel: ${v}.`, true); pgRoll(i); }, 'zz', {rv: R.map(r => r.land)}); }
+    if (k === 'sw') { const o = s.pl.map((x, q) => q).filter(q => q !== i), dist = q => pbDist(b, b.pos[q], b.star);
+      return pbAsk(i, '🔁 Mit wem tauschen?', o.map(q => ({id: String(q), l: s.pl[q].n, sub: `${dist(q) < 99 ? dist(q) + ' Felder bis ⭐' : 'kein Weg zum ⭐'}${b.items[q].includes('sh') ? ' · 🛡️' : ''}`})), String(o[0]),
+        () => String(o.slice().sort((x, y) => (b.items[x].includes('sh') - b.items[y].includes('sh')) || dist(x) - dist(y))[0]),
+        v => { const q = +v;
+          if (pbShield(q)) pbSay(`🔁 ${pbN(i)} will mit ${pbN(q)} tauschen, aber ${pbN(q)} hat ein 🛡️ Schild.`, true);
+          else { [b.pos[i], b.pos[q]] = [b.pos[q], b.pos[i]]; pbFx(i, '🔁', 'star'); pbFx(q, '🔁', 'star'); pbSay(`🔁 ${pbN(i)} tauscht den Platz mit ${pbN(q)}.`, true); }
+          pgPush(); botRoll(1000); }, 'sw'); }
   }
 }
 // Bonus-Sterne am Ende: Minispiel-Siege, gesammelte Münzen, Ereignisfelder
@@ -17145,7 +17459,7 @@ function pgBonus(){
   for (const [k, ic, n, v] of [['mw', '🏆', 'Minispiel-Star', ['Minispiel-Sieg', 'Minispiel-Siege']], ['got', '🪙', 'Münz-Star', ['Münze gesammelt', 'Münzen gesammelt']], ['ev', '❓', 'Ereignis-Star', ['Ereignisfeld', 'Ereignisfelder']]]) {
     const mx = Math.max(...b[k]); if (mx <= 0) continue; const w = s.pl.map((x, i) => i).filter(i => b[k][i] === mx); w.forEach(i => { b.stars[i]++; }); A.push({ic, n, v, mx, w}); }
   b.bonus = A; s.ph = 'bonus'; pgPush();
-  pgT(() => { s.ph = 'end'; pgPush(); }, 3000 + A.length*2500);
+  pgT(() => { s.ph = 'end'; pgPush(); }, pbW(3500 + A.length*2800));
 }
 function pgBonusView(s){
   const b = s.br;
@@ -17154,62 +17468,109 @@ function pgBonusView(s){
 // genaue Beschreibung beim Drüberfahren oder Antippen
 function pbTip(s, i){
   const b = s.br, N = pbG(b.mi), n = N[i], t = b.T[i], m = b.end ? 2 : 1, out = [];
-  if (i === b.star) out.push(`<b>⭐ Stern</b>Wer hier vorbeiläuft, kann ihn für ${BR_STAR} Münzen kaufen. Danach wandert er auf ein anderes Feld.`);
+  if (i === b.star) out.push(`<b>⭐ Stern</b>Wer hier vorbeiläuft, kann ihn für ${pbStar(b)} Münzen kaufen. Danach zieht er auf ein anderes Feld.`);
   else out.push({h: '<b>🏁 Start</b>Hier geht es los, das Feld macht nichts.', b: `<b>🔵 Blaues Feld</b>Wer hier stehen bleibt, bekommt ${3*m} Münzen.`, r: `<b>🔴 Rotes Feld</b>Wer hier stehen bleibt, verliert ${3*m} Münzen.`,
-    e: '<b>❓ Ereignis</b>Etwas Zufälliges passiert: Goldregen (+6), Robin Hood (der Reichste gibt dem Ärmsten 5), Teleport, Sturm (der Stern wandert), Geschenk (ein Gegenstand), Steuer (alle −3) oder nochmal würfeln.',
+    e: '<b>❓ Ereignis</b>Etwas Zufälliges passiert: Goldregen (+6), Robin Hood (der Reichste gibt dem Ärmsten 5), Teleport, Sturm (der Stern zieht um), Geschenk (ein Gegenstand), Steuer (alle −3) oder nochmal würfeln.',
     s: '<b>🛒 Shop</b>Schon beim Vorbeilaufen kannst du Gegenstände kaufen: ' + Object.values(PB_IT).map(x => `${x.ic} ${x.n} ${x.c} 🪙`).join(', ') + `. Höchstens ${PB_MAX} Stück.`,
     d: `<b>🦹 Dieb</b>Wer hier stehen bleibt, lässt den Dieb für sich klauen: ${5*m} Münzen vom reichsten Mitspieler, mit etwas Glück (12 %) sogar einen Stern.`,
-    w: '<b>🔄 Tausch</b>Wer hier stehen bleibt, tauscht den Platz mit einem zufälligen Mitspieler.',
-    o: `<b>⛵ Boot</b>Wer hier stehen bleibt, kann kostenlos ${n.isle ? 'zurück zum Festland' : 'zur Insel'} übersetzen.`}[t] || '');
-  if (n.isle) out.push('Dieses Feld liegt auf der Insel, hin und zurück nur mit dem Boot.');
+    w: '<b>🔄 Tausch</b>Wer hier stehen bleibt, tauscht den Platz mit einem zufälligen Mitspieler.'}[t] || '');
   const op = n.nx.length > 1 ? n.nx.map((z, k) => `${n.lab[k] || (k ? 'abbiegen' : 'weiter')}${n.toll[k] ? ` (${n.toll[k]} 🪙 Zoll)` : ''}${b.closed.includes(n.eg[k]) ? ' – gesperrt' : ''}`) : null;
   if (op) out.push(`<b>Abzweigung</b>${op.join(' oder ')}`);
+  if (pbShut(b).has(i)) out.push('<b>Gesperrt</b>Dieser Weg ist gerade nicht befahrbar.');
   if (b.traps[i] != null) out.push(`<b>🚧 Falle von ${pbN(b.traps[i])}</b>Wer hier stehen bleibt, zahlt ${pbN(b.traps[i])} 10 Münzen.`);
-  const who = s.pl.map((p, k) => b.pos[k] === i ? esc(p.n) : '').filter(Boolean); if (who.length) out.push(`Hier steht: ${who.join(', ')}`);
+  const who = s.pl.map((p, k) => b.pos[k] === i ? esc(p.n) : '').filter(Boolean); if (who.length) out.push(`Hier steht: ${who.join(', ')}${who.length > 1 && t !== 'h' ? ' (Duell möglich)' : ''}`);
   return out.map(x => `<p>${x}</p>`).join('');
 }
 const pbDie = v => v ? DIE(v) : '<span class="mxdie dq"><b>?</b></span>';
+// Knöpfe einer Frage: wer gefragt ist, kann wählen, alle anderen sehen sie ausgegraut
+function pbOptView(a, me, st){
+  const off = o => !me || o.dis ? ' disabled' : '', kb = k => me && k < 5 ? ` ${kbp(st, 'r' + k)}` : '';
+  if (a.k === 'shop') return `<div class="pbshop">${a.o.filter(o => o.id !== 'x').map((o, k) => { const it = PB_IT[o.id];
+      return `<button class="pbsc${o.dis ? ' no' : ''}" data-bo="${o.id}"${off(o)}><span class="pbsh"><span class="pbsi">${it.ic}</span><b>${it.n}</b></span><small>${esc(it.d)}</small><span class="pbsf"><em>${it.c} 🪙</em>${o.dis ? '<i>zu teuer</i>' : kb(k)}</span></button>`; }).join('')}</div>
+    <div class="mbtns pbopt"><button class="btn ghost" data-bo="x"${me ? '' : ' disabled'}>Nichts kaufen</button></div>`;
+  return `<div class="mbtns pbopt${a.k === 'zz' ? ' zz' : ''}">${a.o.map((o, k) => `<button class="btn${o.ghost ? ' ghost' : ''}${a.k === 'fork' ? ` pbfo c${k}` : ''}" data-bo="${esc(o.id)}"${a.k === 'fork' ? ` data-pi="${k}"` : ''}${off(o)}>${a.k === 'fork' ? `<i class="pbbn">${k + 1}</i>` : ''}<span>${esc(o.l)}${o.sub ? `<small>${esc(o.sub)}</small>` : ''}</span>${kb(k)}</button>`).join('')}</div>`;
+}
 function pgBoardView(s, seats){
-  const b = s.br, p = b.act, N = pbG(b.mi), M = PB_MAPS[b.mi];
+  const b = s.br, p = b.act, N = pbG(b.mi), M = PB_MAPS[b.mi], now = performance.now();
   const pl = P => `<polyline points="${P.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}"/>`, road = N.segs.map(sg => pl(sg.P)).join('');
-  const shut = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)).map(sg => pl(sg.P)).join('');
-  const shutS = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)), shutIds = new Set(shutS.flatMap(sg => sg.ids.slice(1, -1)));
+  const shutS = N.segs.filter(sg => sg.g != null && b.closed.includes(sg.g)), shut = shutS.map(sg => pl(sg.P)).join(''), shutIds = new Set(shutS.flatMap(sg => sg.ids.slice(1, -1)));
   const blk = shutS.map(sg => { const m = N[sg.ids[Math.floor(sg.ids.length/2)]]; return `<div class="pbblk" style="left:${m.x}%;top:${m.y}%">${M.ev === 'tide' ? '🌊' : M.ev === 'tree' ? '🌲' : '⛔'}<small>gesperrt</small></div>`; }).join('');
   const arrows = N.segs.filter(sg => sg.ids.length >= 4).map(sg => { const k = Math.floor((sg.ids.length - 1)/2), a = N[sg.ids[k]], c = N[sg.ids[k + 1]], ang = Math.atan2(c.Y - a.Y, c.X - a.X)*180/Math.PI;
     return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2}) rotate(${ang.toFixed(0)})"><path d="M-1.3 -2 L1.5 0 L-1.3 2" /></g>`; }).join('');
   const tolls = N.segs.filter(sg => sg.toll).map(sg => { const a = N[sg.ids[0]], c = N[sg.ids[1]]; return `<g transform="translate(${(a.X + c.X)/2} ${(a.Y + c.Y)/2})"><circle r="2.6"/><text y="1">${sg.toll}</text></g>`; }).join('');
-  const tiles = N.map((n, i) => { const t = b.T[i]; return `<div class="pbn t-${t}${shutIds.has(i) ? ' off' : ''}${i === b.star ? ' star' : ''}${n.nx.length > 1 ? ' fork' : ''}" data-n="${i}" style="left:${n.x}%;top:${n.y}%"><span>${i === b.star ? '⭐' : t === 'b' || t === 'r' ? '' : PB_T[t].ic}</span>${b.traps[i] != null ? `<i class="trap" style="--pc:${PT_COL[b.traps[i]]}">🚧</i>` : ''}</div>`; }).join('');
-  const toks = s.pl.map((pl, i) => { const n = N[b.pos[i]], same = s.pl.map((x, k) => k).filter(k => b.pos[k] === b.pos[i]), j = same.indexOf(i), m = same.length;
-    const dx = m > 1 ? Math.cos(j/m*2*Math.PI)*2 : 0, dy = m > 1 ? Math.sin(j/m*2*Math.PI)*3 : 0;
-    return `<div class="pbk${i === p ? ' on' : ''}" style="left:${n.x + dx}%;top:${n.y + dy}%;--pc:${PT_COL[i]}">${ptHead({av: pl.av}, i)}</div>`; }).join('');
+  const a = b.ask, meAsk = a && pgMine(a.p) && !pgBot(a.p);
+  // Vorschau: Wege ① ② an der Abzweigung, Zahlen auf den Landefeldern beim Zielwürfel
+  let paths = '', badges = '', nums = ''; PQ.pp = {};
+  if (a && a.k === 'fork' && b.fk) {
+    const P = b.fk.to.map(t => pbPath(b, b.fk.at, t.z));
+    paths = P.map((Q, k) => `<polyline class="pbpath c${k}" data-pi="${k}" points="${Q.map(i => N[i].X + ',' + N[i].Y).join(' ')}"/>`).join('');
+    const spot = P.map((Q, k) => { for (let j = 1; j < Q.length; j++) { const q = N[Q[j]]; if (P.every((R, k2) => k2 === k || R.slice(1).every(i => Math.hypot(N[i].X - q.X, N[i].Y - q.Y) > 8))) return Q[j]; } return Q[Q.length - 1]; });
+    P.forEach((Q, k) => Q.slice(1).forEach(i => { if (PQ.pp[i] == null) PQ.pp[i] = k; }));
+    badges = b.fk.to.map((t, k) => { const n = N[spot[k]]; return `<button class="pbbadge c${k}" data-bo="${t.id}" data-pi="${k}" style="left:${n.x}%;top:${n.y}%"${meAsk ? '' : ' disabled'}>${k + 1}</button>`; }).join('');
+  }
+  if (a && a.k === 'zz' && a.rv) { const lab = {}; a.rv.forEach((L, v) => L.forEach(z => { (lab[z] = lab[z] || []).push(v + 1); }));
+    nums = Object.keys(lab).map(z => `<span class="pbnum" style="left:${N[z].x}%;top:${N[z].y}%">${lab[z].join('·')}</span>`).join(''); }
+  const starNew = now - pgMark('sn' + b.sn) < 2600;
+  const tiles = N.map((n, i) => { const t = b.T[i], st = i === b.star;
+    return `<div class="pbn t-${t}${shutIds.has(i) ? ' off' : ''}${st ? ' star' : ''}${n.nx.length > 1 ? ' fork' : ''}${PQ.pp[i] != null ? ' pp c' + PQ.pp[i] : ''}" data-n="${i}"${PQ.pp[i] != null ? ` data-pi="${PQ.pp[i]}"` : ''} style="left:${n.x}%;top:${n.y}%"><span>${st ? '⭐' : t === 'b' || t === 'r' ? '' : PB_T[t].ic}</span>${st && starNew ? `<i class="pbsn" style="--ad:-${Math.round(now - PQ.mk['sn' + b.sn])}ms"></i>` : ''}${b.traps[i] != null ? `<i class="trap" style="--pc:${PT_COL[b.traps[i]]}">🚧</i>` : ''}</div>`; }).join('');
+  const toks = s.pl.map((x, i) => { const n = N[b.pos[i]], same = s.pl.map((y, k) => k).filter(k => b.pos[k] === b.pos[i]), j = same.indexOf(i), m = same.length;
+    const dx = m > 1 ? (j - (m - 1)/2)*2.4 : 0, dy = m > 1 ? (j % 2 ? -2.2 : 0) : 0;   // nebeneinander, damit am Rand nichts abgeschnitten wird
+    return `<div class="pbk${i === p ? ' on' : ''}" style="left:${n.x + dx}%;top:${n.y + dy}%;--pc:${PT_COL[i]}">${ptHead({av: x.av}, i)}</div>`; }).join('');
+  // +3 🪙 an der Figur, mehrere gleichzeitig übereinander
+  const fxl = (b.fx || []).map(f => ({f, el: now - pgMark('fx' + f.id)})).filter(o => o.el < 2600 && N[b.pos[o.f.p]]), stk = {};
+  const fx = fxl.map(({f, el}) => { const n = N[b.pos[f.p]], k = stk[f.p] = (stk[f.p] || 0) + 1; return `<div class="pbfx ${f.k}" style="left:${n.x}%;top:${n.y - (k - 1)*6}%;--ad:-${Math.round(el)}ms">${esc(f.t)}</div>`; }).join('');
+  // Spalte: Kopf, Banner, Würfel und Entscheidung, Spieler, letzte Ereignisse
+  const ct = pbClosedTxt(b);
+  const head = `<div class="bxh"><div class="bxt"><span>${M.ic} ${M.n}</span><b>Runde ${s.ri + 1} von ${s.rounds}</b></div>
+    ${b.end ? '<div class="bxb end">🔥 Endspurt: Blau, Rot und der Dieb zählen doppelt</div>' : ''}${b.last ? `<div class="bxb last">⭐ Letzte Chance: Stern nur ${pbStar(b)} 🪙</div>` : ''}${ct ? `<div class="bxb cl">${ct}</div>` : ''}${b.rev ? `<div class="bxb rev">${b.rev}</div>` : ''}${s.team ? `<div class="bxb team">👥 Team-Minispiel: ${pbTeamTxt(s)}</div>` : ''}</div>`;
   const mine = p >= 0 && pgMine(p) && !pgBot(p), seat = pgSeat(seats, p);
   let act = '';
-  if (b.ask) { const a = b.ask, me = pgMine(a.p) && !pgBot(a.p), st = pgSeat(seats, a.p);
-    act = me ? `<p class="brq">${esc(a.q)} · ${pgCdn('bq' + a.n, 15000)}</p><div class="mbtns pbopt">${a.o.map((o, k) => `<button class="btn" data-bo="${esc(o.id)}">${esc(o.l)}${k < 5 ? ` ${kbp(st, 'r' + k)}` : ''}</button>`).join('')}</div>` : `<p class="brq">${pbN(a.p)} überlegt: ${esc(a.q)}</p>`; }
+  if (a) act = `<p class="brq">${meAsk ? '' : `<b style="color:${PT_COL[a.p]}">${pbN(a.p)}</b> überlegt: `}${esc(a.q)} · ${pgCdn('bq' + a.n, pbW(15000))}</p>${pbOptView(a, meAsk, pgSeat(seats, a.p))}`;
   else if (p >= 0 && b.st === 'pre' && mine) {
-    act = `<div class="mbtns"><button class="btn brroll" id="pgroll" style="background:${PT_COL[p]};color:#fff">🎲 ${b.fix ? b.fix : b.mul > 1 ? b.mul + ' Würfel' : ''} Würfeln! ${kbp(seat, 'bz')}</button></div>
-      ${b.items[p].length && !b.used ? `<p class="hint">Vor dem Würfeln einen Gegenstand benutzen:</p><div class="pbits">${b.items[p].map(k => `<button class="btn ghost" data-it="${k}" title="${esc(PB_IT[k].d)}">${PB_IT[k].ic} ${PB_IT[k].n}</button>`).join('')}</div>` : ''}<p class="hint">${pgCdn('bt' + b.tk, 30000)}</p>`; }
+    act = `<div class="mbtns"><button class="btn brroll" id="pgroll" style="background:${PT_COL[p]};color:#fff">🎲 ${b.fix ? b.fix + ' ' : b.mul > 1 ? b.mul + ' Würfel ' : ''}Würfeln! ${kbp(seat, 'bz')}</button></div>
+      ${b.items[p].length && !b.used ? `<p class="hint">Vor dem Würfeln einen Gegenstand benutzen:</p><div class="pbits">${b.items[p].map(k => `<button class="pbic" data-it="${k}"${k === 'sh' ? ' disabled' : ''}><b>${PB_IT[k].ic} ${PB_IT[k].n}</b><small>${k === 'sh' ? 'wirkt von selbst' : esc(PB_IT[k].d)}</small></button>`).join('')}</div>` : ''}
+      <p class="hint">${pgCdn('bt' + b.tk, pbW(30000))}</p>`; }
   else if (p >= 0 && b.st === 'pre') act = `<p class="hint">${pbN(p)} würfelt gleich …</p>`;
-  const dice = b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0);
-  return `${b.end ? '<div class="pbend">🔥 Endspurt: blaue und rote Felder zählen doppelt</div>' : ''}
-    <div class="pbc"><div class="mxdice pbdice">${dice}</div><div><p class="brmsg">${b.msg}${b.st === 'walk' && b.left > 0 && !b.ask ? ` <b>noch ${b.left}</b>` : ''}</p><div class="bract">${act}</div></div></div>
-    <div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g></svg>${tiles}${blk}${toks}
-      ${b.ask && b.fk && pgMine(b.ask.p) && !pgBot(b.ask.p) ? b.fk.to.map(t => { const n = N[t.z], o = b.ask.o.find(x => x.id === t.id); return `<button class="pbgo" data-bo="${t.id}" style="left:${n.x}%;top:${n.y}%">➜ ${esc(o ? o.l : '')}</button>`; }).join('') : ''}
-      <div class="pbmap">${M.ic} ${M.n}</div><div class="pbtip" id="pbtip" hidden></div></div>
-    ${pgChips(s, i => [i === p ? 'on' : '', b.items[i].length ? b.items[i].map(k => PB_IT[k].ic).join(' ') : 'keine Gegenstände'])}
-    <p class="hint">Felder antippen oder mit der Maus darüberfahren zeigt, was sie machen.</p>
-    ${(b.log || []).length ? `<details class="pblog"${PQ.logOpen ? ' open' : ''}><summary>📜 Verlauf</summary><ol>${b.log.slice().reverse().map(e => `<li><small>R${e.r}</small> ${e.m}</li>`).join('')}</ol></details>` : ''}`;
+  const D = b.duel, rolling = b.dice.length && now - pgMark('roll' + b.roll) < 550;
+  const dice = D ? `<div class="pbduel"><span style="color:${PT_COL[D.a]}">${pbN(D.a)}</span>${pbDie(D.da)}<b>:</b>${pbDie(D.db)}<span style="color:${PT_COL[D.b]}">${pbN(D.b)}</span></div>` : `<div class="mxdice pbdice${rolling ? ' rolling' : ''}">${b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0)}</div>`;
+  const status = `<div class="bxst">${dice}<p class="brmsg">${b.msg}${b.st === 'walk' && b.left > 0 && !a ? ` <b>noch ${b.left} ${b.left === 1 ? 'Feld' : 'Felder'}</b>` : ''}</p><div class="bract">${act}</div></div>`;
+  const board = `<div class="bxbw"><div class="bxbd${PQ.zoom ? ' zoom' : ''}" id="bxbd"><div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g>${paths}</svg>${tiles}${blk}${nums}${toks}${badges}${fx}<div class="pbtip" id="pbtip" hidden></div></div></div>
+    <div class="bxbar"><button class="bxzm" id="bxzm">${PQ.zoom ? '🔎 Ganzes Brett' : '🔍 Brett vergrößern'}</button></div></div>`;
+  // Spieler in Zugreihenfolge, Platz rechts
+  const sc = i => b.stars[i]*10000 + b.coins[i], rk = s.pl.map((x, i) => i).sort((x, y) => sc(y) - sc(x)), place = []; rk.forEach((i, k) => { place[i] = k && sc(i) === sc(rk[k - 1]) ? place[rk[k - 1]] : k; });
+  const ord = s.ord || s.pl.map((x, i) => i), nx = p >= 0 ? ord[ord.indexOf(p) + 1] : -1;
+  const plist = `<div class="bxpl">${ord.map((i, k) => `<div class="bxp${i === p ? ' on' : ''}${pgMine(i) && !pgBot(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="o">${k + 1}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span>
+    <span class="nm"><b>${s.team ? `<i class="tm" style="background:${PB_TC[s.team.g[i]]}"></i>` : ''}${esc(s.pl[i].n)}</b><small>${i === p ? '🎲 ist dran' : i === nx ? 'als Nächstes' : ''}${b.items[i].length ? `<span class="it">${b.items[i].map(k2 => `<i title="${esc(PB_IT[k2].n)}">${PB_IT[k2].ic}</i>`).join('')}</span>` : ''}</small></span>
+    <span class="st">⭐ ${b.stars[i]}</span><span class="co">🪙 ${b.coins[i]}</span><span class="rk">${place[i] + 1}.</span></div>`).join('')}</div>`;
+  const L = b.log || [], hov = typeof matchMedia === 'function' && matchMedia('(hover:hover)').matches;
+  const tick = `<div class="bxtk">${L.length ? `<ol class="bxtl">${L.slice(-4).reverse().map((e, k) => `<li${k ? '' : ' class="nw"'}><small>R${e.r}</small><span>${e.m}</span></li>`).join('')}</ol>` : ''}
+    ${L.length > 4 ? `<details class="pblog"${PQ.logOpen ? ' open' : ''}><summary>📜 Ganzer Verlauf (${L.length})</summary><ol>${L.slice().reverse().map(e => `<li><small>R${e.r}</small> ${e.m}</li>`).join('')}</ol></details>` : ''}
+    ${s.ri < 2 ? `<p class="hint bxhint">Tipp: Felder ${hov ? 'mit der Maus berühren' : 'antippen'}, dann steht da, was sie machen.</p>` : ''}</div>`;
+  return `<div class="bxw">${head}${status}${board}${plist}${tick}</div>`;
 }
 function pgBoardAfter(s, seats){
-  const b = s.br, q = id => main.querySelector('#' + id);
-  if (q('pgroll')) q('pgroll').onclick = () => pgSend(b.act, {k: 'roll'});
+  const b = s.br, q = id => main.querySelector('#' + id), tap = (el, fn) => { el.onpointerdown = e => { if (e.button) return; e.preventDefault(); fn(); }; el.onclick = e => { if (e.detail === 0) fn(); }; };
+  if (q('pgroll')) tap(q('pgroll'), () => pgSend(b.act, {k: 'roll'}));
   main.querySelectorAll('[data-it]').forEach(x => x.onclick = () => pgSend(b.act, {k: 'item', id: x.dataset.it}));
-  main.querySelectorAll('[data-bo]').forEach(x => x.onclick = () => { if (!b.ask || PQ.taps['bo' + b.ask.n]) return; PQ.taps['bo' + b.ask.n] = 1; pgSend(b.ask.p, {k: 'opt', v: x.dataset.bo, n: b.ask.n}); });
+  main.querySelectorAll('[data-bo]').forEach(x => tap(x, () => { if (x.disabled || !b.ask || PQ.taps['bo' + b.ask.n]) return; PQ.taps['bo' + b.ask.n] = 1; pgSend(b.ask.p, {k: 'opt', v: x.dataset.bo, n: b.ask.n}); }));
+  // Weg zum Knopf hervorheben
+  const hot = (k, on) => main.querySelectorAll(`[data-pi="${k}"]`).forEach(e => e.classList.toggle('hot', on));
+  main.querySelectorAll('.pbfo[data-pi],.pbbadge[data-pi]').forEach(x => { x.onpointerenter = () => hot(x.dataset.pi, true); x.onpointerleave = () => hot(x.dataset.pi, false); });
   const lg = main.querySelector('.pblog'); if (lg) lg.ontoggle = () => { PQ.logOpen = lg.open; };
+  if (q('bxzm')) q('bxzm').onclick = () => { PQ.zoom = !PQ.zoom; PQ.zf = ''; pgRender(); };
+  // vergrößertes Brett: Lage behalten, der Figur folgen, die gerade zieht oder gefragt ist
+  const zb = q('bxbd');
+  if (zb && PQ.zoom) { const f = b.ask ? b.ask.p : b.act, key = f >= 0 ? f + ':' + b.pos[f] : '';
+    if (key && key !== PQ.zf) { const n = pbG(b.mi)[b.pos[f]], w = zb.scrollWidth, h = zb.scrollHeight; zb.scrollLeft = n.x/100*w - zb.clientWidth/2; zb.scrollTop = n.y/100*h - zb.clientHeight/2; PQ.zf = key; }
+    else { zb.scrollLeft = PQ.zsx || 0; zb.scrollTop = PQ.zsy || 0; }
+    PQ.zsx = zb.scrollLeft; PQ.zsy = zb.scrollTop; zb.onscroll = () => { PQ.zsx = zb.scrollLeft; PQ.zsy = zb.scrollTop; }; }
   const bd = q('pbd'), tip = q('pbtip'); if (!bd || !tip) return;
-  const show = el => { const i = +el.dataset.n; tip.innerHTML = pbTip(s, i); tip.hidden = false; const n = pbG(b.mi)[i]; tip.style.left = clamp(n.x, 18, 82) + '%'; tip.style.top = n.y + '%'; tip.classList.toggle('up', n.y > 50); PQ.tipN = i; };
+  if (PQ.tipAct !== b.act) { PQ.tipN = null; PQ.tipAct = b.act; }   // neuer Zug: alte Feld-Info zu
+  const show = el => { const i = +el.dataset.n, n = pbG(b.mi)[i]; tip.innerHTML = pbTip(s, i); tip.hidden = false;
+    const half = tip.offsetWidth/2/(bd.clientWidth || 1)*100 + 1; tip.style.left = clamp(n.x, half, 100 - half) + '%'; tip.style.top = n.y + '%'; tip.classList.toggle('up', n.y > 50); PQ.tipN = i; };
   const hide = () => { tip.hidden = true; PQ.tipN = null; };
   bd.querySelectorAll('.pbn').forEach(el => { el.onpointerenter = e => { if (e.pointerType === 'mouse') show(el); }; el.onpointerleave = e => { if (e.pointerType === 'mouse') hide(); }; el.onclick = () => { PQ.tipN === +el.dataset.n ? hide() : show(el); }; });
+  bd.onpointerdown = e => { if (!e.target.closest('.pbn') && PQ.tipN != null) hide(); };
   if (PQ.tipN != null) { const el = bd.querySelector(`.pbn[data-n="${PQ.tipN}"]`); if (el) show(el); }
 }
 
@@ -17602,8 +17963,16 @@ PGAMES.farbfalle = {
 
 /* ---------- Jeder für sich: alle spielen dieselbe Strecke (gleicher Zufall), nur der Punktestand wird geschickt ---------- */
 const pgRng = seed => () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0)/4294967296; };
+// Zuschauen: der eigene Spielstand geht als Änderung an alle (nur Felder, die sich geändert haben, alle 3 s komplett)
+function pgSpec(i, S, now){
+  const C = PQ.spC[i] = (now - (PQ.spC[i] && PQ.spC[i].t || 0) > 3000) ? {t: now} : PQ.spC[i], d = {};
+  for (const k of Object.keys(S)) { const v = S[k]; if (typeof v === 'function' || k === 'tdown' || k === 'gt') continue; let j; try { j = JSON.stringify(v, (kk, x) => typeof x === 'number' ? Math.round(x*10)/10 : x instanceof Set ? {$s: [...x]} : x instanceof Map ? {$m: [...x]} : x); } catch(e) { continue; } if (j === undefined || j.length > 9000) continue; if (C[k] !== j) { C[k] = j; d[k] = JSON.parse(j); } }
+  PQ.spT[i] = now; if (Object.keys(d).length) pgSend(i, {k: 'sp', d});
+}
 function pgSolo(c){
+  c.spec = c.spec !== false;
   return {
+    _c: c,
     disc: c.disc, icon: c.icon, name: c.name, rule: c.rule, keys: c.keys || 'Buzzer oder auf dein Feld tippen.', rep: c.rep,
     start(s){
       const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.sc = s.pl.map(() => null);
@@ -17613,19 +17982,22 @@ function pgSolo(c){
       }, 2000);
     },
     input(s, i, a){ const g = s.g; if (a.k === 'gh' && g.st === 'run' && Array.isArray(a.d) && a.d.length < 12) { pgRT(['gh', i, a.d.map(v => +v || 0)]); return; }
+      if (a.k === 'sp' && g.st === 'run' && c.spec && a.d && typeof a.d === 'object' && JSON.stringify(a.d).length < 18000) { pgRT(['sp', i, a.d]); return; }
       if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = Math.max(0, a.v); pgPush(); if (g.sc.every(v => v != null)) this.fin(s); } },
-    rt(s, d){ if (d[0] === 'gh' && Number.isInteger(d[1])) (PQ.gh = PQ.gh || {})[d[1]] = d[2]; },
+    rt(s, d){ if (d[0] === 'gh' && Number.isInteger(d[1])) (PQ.gh = PQ.gh || {})[d[1]] = d[2]; if (d[0] === 'sp' && Number.isInteger(d[1]) && d[2] && s.g.seed) { PQ.sp = PQ.sp || {}; const w = d[1]; if (!PQ.sp[w]) { try { PQ.sp[w] = c.make(pgRng(s.g.seed), s.g.seed, 0, w); } catch(e) { PQ.sp[w] = {}; } PQ.sp[w].press = PQ.sp[w].key = PQ.sp[w].shoot = PQ.sp[w].touch = null; } const T = PQ.sp[w], rv = v => { if (!v || typeof v !== 'object') return v; if (Array.isArray(v.$s)) return new Set(v.$s); if (Array.isArray(v.$m)) return new Map(v.$m); for (const k in v) v[k] = rv(v[k]); return v; }; for (const k in d[2]) T[k] = rv(d[2][k]); } },
     rk: c.rk,
-    fin(s){ const g = s.g; if (g.st !== 'run') return; const v = g.sc.map(x => x == null ? (c.low ? 1e9 : 0) : x); pgResult(v.map(x => c.low ? -x : x), v.map(x => c.fmt(x))); },
+    fin(s){ PQ.sp = {}; PQ.wt = null; const g = s.g; if (g.st !== 'run') return; const v = g.sc.map(x => x == null ? (c.low ? 1e9 : 0) : x); pgResult(v.map(x => c.low ? -x : x), v.map(x => c.fmt(x))); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<p class="hint">${g.st === 'cd' ? 'Gleich geht es los …' : c.hint || 'Jeder spielt dieselbe Strecke'} · ${c.rk ? `<span class="kbonly">${rtKeyHint(c.rk, 0)}</span>` : pgKeyHint(seats, 'bz')}</p>
         <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
+        ${c.spec && g.st === 'run' && mine.length && mine.every(i => PQ.solo && PQ.solo[i] && PQ.solo[i].done) ? `<div class="pgwatch"><span>👀 Zuschauen:</span>${s.pl.map((p, k) => mine.includes(k) || pgBot(k) ? '' : `<button class="pglv${PQ.wt === k ? ' sel' : ''}" data-wt="${k}" style="color:${PT_COL[k]}">${esc(p.n)}${g.sc[k] != null ? ' ✓' : ''}</button>`).join('') || '<em>nur Bots, nichts zu sehen</em>'}</div>` : ''}
         ${pgDots(s, i => g.sc[i] != null)}`;
     },
     after(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
-      PQ.solo = PQ.solo || {};
+      PQ.solo = PQ.solo || {}; PQ.sp = PQ.sp || {}; PQ.spT = PQ.spT || {}; PQ.spC = PQ.spC || {};
+      main.querySelectorAll('[data-wt]').forEach(b => b.onpointerdown = e => { e.preventDefault(); PQ.wt = +b.dataset.wt; pgRender(); });
       mine.forEach(i => { const cv = $('#pgs' + i); if (!cv) return; const cxy = e => { const b = cv.getBoundingClientRect(); return [(e.clientX - b.left)/b.width*c.W, (e.clientY - b.top)/b.height*c.H]; };
         cv.onpointermove = e => { const S = PQ.solo && PQ.solo[i]; if (S && S.touch && S.tdown) S.touch(...cxy(e), 1); };
         cv.onpointerup = cv.onpointercancel = e => { const S = PQ.solo && PQ.solo[i]; if (S && S.touch && S.tdown) { S.tdown = 0; S.touch(...cxy(e), 0); } };
@@ -17642,7 +18014,10 @@ function pgSolo(c){
           const x = cv.getContext('2d'); x.setTransform(cv.width/c.W, 0, 0, cv.width/c.W, 0, 0);
           const S = PQ.solo[i];
           if (S && !S.done) { S.t = (S.t || 0) + dt; S.step(dt, now); if (S.t >= c.max) S.done = true; if (c.ghost && !S.done && now - (S.gt || 0) > 80) { S.gt = now; pgSend(i, {k: 'gh', d: c.ghost(S)}); } }
-          if (S && S.done && !PQ.taps['s' + i]) { PQ.taps['s' + i] = 1; pgSend(i, {k: 'sc', v: S.score}); }
+          if (c.spec && S && !S.done && now - (PQ.spT[i] || 0) > 100) pgSpec(i, S, now);
+          if (S && S.done && !PQ.taps['s' + i]) { PQ.taps['s' + i] = 1; if (c.spec) pgSpec(i, S, now); pgSend(i, {k: 'sc', v: S.score}); if (c.spec) setTimeout(pgRender, 50); }
+          const wt = c.spec && S && S.done && mine.every(j => PQ.solo[j] && PQ.solo[j].done) ? (PQ.wt != null && PQ.sp[PQ.wt] ? PQ.wt : +Object.keys(PQ.sp).find(k => !mine.includes(+k) && !PQ.sp[k].done)) : NaN;
+          if (Number.isInteger(wt) && PQ.sp[wt]) { c.draw(x, PQ.sp[wt], PT_COL[wt], null); x.fillStyle = 'rgba(0,0,0,.6)'; x.fillRect(0, c.H - 44, c.W, 44); x.fillStyle = '#fff'; x.font = '900 20px Nunito, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(`👀 ${s.pl[wt].n}${PQ.sp[wt].done ? ' · fertig' : ''}`, c.W/2, c.H - 22); x.textBaseline = 'alphabetic'; PQ.raf = requestAnimationFrame(loop); return; }
           c.draw(x, S, PT_COL[i], c.ghost ? Object.keys(PQ.gh || {}).filter(k => +k !== i).map(k => ({i: +k, d: PQ.gh[k], col: PT_COL[k]})) : null);
           if (S && S.done) { x.fillStyle = 'rgba(0,0,0,.55)'; x.fillRect(0, c.H/2 - 40, c.W, 80); x.fillStyle = '#fff'; x.font = '900 34px Nunito, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(c.fmt(S.score), c.W/2, c.H/2); }
           else if (!S) { x.fillStyle = '#fff'; x.font = '900 30px Nunito'; x.textAlign = 'center'; x.fillText('Achtung …', c.W/2, c.H/2); }
@@ -17670,8 +18045,8 @@ PGAMES.stapel = pgSolo({
   draw(x, S, col){
     x.fillStyle = '#1d1a2a'; x.fillRect(0, 0, 400, 600);
     if (!S) return; const cam = Math.max(0, S.cam), y0 = 570 + cam;
-    S.bl.forEach((b, k) => { x.fillStyle = k ? col : '#5a5274'; x.fillRect(b.x, y0 - k*28, b.w, 26); });
-    if (!S.done) { const k = S.bl.length; x.fillStyle = '#fff'; x.fillRect(S.cur.x, y0 - k*28, S.cur.w, 26); }
+    const o = S.off || 0; S.bl.forEach((b, k) => { x.fillStyle = k + o ? col : '#5a5274'; x.fillRect(b.x, y0 - (k + o)*28, b.w, 26); });
+    if (!S.done) { const k = S.bl.length + o; x.fillStyle = '#fff'; x.fillRect(S.cur.x, y0 - k*28, S.cur.w, 26); }
     x.fillStyle = '#fff'; x.font = '900 28px Nunito'; x.textAlign = 'left'; x.fillText(S.score, 14, 36);
   },
 });
@@ -17815,7 +18190,7 @@ PGAMES.wer = {
     pgT(() => this.toGuess(s), 45000); },
   toGuess(s){ const g = s.g; if (g.st !== 'write') return; pgClear();
     s.pl.forEach((p, i) => { if (!g.txt[i]) g.txt[i] = '(keine Antwort)'; });
-    g.ord = pgShuf(s.pl.length); g.st = 'guess'; g.gs = s.pl.map(() => null);
+    g.ord = pgShuf(s.pl.length); g.no = s.pl.map(() => pgShuf(s.pl.length)); g.st = 'guess'; g.gs = s.pl.map(() => null);
     s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => { const m = {}; g.ord.forEach(a => { if (a !== i) m[a] = pickOne(s.pl.map((x, k) => k).filter(k => k !== i)); }); pgIn(i, {k: 'gs', m}); }, 4000 + Math.random()*8000); });
     pgPush(); pgT(() => this.show(s), 40000); },
   input(s, i, a){ const g = s.g;
@@ -17828,7 +18203,7 @@ PGAMES.wer = {
     let b = `<p class="hint">Frage ${g.k + 1} von ${pgR(3)}</p><h2 class="pgq">${esc(g.Q)}</h2>`;
     if (g.st === 'write') b += mine.map(i => g.txt[i] != null ? `<p class="pgok" style="--pc:${PT_COL[i]}">✓ ${esc(s.pl[i].n)}: abgegeben</p>` : pgTxt('w' + g.k, i, 'Deine Antwort')).join('') + pgDots(s, i => g.txt[i] != null);
     else if (g.st === 'guess') { const me = mine.find(i => g.gs[i] == null && !PQ.taps['g' + g.k + ':' + i]);
-      b += me == null ? `<p class="pgok">✓ geraten, warte auf die anderen</p>${pgDots(s, i => !!g.gs[i])}` : `<p class="hint" style="color:${PT_COL[me]}">${esc(s.pl[me].n)}: Wer hat was geschrieben?</p><div class="pgwl">${g.ord.filter(a => a !== me).map(a => `<div class="pgw"><q>${esc(g.txt[a])}</q><div class="pgwn">${s.pl.map((p, k) => k === me ? '' : `<button class="${(PQ.wg || {})[a] === k ? 'on' : ''}" data-a="${a}" data-w="${k}" style="--pc:${PT_COL[k]}">${esc(p.n)}</button>`).join('')}</div></div>`).join('')}</div><button class="btn" id="pgwok" data-i="${me}">Fertig</button>`; }
+      b += me == null ? `<p class="pgok">✓ geraten, warte auf die anderen</p>${pgDots(s, i => !!g.gs[i])}` : `<p class="hint" style="color:${PT_COL[me]}">${esc(s.pl[me].n)}: Wer hat was geschrieben?</p><div class="pgwl">${g.ord.filter(a => a !== me).map(a => `<div class="pgw"><q>${esc(g.txt[a])}</q><div class="pgwn">${(g.no && g.no[a] ? g.no[a] : s.pl.map((p, k) => k)).map(k => [s.pl[k], k]).map(([p, k]) => k === me ? '' : `<button class="${(PQ.wg || {})[a] === k ? 'on' : ''}" data-a="${a}" data-w="${k}" style="--pc:${PT_COL[k]}">${esc(p.n)}</button>`).join('')}</div></div>`).join('')}</div><button class="btn" id="pgwok" data-i="${me}">Fertig</button>`; }
     else b += `<div class="pgwl">${g.ord.map(a => `<div class="pgw"><q>${esc(g.txt[a])}</q><span style="color:${PT_COL[a]}">— ${esc(s.pl[a].n)}</span><small>${s.pl.map((p, i) => i !== a && g.gs[i] && g.gs[i][a] === a ? esc(p.n) : '').filter(Boolean).join(', ') || 'keiner'} lag richtig</small></div>`).join('')}</div>`;
     return b; },
   after(s, seats){ const g = s.g;
@@ -18457,14 +18832,14 @@ PGAMES.senso = pgLocal({
 
 PGAMES.mastermind = pgLocal({
   disc: 'mastermind', icon: '🔐', name: 'Mastermind', max: 180, hint: 'Code knacken',
-  rule: 'Alle knacken denselben geheimen Code aus 4 Farben (6 Farben, doppelt möglich). Nach jedem Versuch: schwarz = richtige Farbe am richtigen Platz, weiß = richtige Farbe am falschen Platz. Wer mit den wenigsten Versuchen fertig ist, gewinnt, bei Gleichstand der Schnellere. Höchstens 10 Versuche, 3 Minuten.', keys: 'Farbe antippen füllt den nächsten Platz, Platz antippen leert ihn.',
+  rule: 'Alle knacken denselben geheimen Code aus 4 Farben (6 Farben, doppelt möglich). Nach jedem Versuch zeigt ein Punkt unter jeder Stelle: grün = richtige Farbe am richtigen Platz, gelb = Farbe kommt vor, aber woanders, grau = nicht im Code. Wer mit den wenigsten Versuchen fertig ist, gewinnt, bei Gleichstand der Schnellere. Höchstens 10 Versuche, 3 Minuten.', keys: 'Farbe antippen füllt den nächsten Platz, Platz antippen leert ihn.',
   init(s, g){ g.code = MM.rand(MM_LV[2]); },
   bot(s, g, L){ if (L === 0 && Math.random() < .3) return [0, 150000]; const n = clamp(Math.round([7, 6, 5][L] + gauss()), 3, 10); return [(11 - n)*1000 + Math.round(180 - n*14), n*14000]; },
   fmt: v => v < 1000 ? 'nicht geknackt' : `${11 - Math.floor(v/1000)} Versuche`,
   mount(L, s, g, i, nm){
     const cfg = MM_LV[2], H = []; let cur = [];
     const draw = () => {
-      L.el.innerHTML = `${nm}<div class="pgmm">${H.map(([gs, [b, w]]) => `<div class="mmrow">${gs.map(c => MM.peg(c)).join('')}<span class="mmfb">${'<i class="b"></i>'.repeat(b)}${'<i class="w"></i>'.repeat(w)}${'<i></i>'.repeat(cfg.len - b - w)}</span></div>`).join('')}
+      L.el.innerHTML = `${nm}<div class="pgmm">${H.map(([gs, [b, w]]) => { const left = g.code.filter((v, k) => gs[k] !== v), f = gs.map((v, k) => { if (g.code[k] === v) return 'ok'; const j = left.indexOf(v); if (j >= 0) { left.splice(j, 1); return 'near'; } return 'no'; }); return `<div class="mmrow">${gs.map((c, k) => `<span class="mmpos ${f[k]}">${MM.peg(c)}</span>`).join('')}<small class="mmtx"><b>${b}</b> richtig</small></div>`; }).join('')}
         ${L.done ? '' : `<div class="mmrow in">${Array.from({length: cfg.len}, (_, k) => `<button class="mmslot" data-s="${k}">${MM.peg(cur[k] != null ? cur[k] : -1)}</button>`).join('')}</div>
         <div class="mmpal">${MM_COL.slice(0, cfg.cols).map((c, k) => `<button class="mmc" data-c="${k}">${MM.peg(k)}</button>`).join('')}</div>
         <button class="btn pgmmok"${cur.length === cfg.len && cur.every(v => v != null) ? '' : ' disabled'}>Prüfen (${H.length + 1}/10)</button>`}</div>`;
@@ -18551,23 +18926,33 @@ PGAMES.auktion = {
 // Kniffel: alle gleichzeitig, jeder mit eigenen Würfeln, 5 Züge
 PGAMES.kniffel = pgLocal({
   disc: 'kniffel', icon: '🎲', name: 'Kniffel', max: 240, hint: 'Würfeln',
-  rule: 'Alle spielen gleichzeitig, jeder mit eigenen Würfeln. 5 Züge: bis zu 3-mal würfeln, Würfel antippen hält sie fest, dann ein freies Feld wählen. Wer nach 5 Zügen die meisten Punkte hat, gewinnt. Höchstens 4 Minuten.', keys: 'Würfel antippen hält sie, Feld antippen trägt ein.',
-  bot(s, g, L){ const v = Math.round([55, 80, 105][L] + gauss()*15); return [Math.max(5, v), 40000 + Math.random()*60000]; },
+  rule: 'Alle spielen gleichzeitig, jeder mit eigenen Würfeln, alle haben dieselben 5 Felder. Pro Zug bis zu 3-mal würfeln, Würfel antippen hält sie fest, dann ein freies Feld eintragen. Wer am Ende die meisten Punkte hat, gewinnt. Höchstens 4 Minuten.', keys: 'Würfel antippen oder Auswahltasten hält sie, Buzzer würfelt, Feld antippen trägt ein.',
+  init(s, g){ g.F = KN.pick(5); },
+  bot(s, g, L){ const v = Math.round([55, 80, 105][L]*g.F.length/5*.6 + gauss()*10); return [Math.max(5, v), 40000 + Math.random()*60000]; },
   fmt: v => `${v} Pkt.`,
   mount(L, s, g, i, nm){
-    const sh = {}; let d = null, hd = [0, 0, 0, 0, 0], rl = 0;
+    const F = g.F || KN.pick(5), sh = {}; let d = [0, 0, 0, 0, 0], hd = [0, 0, 0, 0, 0], rl = 0, rolled = [], wrote = null;
     const tot = () => Object.values(sh).reduce((a, b) => a + b, 0);
+    const pip = v => { const on = {1:[4], 2:[0,8], 3:[0,4,8], 4:[0,2,6,8], 5:[0,2,4,6,8], 6:[0,2,3,5,6,8]}[v] || []; return Array.from({length: 9}, (_, k) => `<i${on.includes(k) ? ' class="on"' : ''}></i>`).join(''); };
+    const roll = () => { if (L.done || rl >= 3) return; rolled = []; d = d.map((v, k) => rl && hd[k] && v ? v : (rolled.push(k), 1 + R0(6))); if (!rl) hd = [0, 0, 0, 0, 0]; rl++; wrote = null; Snd.tick(); draw(); };
+    const hold = k => { if (L.done || !rl || rl >= 3 || k < 0 || k > 4) return; hd[k] = hd[k] ? 0 : 1; Snd.tick(); draw(); };
+    const write = id => { if (L.done || !rl || id in sh || !F.includes(id)) return; const v = KN.score(id, d, false); sh[id] = v; wrote = id; v ? Snd.good() : Snd.bad();
+      d = [0, 0, 0, 0, 0]; rl = 0; hd = [0, 0, 0, 0, 0]; if (F.every(x => x in sh)) L.send(tot()); draw(); };
     const draw = () => {
       const n = Object.keys(sh).length;
-      L.el.innerHTML = `${nm}<p class="hint">${L.done ? `Fertig: <b>${tot()} Punkte</b>` : `Zug ${n + 1} von 5 · ${tot()} Punkte`}</p>
-        ${L.done ? '' : `${d ? `<div class="mxdice pgkd">${d.map((v, k) => `<button class="pgdie${hd[k] ? ' hold' : ''}" data-dk="${k}"${rl < 3 ? '' : ' disabled'}>${DIE(v)}</button>`).join('')}</div>` : ''}
-        <div class="mbtns"><button class="btn pgkr"${rl >= 3 ? ' disabled' : ''}>${rl ? 'Nochmal würfeln' : 'Würfeln'} (${rl}/3)</button></div>`}
-        <div class="pgkc">${KN.CAT.map(c => { const u = c.id in sh, v = u ? sh[c.id] : d ? KN.score(c.id, d, false) : ''; return `<button class="${u ? 'used' : ''}" data-id="${c.id}"${!L.done && rl && !u ? '' : ' disabled'}><span>${c.n}</span><b>${v}</b></button>`; }).join('')}</div>`;
-      L.el.querySelectorAll('[data-dk]').forEach(b => b.onclick = () => { const k = +b.dataset.dk; hd[k] = hd[k] ? 0 : 1; draw(); });
-      const r = L.el.querySelector('.pgkr'); if (r) r.onclick = () => { if (rl >= 3) return; d = (d || [1, 1, 1, 1, 1]).map((v, k) => rl && hd[k] ? v : 1 + R0(6)); if (!rl) hd = [0, 0, 0, 0, 0]; rl++; Snd.tick(); draw(); };
-      L.el.querySelectorAll('.pgkc [data-id]').forEach(b => b.onclick = () => { if (b.disabled) return; sh[b.dataset.id] = KN.score(b.dataset.id, d, false); d = null; rl = 0; hd = [0, 0, 0, 0, 0]; Snd.good();
-        if (Object.keys(sh).length >= 5) L.send(tot()); draw(); });
+      const info = L.done ? `Fertig: <b>${tot()} Punkte</b>` : !rl ? `Zug ${n + 1} von ${F.length}: würfeln` : rl < 3 ? `Wurf ${rl} von 3: Würfel antippen zum Halten, nochmal würfeln oder ein Feld wählen` : 'Wurf 3 von 3: jetzt ein Feld wählen';
+      const rows = F.map(id => { const c = KN.CAT.find(x => x.id === id), u = id in sh;
+        return `<div class="kr k1"><span>${c.n}</span>${u ? `<i class="kv${wrote === id ? ' nw' : ''}${sh[id] === 0 ? ' z' : ''}">${sh[id]}</i>` : rl && !L.done ? `<button class="kc" data-id="${id}">${KN.score(id, d, false)}</button>` : '<i class="ke">–</i>'}</div>`; }).join('');
+      L.el.innerHTML = `${nm}<div class="kdice">${d.map((v, k) => `<button class="kd${hd[k] ? ' held' : ''}${rolled.includes(k) ? ' roll' : ''}${v ? '' : ' blank'}" data-dk="${k}"${!v || rl >= 3 || L.done ? ' disabled' : ''}>${v ? pip(v) : ''}<small>${hd[k] ? 'gehalten' : ''}</small></button>`).join('')}</div>
+        <div class="kinfo">${info}</div>
+        ${L.done ? '' : `<div class="mbtns"><button class="btn pgkr"${rl >= 3 ? ' disabled' : ''}>🎲 ${rl ? `Nochmal (${3 - rl})` : 'Würfeln'}</button></div>`}
+        <div class="kgrid pgkg"><div class="kblk"><div class="kr k1 kh"><span></span><b>${esc(s.pl[i].n)}</b></div>${rows}<div class="kr k1 ks kt"><span>Gesamt</span><i class="kv">${tot()}</i></div></div></div>`;
+      rolled = [];
+      L.el.querySelectorAll('[data-dk]').forEach(b => b.onpointerdown = e => { e.preventDefault(); hold(+b.dataset.dk); });
+      const r = L.el.querySelector('.pgkr'); if (r) r.onpointerdown = e => { e.preventDefault(); roll(); };
+      L.el.querySelectorAll('.kc[data-id]').forEach(b => b.onpointerdown = e => { e.preventDefault(); write(b.dataset.id); });
     };
+    L.onKey = a => { if (a.k === 'bz') roll(); else if (a.k === 'row') hold(a.i); };
     draw();
   },
 });
