@@ -15002,8 +15002,8 @@ function openHelp(){
     ${d ? '' : `<h3>Party (3–6 Spieler)</h3>
     <ul><li>Unter „Party“ einen Raum erstellen und den Link schicken, oder lokal an einem Gerät spielen. Freie Plätze füllt der Gastgeber mit Bots (drei Stärken).</li>
       <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, oder ♾️ nur Minispiele mit Punkten nach Platz.</li>
-      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Länge der Minispiele (50–250 %), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und Anzahl Minispiele zur Wahl (oder Zufall).</li>
-      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang.</li>
+      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Dauer pro Minispiel (ungefähr 1 bis 5 Minuten, Standard etwa 3; Billard und Boss-Kämpfe dauern immer gleich), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und Anzahl Minispiele zur Wahl (oder Zufall).</li>
+      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang, daneben steht, wie viele Minuten das ungefähr sind. Kurze Spiele bekommen dafür mehrere Durchgänge.</li>
       <li><b>Vor dem Minispiel</b> stehen die Regeln da, bis alle ✋ Bereit getippt haben, höchstens 15 s. Dann zählt es 3, 2, 1 herunter.</li>
       <li><b>Nach dem Minispiel</b> geht es nach 15 s von selbst weiter, der Gastgeber kann das anhalten. „Party beenden“ fragt nochmal nach.</li>
       <li>Online piept und vibriert es, wenn du dran bist oder gefragt wirst.</li></ul>
@@ -15306,7 +15306,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'be837cad5';
+const NET_BUILD = 'b8d74ddb1';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16280,7 +16280,7 @@ netFromLink();
 const PT_PREFIX = 'qwparty-', PT_MAX = 6;
 const PT_COL = ['#ff5a36', '#16b8c9', '#ffc531', '#8a63d2', '#1fae5b', '#ff6fb1'];
 const PT_TEMPO = [{v: .6, n: '⚡ Schnell'}, {v: 1, n: 'Normal'}, {v: 1.5, n: '🐢 Gemütlich'}];
-const PT = {len: 1, tempo: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
+const PT = {len: 3, tempo: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
 const ptTok = (() => { let t = ''; try { t = sessionStorage.getItem('qw-ptok') || ''; } catch(e) {} if (!t) { t = Math.random().toString(36).slice(2, 12); try { sessionStorage.setItem('qw-ptok', t); } catch(e) {} } return t; })();
 const ptName = () => { try { return localStorage.getItem('qw-pname') || ''; } catch(e) { return ''; } };
 const ptSetName = n => { try { localStorage.setItem('qw-pname', n); } catch(e) {} };
@@ -16429,7 +16429,7 @@ function ptConnect(){
     PT.lost = 0; { const bn = document.getElementById('ptban'); if (bn && /unterbrochen/.test(bn.textContent)) bn.hidden = true; }
     if (m.t === 'lob' && Array.isArray(m.pl)) {
       PT.pl = m.pl.slice(0, PT_MAX); PT.me = m.me | 0; try { sessionStorage.setItem('qw-pslot', String(PT.me)); } catch(e) {}
-      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(m.len, .5, 2.5); if (Number.isFinite(m.tempo)) PT.tempo = clamp(m.tempo, .5, 2);
+      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(Math.round(m.len), 1, 5); if (Number.isFinite(m.tempo)) PT.tempo = clamp(m.tempo, .5, 2);
       if (m.go) PT.started = true;
       else { PT.started = false; PT.st = 'lobby'; PT.msg = ''; if (PQ.s) pgStop(); ptView(); }
     }
@@ -16512,7 +16512,7 @@ function ptView(){
       <div class="mkv"><span>Modus<small>${PT.mode === 'board' ? 'Würfeln, Münzen und Sterne, nach jeder Runde ein Minispiel' : 'Ein Minispiel nach dem anderen, Punkte nach Platz, bis ihr aufhört'}</small></span>${host ? `<div class="seg" id="ptmode"><button data-v="board" class="${PT.mode === 'board' ? 'on' : ''}">🎲 Brett</button><button data-v="endless" class="${PT.mode === 'endless' ? 'on' : ''}">♾️ Minispiele</button></div>` : `<b>${PT.mode === 'board' ? '🎲 Brett' : '♾️ Minispiele'}</b>`}</div>
       ${PT.mode === 'board' ? `<div class="mkv"><span>Karte<small>${PT.map >= 0 ? esc(PB_MAPS[PT.map].d) : 'jedes Mal eine andere'}</small></span>${host ? `<div class="seg" id="ptmap">${PB_MAPS.map((m, k) => `<button data-v="${k}" class="${PT.map === k ? 'on' : ''}">${m.ic} ${m.n}</button>`).join('')}<button data-v="-1" class="${PT.map < 0 ? 'on' : ''}">🎲 Zufall</button></div>` : `<b>${PT.map >= 0 ? PB_MAPS[PT.map].ic + ' ' + PB_MAPS[PT.map].n : '🎲 Zufall'}</b>`}</div>` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Runden</span>${host ? `<div class="stepper"><button id="ptrm" aria-label="Weniger">−</button><input id="ptrn" type="number" min="1" max="50" value="${PT.rounds}"><button id="ptrp" aria-label="Mehr">+</button></div>` : `<b>${PT.rounds}</b>`}</div>` : ''}
-      <div class="mkv"><span>Länge der Minispiele<small>Mehr oder weniger Runden und Durchgänge pro Minispiel</small></span>${host ? `<span class="mkr"><input type="range" min=".5" max="2.5" step=".1" value="${PT.len}" id="ptlen"><b>${Math.round(PT.len*100)}%</b></span>` : `<b>${Math.round(PT.len*100)}%</b>`}</div>
+      <div class="mkv"><span>Dauer pro Minispiel<small>Ungefähr, je nach Spiel und wie gut ihr spielt. Billard und Boss-Kämpfe dauern immer gleich lang.</small></span>${host ? `<div class="seg" id="ptlen">${PG_MINS.map(m => `<button data-v="${m}" class="${PT.len === m ? 'on' : ''}">${pgMinTxt(m)}</button>`).join('')}</div>` : `<b>${pgMinTxt(PT.len)}</b>`}</div>
       <div class="mkv"><span>Tempo<small>${PT.mode === 'board' ? 'Wie lange Meldungen stehen bleiben und wie schnell Bots ziehen' : 'Wie lange Ergebnisse und Ansagen stehen bleiben'}</small></span>${host ? `<div class="seg" id="pttempo">${PT_TEMPO.map(t => `<button data-v="${t.v}" class="${PT.tempo === t.v ? 'on' : ''}">${t.n}</button>`).join('')}</div>` : `<b>${(PT_TEMPO.find(t => t.v === PT.tempo) || PT_TEMPO[1]).n}</b>`}</div>
       <div class="mkv"><span>Spiele zur Wahl<small>${PT.nch === -1 ? 'jedes Minispiel wird ausgelost' : 'alle stimmen ab, „🎲 Zufall“ gibt es immer dazu'}</small></span>${host ? `<span class="mkr"><div class="stepper"><button id="ptcm"${PT.nch > 0 ? '' : ' disabled'}>−</button><input id="ptcn" value="${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '–'}" disabled><button id="ptcp"${PT.nch > 0 ? '' : ' disabled'}>+</button></div><div class="seg" id="ptcs"><button data-v="3" class="${PT.nch > 0 ? 'on' : ''}">Anzahl</button><button data-v="0" class="${PT.nch === 0 ? 'on' : ''}">Alle</button><button data-v="-1" class="${PT.nch === -1 ? 'on' : ''}">🎲 Zufall</button></div></span>` : `<b>${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '🎲 Zufall'}</b>`}</div>
       <p class="hint">${host ? (n >= 3 ? `${n} Spieler${loc ? '' : ' im Raum'}.` : `Noch ${3 - n} Spieler bis zum Start, mit Bots auffüllen.${loc ? '' : ' Zu zweit geht es über Online → Duell.'}`) : 'Warte, bis der Gastgeber startet.'}</p>
@@ -16533,7 +16533,7 @@ function ptView(){
   main.querySelectorAll('.ptkick').forEach(b => b.onclick = () => ptKick(+b.dataset.k));
   if (q('ptcopy')) q('ptcopy').onclick = () => { const l = ptLink(), ok = () => { q('ptcopy').textContent = 'Kopiert ✓'; }; if (navigator.clipboard) navigator.clipboard.writeText(l).then(ok, () => toast(l)); else toast(l); };
   main.querySelectorAll('#ptmode button').forEach(b => b.onclick = () => { PT.mode = b.dataset.v; ptSync(); });
-  const ln = q('ptlen'); if (ln) { ln.oninput = () => { ln.nextElementSibling.textContent = Math.round(+ln.value*100) + '%'; }; ln.onchange = () => { PT.len = clamp(+ln.value, .5, 2.5); ptSync(); }; }
+  main.querySelectorAll('#ptlen button').forEach(b => b.onclick = () => { PT.len = +b.dataset.v; ptSync(); });
   main.querySelectorAll('#ptmap button').forEach(b => b.onclick = () => { PT.map = +b.dataset.v; ptSync(); });
   main.querySelectorAll('#pttempo button').forEach(b => b.onclick = () => { PT.tempo = +b.dataset.v; ptSync(); });
   const setR = v => { PT.rounds = clamp(Math.round(v) || 1, 1, 50); ptSync(); };
@@ -16770,8 +16770,24 @@ function brView(){
 const PQ = {s: null, tm: [], mk: {}, taps: {}, botWas: null, last: ''};
 // immer nur eine Animationsschleife: ein neuer Frame bricht den alten ab (sonst laufen Durchgänge doppelt so schnell)
 { let r = 0; Object.defineProperty(PQ, 'raf', {get: () => r, set: v => { if (r && r !== v) cancelAnimationFrame(r); r = v; }}); }
-// Länge der Minispiele (Lobby-Regler): Runden und Durchgänge mal Faktor
+// Länge der Minispiele: Runden mal Faktor (den Faktor rechnet pgLenPlan aus der gewünschten Dauer)
 const pgR = n => Math.max(1, Math.round(n*((PQ.s && PQ.s.len) || 1)));
+/* Dauer der Minispiele: in der Lobby ungefähr in Minuten. Jedes Spiel hat eine gemessene Dauer bei Länge 1 (Sekunden, 4 Spieler),
+   daraus werden Runden (höchstens das 2,5-Fache) und Durchgänge gerechnet. Billard und Boss-Kämpfe bleiben immer gleich. */
+const PG_MINS = [1, 2, 3, 4, 5];
+const PG_DUR = {reakt: [32, 33], ham: [14, 14], zeit: [14, 14], quiz: [68, 74], sumo: [30, 34], lichtrad: [57, 47], wf: [61, 64], emoji: [59, 58], blitz: [53, 53], schaetzen: [84, 83], farbfalle: [29, 29],
+  stapel: [36, 43], flappy: [36, 45], sprint: [39, 43], huhn: [39, 39], unik: [57, 59], wer: [75, 75], lex: [81, 79], minigolf: [127, 180], kante: [174, 128], nim: [69, 124], bombe: [52, 90], maexchen: [122, 188],
+  kaese: [128, 174], karte: [93, 92], kanone: [96, 91], ordnen: [96, 96], tempo: [25, 27], senso: [110, 113], mastermind: [141, 154], rechnen: [190, 186], wortsalat: [140, 151], auktion: [68, 67], kniffel: [99, 94],
+  doodle: [106, 107], invaders: [123, 131], tetris: [154, 154], drift: [105, 106], rakete: [36, 36], tauziehen: [43, 43], spiegel: [25, 25], mines: [133, 141], sokoban: [164, 184], memory: [85, 98],
+  zeitstrahl: [47, 45], mehr: [43, 59], ssp: [30, 44], fruit: [47, 49], ballon: [28, 29]};   // Sekunden pro Durchgang bei Länge 1, mit 4 und mit 6 Spielern (gemessen mit Bots)
+const pgMinTxt = m => `≈ ${Math.max(1, Math.round(m))} min`;
+function pgLenPlan(G0, id, inner){
+  if (G0.fix || G0.boss) return {li: 1, rp: 1};
+  const D = PG_DUR[id] || [80, 80], n = pgN() || 4, u = Math.max(D[0]*.6, D[0] + (D[1] - D[0])*(n - 4)/2);   // nach Spielerzahl, 3 und 5 dazwischen bzw. weitergedacht
+  const T = Math.max(.6, (PQ.s && PQ.s.mins) || 3)*55, li = inner && !G0.repOnly ? clamp(T/u, .5, 2.5) : 1, d = u*li;
+  let rp = Math.max(1, Math.round(T/d)); if (rp*d < T*.85 && (rp + 1)*d < T*1.4) rp++;   // lieber etwas länger als zu kurz, aber nicht doppelt so lang
+  return {li, rp};
+}
 const pgHost = () => PT.role === 'host' || PT.role === 'local';
 const pgN = () => PQ.s ? PQ.s.pl.length : 0;
 // welche Spieler sitzen an diesem Gerät (Sitz 0 = linke Tasten, Sitz 1 = rechte Tasten, nur offline)
@@ -16794,7 +16810,7 @@ const pgMark = (k, fn) => { if (!(k in PQ.mk)) { PQ.mk[k] = performance.now(); i
 function pgBegin(){
   pgClear();
   if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.on = false; }
-  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: PT.len || 1, len0: PT.len || 1, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
+  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: 1, len0: PT.len || 3, mins: PT.len || 3, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
   if (PQ.s.mode === 'board') pgBoardInit(PQ.s, PT.map);
   pgOrder();
 }
@@ -16821,8 +16837,8 @@ function pgOrderIn(i){
 // Minispiel aussuchen: alle stimmen gleichzeitig ab (15 s), die meisten Stimmen gewinnen, Gleichstand wird ausgelost
 function pgPick(){
   const s = PQ.s, ids = Object.keys(PGAMES).filter(k => k !== s.prev && !PGAMES[k].boss);
-  if (s.boss) { s.len = s.len0 || 1; return pgIntro(pickOne(Object.keys(PGAMES).filter(k => PGAMES[k].boss && k !== s.prev))); }
-  if (s.nch === -1) { s.len = s.len0 || s.len || 1; return pgIntro(pickOne(ids)); }   // Einstellung „Zufall“: gar nicht abstimmen
+  if (s.boss) { s.mins = s.len0 || 3; return pgIntro(pickOne(Object.keys(PGAMES).filter(k => PGAMES[k].boss && k !== s.prev))); }
+  if (s.nch === -1) { s.mins = s.len0 || 3; return pgIntro(pickOne(ids)); }   // Einstellung „Zufall“: gar nicht abstimmen
   const opts = s.nch > 0 ? shuffle(ids.slice()).slice(0, s.nch) : ids;
   s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
   pgPush();
@@ -16842,7 +16858,7 @@ function pgVoteEnd(){
   const mx = Math.max(0, ...Object.values(c)), top = s.pk.opts.filter(id => (c[id] || 0) === mx);
   let id = pickOne(top); s.pk.win = id; s.pk.cnt = c;
   if (id === 'rnd') id = pickOne(Object.keys(PGAMES).filter(k => k !== s.prev && !PGAMES[k].boss));
-  { const lc = [0, 0, 0]; s.pk.lv.forEach(v => { if (v != null) lc[v]++; }); const m = Math.max(...lc), t = [0, 1, 2].filter(k => lc[k] === m); s.pk.lw = t.includes(1) ? 1 : pickOne(t); s.len = Math.round((s.len0 || 1)*PG_LV[s.pk.lw].f*100)/100; }
+  { const lc = [0, 0, 0]; s.pk.lv.forEach(v => { if (v != null) lc[v]++; }); const m = Math.max(...lc), t = [0, 1, 2].filter(k => lc[k] === m); s.pk.lw = t.includes(1) ? 1 : pickOne(t); s.mins = (s.len0 || 3)*PG_LV[s.pk.lw].f; }
   s.pk.go = id; pgPush();
   pgT(() => pgIntro(id), pbW(2600));
 }
@@ -16850,7 +16866,7 @@ function pgIntro(id){
   const s = PQ.s;
   s.prev = id;
   const G0 = PGAMES[id], inner = G0.inner != null ? G0.inner : (G0.inner = Object.values(G0).some(f => typeof f === 'function' && /pgR\(/.test(String(f))));
-  const rp = inner || G0.boss ? 1 : pgR(G0.rep || 1);
+  const LP = pgLenPlan(G0, id, inner), rp = LP.rp; s.len = LP.li;
   s.ph = 'intro'; s.g = {id, t: Date.now(), rp: {n: rp, k: 0, sum: s.pl.map(() => 0)}}; s.res = null; s.rdy = s.pl.map((p, i) => pgBot(i)); s.go = 0;
   pgPush();
   if (s.rdy.every(Boolean)) return pgT(pgGo, 1500);
@@ -16954,11 +16970,11 @@ function pgRender(){
       ${P.win ? '' : `<p class="hint">${me != null && seats[1] >= 0 ? `<b style="color:${PT_COL[me]}">${esc(s.pl[me].n)}</b> stimmt ab · ` : ''}${pgCdn('vt' + P.n, 15000)}</p>`}
       <div class="choices${P.opts.length > 3 ? ' many' : ''}">${P.opts.map((id, k) => `<button class="choice pgpick${P.win === id ? ' on' : ''}${!P.win && mineV === id ? ' sel' : ''}" data-id="${id}"${me != null ? '' : ' disabled'}><span class="ti">${id === 'rnd' ? '🎲' : PGAMES[id].icon}</span><b>${id === 'rnd' ? 'Zufall' : PGAMES[id].name}</b>${P.win ? `<em>${(P.cnt && P.cnt[id]) || 0} ${(P.cnt && P.cnt[id]) === 1 ? 'Stimme' : 'Stimmen'}</em>` : me != null && k < 5 ? `<em>${kbp(seat, 'r' + k)}</em>` : ''}</button>`).join('')}</div>
       ${(() => { const me1 = seats.filter(i => i >= 0), myL = me1.map(i => P.lv && P.lv[i]).find(v => v != null), cnt = [0, 1, 2].map(k => (P.lv || []).filter(v => v === k).length);
-        return `<div class="pglen"><span>Länge:</span>${PG_LV.map((L, k) => `<button class="pglv${P.win ? (P.lw === k ? ' on' : '') : myL === k ? ' sel' : ''}" data-lv="${k}"${P.win || !me1.length ? ' disabled' : ''}>${L.ic} ${L.n}${cnt[k] ? ` <em>${cnt[k]}</em>` : ''}</button>`).join('')}</div>`; })()}
+        return `<div class="pglen"><span>Länge:</span>${PG_LV.map((L, k) => `<button class="pglv${P.win ? (P.lw === k ? ' on' : '') : myL === k ? ' sel' : ''}" data-lv="${k}"${P.win || !me1.length ? ' disabled' : ''}>${L.ic} ${L.n} <small>${pgMinTxt((s.len0 || 3)*L.f)}</small>${cnt[k] ? ` <em>${cnt[k]}</em>` : ''}</button>`).join('')}</div>`; })()}
       ${P.win ? '<p class="hint">Gleich geht es los …</p>' : pgDots(s, i => P.v[i] != null)}`;
   } else if (s.ph === 'board') body = pgBoardView(s, seats);
   else if (s.ph === 'intro') { const rd = s.rdy || [], wait = seats.filter(i => i >= 0 && !rd[i] && !pgBot(i));
-    body = `<div class="pgintro">${s.boss ? '<div class="pgteam boss">⚡ Boss-Kampf: alle zusammen gegen den Boss!<small>Besiegt ihr ihn, bekommt jeder je nach Schaden 10 bis 25 🪙, der beste Kämpfer +1 ⭐. Gewinnt der Boss, verliert jeder 5 🪙.</small></div>' : ''}${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1><p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
+    body = `<div class="pgintro">${s.boss ? '<div class="pgteam boss">⚡ Boss-Kampf: alle zusammen gegen den Boss!<small>Besiegt ihr ihn, bekommt jeder je nach Schaden 10 bis 25 🪙, der beste Kämpfer +1 ⭐. Gewinnt der Boss, verliert jeder 5 🪙.</small></div>' : ''}${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1>${g.rp && g.rp.n > 1 ? `<p class="hint pgrp">${g.rp.n} Durchgänge, die Platzpunkte werden zusammengezählt</p>` : ''}<p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
       ${s.go ? '<div class="pgcd" id="pgcd"></div>' : `${wait.length ? `<div class="mbtns pgrdy">${wait.map(i => `<button class="btn pgrd" data-i="${i}" style="background:${PT_COL[i]};color:#fff">✋ ${seats[1] >= 0 ? esc(s.pl[i].n) + ': ' : ''}Bereit ${kbp(pgSeat(seats, i), 'bz')}</button>`).join('')}</div>` : '<p class="hint">Warte auf die anderen …</p>'}
       ${pgDots(s, i => rd[i])}<p class="hint">Los geht es, wenn alle bereit sind, spätestens in ${pgCdn('rd' + s.g.t, pbW(15000))}</p>`}</div>`; }
   else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
@@ -18544,8 +18560,8 @@ const pgHi = (x, S, i, n, s) => { x.font = '900 18px Nunito, sans-serif'; x.text
 // Minigolf: 2 Löcher, alle Bälle auf derselben Bahn, reihum je ein Schlag
 PGAMES.minigolf = pgShot({
   disc: 'minigolf', icon: '⛳', name: 'Minigolf', W: MG.W, H: MG.H, PULL: MG.PULL, FMS: MG.REC*MG.DT*1000,
-  rule: '2 Löcher. Alle Bälle liegen auf derselben Bahn, reihum schlägt jeder einmal. Man darf die anderen Bälle wegschießen. Wasser kostet einen Strafschlag. Nach 6 Schlägen ohne Loch zählen 7. Wer insgesamt die wenigsten Schläge braucht, gewinnt.',
-  init(s, g){ g.holes = shuffle(MG.HOLES.map((h, i) => i)).slice(0, 2); g.tot = s.pl.map(() => 0); this.hole(s, g); },
+  rule: 'Mehrere Löcher hintereinander, wie viele hängt von der eingestellten Dauer ab. Alle Bälle liegen auf derselben Bahn, reihum schlägt jeder einmal. Man darf die anderen Bälle wegschießen. Wasser kostet einen Strafschlag. Nach 6 Schlägen ohne Loch zählen 7. Wer insgesamt die wenigsten Schläge braucht, gewinnt.',
+  init(s, g){ g.holes = shuffle(MG.HOLES.map((h, i) => i)).slice(0, Math.min(MG.HOLES.length, pgR(2))); g.tot = s.pl.map(() => 0); this.hole(s, g); },
   hole(s, g){ g.hi = g.holes[g.r]; const h = MG.prep(MG.HOLES[g.hi]); g.b = s.pl.map(() => ({x: h.tee[0], y: h.tee[1], f: 0})); g.sk = s.pl.map(() => 0); g.q = pgRot(s, g.r); g.k = -1; },
   next(s, g){ return pgCyc(g, i => !g.b[i].f); },
   sim(s, g, b0, p, a, w, T, rec){ const r = MG.simN(MG.HOLES[g.hi], b0, p, Math.cos(a)*w*MG.VMAX, Math.sin(a)*w*MG.VMAX, T, rec); r.dur = r.fr.length*this.FMS; return r; },
@@ -18710,8 +18726,8 @@ PGAMES.bombe = {
 
 // Mäxchen: verdeckt würfeln, ansagen (höher als vorher, gern gelogen), der Nächste glaubt oder zweifelt an
 PGAMES.maexchen = {
-  disc: 'maexchen', icon: '🎲', name: 'Mäxchen', rule: 'Würfeln, nur du siehst die Würfel, dann ansagen, was du hast. Die Ansage muss höher sein als die letzte, lügen ist erlaubt. Der Nächste glaubt (und muss dann selbst höher würfeln) oder zweifelt an. Wer beim Aufdecken falsch liegt, verliert ein Leben. Jeder hat 2 Leben. Mäxchen (2 und 1) ist das Höchste.', keys: 'Knöpfe antippen.',
-  start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.no = 0; g.lv = s.pl.map(() => 2); g.q = pgRot(s, 0); g.k = -1; g.p = pgCyc(g, i => g.out[i] < 0); this.fresh(s); },
+  disc: 'maexchen', icon: '🎲', name: 'Mäxchen', rule: 'Würfeln, nur du siehst die Würfel, dann ansagen, was du hast. Die Ansage muss höher sein als die letzte, lügen ist erlaubt. Der Nächste glaubt (und muss dann selbst höher würfeln) oder zweifelt an. Wer beim Aufdecken falsch liegt, verliert ein Leben. Jeder hat 2 bis 4 Leben (je nach eingestellter Dauer, ❤ unten). Mäxchen (2 und 1) ist das Höchste.', keys: 'Knöpfe antippen.',
+  start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.no = 0; g.lv = s.pl.map(() => Math.min(4, pgR(2))); g.q = pgRot(s, 0); g.k = -1; g.p = pgCyc(g, i => g.out[i] < 0); this.fresh(s); },
   fresh(s){ const g = s.g; g.claim = -1; g.cb = -1; g.rv = null; this.step(s, 'roll'); },
   step(s, st){
     const g = s.g, p = g.p; g.st = st;
@@ -19517,12 +19533,12 @@ PGAMES.ssp = {
 };
 
 /* ---------- Billard: gerade Spielerzahl 8-Ball in zwei Teams, ungerade 9-Ball jeder gegen jeden ---------- */
-PGAMES.billard = pgShot({
+PGAMES.billard = Object.assign(pgShot({
   disc: 'billard', icon: '🎱', name: 'Billard', W: BD.W, H: BD.H, PULL: BD.PULL, FMS: 4*BD.DT*1000,
   rule: 'Bei gerader Spielerzahl (und im Team-Minispiel) 8-Ball in zwei Teams, die Teams stoßen abwechselnd: erst die eigene Gruppe (Volle oder Halbe), dann die 8. Bei ungerader Spielerzahl 9-Ball jeder gegen jeden: immer zuerst die niedrigste Kugel treffen, wer die 9 versenkt, gewinnt. Wer richtig versenkt, bleibt dran. Nach einem Foul ist der Nächste dran, eine versenkte Weiße kommt zurück an den Anfang. Jede eigene versenkte Kugel ist ein Punkt.',
   init(s, g){
     BD.geo(); const n = s.pl.length, T = s.br && s.team;
-    g.mode = T || n % 2 === 0 ? '8' : '9'; g.b = BD.rack(g.mode); g.grp = [null, null]; g.brk = true; g.pot = []; g.pt = s.pl.map(() => 0); g.win = null; g.end = false; g.msg = ''; g.cap = pgR(30);
+    g.mode = T || n % 2 === 0 ? '8' : '9'; g.b = BD.rack(g.mode); g.grp = [null, null]; g.brk = true; g.pot = []; g.pt = s.pl.map(() => 0); g.win = null; g.end = false; g.msg = ''; g.cap = 30;
     if (g.mode === '8') {
       const tm = T ? T.g.slice() : (() => { const t = []; shuffle(s.pl.map((p, i) => i)).forEach((i, k) => { t[i] = k % 2; }); return t; })();
       g.tm = tm; g.tq = [0, 1].map(t => shuffle(s.pl.map((p, i) => i).filter(i => tm[i] === t))); g.ti = [1, 1]; g.ct = R0(2); g.ti[1 - g.ct] = 0; g.np = g.tq[g.ct][0];
@@ -19575,7 +19591,7 @@ PGAMES.billard = pgShot({
     S.hud = g.mode === '9' ? ctx => { if (g.p != null && g.st !== 'done') pgHi(ctx, null, g.p, '', s); } : null;
     bdDraw(cv, S, now);
   },
-});
+}), {fix: true});
 
 /* ---------- Fruit Ninja: Obst zerschneiden, Bomben meiden; bei allen fliegt dasselbe Obst ---------- */
 const PG_FRUIT = ['🍉', '🍎', '🍊', '🍋', '🍐', '🍑', '🍍', '🥝'];
