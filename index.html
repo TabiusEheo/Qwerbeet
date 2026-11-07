@@ -15002,8 +15002,8 @@ function openHelp(){
     ${d ? '' : `<h3>Party (3–6 Spieler)</h3>
     <ul><li>Unter „Party“ einen Raum erstellen und den Link schicken, oder lokal an einem Gerät spielen. Freie Plätze füllt der Gastgeber mit Bots (drei Stärken).</li>
       <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, oder ♾️ nur Minispiele mit Punkten nach Platz.</li>
-      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Dauer pro Minispiel (ungefähr 1 bis 5 Minuten, Standard etwa 3; Billard und Boss-Kämpfe dauern immer gleich), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und Anzahl Minispiele zur Wahl (oder Zufall).</li>
-      <li><b>Minispiel wählen:</b> alle stimmen gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang, daneben steht, wie viele Minuten das ungefähr sind. Kurze Spiele bekommen dafür mehrere Durchgänge.</li>
+      <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Dauer pro Minispiel (ungefähr 1 bis 5 Minuten, Standard etwa 3; Billard und Boss-Kämpfe dauern immer gleich), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und wie das Minispiel bestimmt wird: abstimmen (mit Anzahl zur Wahl oder alle), 🎲 Zufall oder 👑 Host wählt. Die Dauer stellt man nur bei Zufall in der Lobby ein, sonst wird sie mit abgestimmt bzw. vom Host gewählt.</li>
+      <li><b>Minispiel wählen:</b> bei „👑 Host wählt“ sucht der Gastgeber jedes Mal aus allen Spielen aus (lokal alle am Gerät), ohne Zeitlimit. Sonst stimmen alle gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang, daneben steht, wie viele Minuten das ungefähr sind. Kurze Spiele bekommen dafür mehrere Durchgänge.</li>
       <li><b>Vor dem Minispiel</b> stehen die Regeln da, bis alle ✋ Bereit getippt haben, höchstens 15 s. Dann zählt es 3, 2, 1 herunter.</li>
       <li><b>Nach dem Minispiel</b> geht es nach 15 s von selbst weiter, der Gastgeber kann das anhalten. „Party beenden“ fragt nochmal nach.</li>
       <li>Online piept und vibriert es, wenn du dran bist oder gefragt wirst.</li></ul>
@@ -15306,7 +15306,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'b0eb4f621';
+const NET_BUILD = 'b2354c60a';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16512,9 +16512,9 @@ function ptView(){
       <div class="mkv"><span>Modus<small>${PT.mode === 'board' ? 'Würfeln, Münzen und Sterne, nach jeder Runde ein Minispiel' : 'Ein Minispiel nach dem anderen, Punkte nach Platz, bis ihr aufhört'}</small></span>${host ? `<div class="seg" id="ptmode"><button data-v="board" class="${PT.mode === 'board' ? 'on' : ''}">🎲 Brett</button><button data-v="endless" class="${PT.mode === 'endless' ? 'on' : ''}">♾️ Minispiele</button></div>` : `<b>${PT.mode === 'board' ? '🎲 Brett' : '♾️ Minispiele'}</b>`}</div>
       ${PT.mode === 'board' ? `<div class="mkv"><span>Karte<small>${PT.map >= 0 ? esc(PB_MAPS[PT.map].d) : 'jedes Mal eine andere'}</small></span>${host ? `<div class="seg" id="ptmap">${PB_MAPS.map((m, k) => `<button data-v="${k}" class="${PT.map === k ? 'on' : ''}">${m.ic} ${m.n}</button>`).join('')}<button data-v="-1" class="${PT.map < 0 ? 'on' : ''}">🎲 Zufall</button></div>` : `<b>${PT.map >= 0 ? PB_MAPS[PT.map].ic + ' ' + PB_MAPS[PT.map].n : '🎲 Zufall'}</b>`}</div>` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Runden</span>${host ? `<div class="stepper"><button id="ptrm" aria-label="Weniger">−</button><input id="ptrn" type="number" min="1" max="50" value="${PT.rounds}"><button id="ptrp" aria-label="Mehr">+</button></div>` : `<b>${PT.rounds}</b>`}</div>` : ''}
-      <div class="mkv"><span>Dauer pro Minispiel<small>Ungefähr, je nach Spiel und wie gut ihr spielt. Billard und Boss-Kämpfe dauern immer gleich lang.</small></span>${host ? `<div class="seg" id="ptlen">${PG_MINS.map(m => `<button data-v="${m}" class="${PT.len === m ? 'on' : ''}">${pgMinTxt(m)}</button>`).join('')}</div>` : `<b>${pgMinTxt(PT.len)}</b>`}</div>
+      ${PT.nch === -1 ? `<div class="mkv"><span>Dauer pro Minispiel<small>Ungefähr, je nach Spiel und wie gut ihr spielt. Billard und Boss-Kämpfe dauern immer gleich lang.</small></span>${host ? `<div class="seg" id="ptlen">${PG_MINS.map(m => `<button data-v="${m}" class="${PT.len === m ? 'on' : ''}">${pgMinTxt(m)}</button>`).join('')}</div>` : `<b>${pgMinTxt(PT.len)}</b>`}</div>` : ''}
       <div class="mkv"><span>Tempo<small>${PT.mode === 'board' ? 'Wie lange Meldungen stehen bleiben und wie schnell Bots ziehen' : 'Wie lange Ergebnisse und Ansagen stehen bleiben'}</small></span>${host ? `<div class="seg" id="pttempo">${PT_TEMPO.map(t => `<button data-v="${t.v}" class="${PT.tempo === t.v ? 'on' : ''}">${t.n}</button>`).join('')}</div>` : `<b>${(PT_TEMPO.find(t => t.v === PT.tempo) || PT_TEMPO[1]).n}</b>`}</div>
-      <div class="mkv"><span>Spiele zur Wahl<small>${PT.nch === -1 ? 'jedes Minispiel wird ausgelost' : 'alle stimmen ab, „🎲 Zufall“ gibt es immer dazu'}</small></span>${host ? `<span class="mkr"><div class="stepper"><button id="ptcm"${PT.nch > 0 ? '' : ' disabled'}>−</button><input id="ptcn" value="${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '–'}" disabled><button id="ptcp"${PT.nch > 0 ? '' : ' disabled'}>+</button></div><div class="seg" id="ptcs"><button data-v="3" class="${PT.nch > 0 ? 'on' : ''}">Anzahl</button><button data-v="0" class="${PT.nch === 0 ? 'on' : ''}">Alle</button><button data-v="-1" class="${PT.nch === -1 ? 'on' : ''}">🎲 Zufall</button></div></span>` : `<b>${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '🎲 Zufall'}</b>`}</div>
+      <div class="mkv"><span>Minispiel-Auswahl<small>${PT.nch === -1 ? 'jedes Minispiel wird ausgelost' : PT.nch === -2 ? 'der Gastgeber sucht jedes Minispiel und seine Länge aus' : 'alle stimmen über Spiel und Länge ab, bei „Anzahl“ stehen so viele Spiele zur Wahl, „🎲 Zufall“ gibt es immer dazu'}</small></span>${host ? `<span class="mkr"><div class="stepper"><button id="ptcm"${PT.nch > 0 ? '' : ' disabled'}>−</button><input id="ptcn" value="${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : '–'}" disabled><button id="ptcp"${PT.nch > 0 ? '' : ' disabled'}>+</button></div><div class="seg" id="ptcs"><button data-v="3" class="${PT.nch > 0 ? 'on' : ''}">Anzahl</button><button data-v="0" class="${PT.nch === 0 ? 'on' : ''}">Alle</button><button data-v="-1" class="${PT.nch === -1 ? 'on' : ''}">🎲 Zufall</button><button data-v="-2" class="${PT.nch === -2 ? 'on' : ''}">👑 Host wählt</button></div></span>` : `<b>${PT.nch > 0 ? PT.nch : PT.nch === 0 ? 'Alle' : PT.nch === -2 ? '👑 Host wählt' : '🎲 Zufall'}</b>`}</div>
       <p class="hint">${host ? (n >= 3 ? `${n} Spieler${loc ? '' : ' im Raum'}.` : `Noch ${3 - n} Spieler bis zum Start, mit Bots auffüllen.${loc ? '' : ' Zu zweit geht es über Online → Duell.'}`) : 'Warte, bis der Gastgeber startet.'}</p>
       <div class="mbtns">${host ? `<button class="btn" id="ptgo"${n >= 3 ? '' : ' disabled'}>Party starten</button>` : ''}<button class="btn ghost" id="ptleave">${loc ? 'Zurück' : 'Raum verlassen'}</button></div></div>`;
   }
@@ -16810,7 +16810,7 @@ const pgMark = (k, fn) => { if (!(k in PQ.mk)) { PQ.mk[k] = performance.now(); i
 function pgBegin(){
   pgClear();
   if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.on = false; }
-  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: 1, len0: PT.len || 3, mins: PT.len || 3, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
+  PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: 1, len0: PT.nch === -1 ? PT.len || 3 : 3, mins: 3, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
   if (PQ.s.mode === 'board') pgBoardInit(PQ.s, PT.map);
   pgOrder();
 }
@@ -16839,6 +16839,11 @@ function pgPick(){
   const s = PQ.s, ids = Object.keys(PGAMES).filter(k => k !== s.prev && !PGAMES[k].boss);
   if (s.boss) { s.mins = s.len0 || 3; return pgIntro(pickOne(Object.keys(PGAMES).filter(k => PGAMES[k].boss && k !== s.prev))); }
   if (s.nch === -1) { s.mins = s.len0 || 3; return pgIntro(pickOne(ids)); }   // Einstellung „Zufall“: gar nicht abstimmen
+  if (s.nch === -2) {   // „Host wählt“: der Gastgeber sucht aus allen Spielen aus (lokal: alle am Gerät), ohne Zeitlimit
+    const hs = PT.role === 'local' ? s.pl.map((p, i) => i).filter(i => !s.pl[i].bot) : [PT.me];
+    s.ph = 'pick'; s.g = null; s.res = null; s.pk = {host: true, hs, opts: [...ids.sort((a, b) => PGAMES[a].name.localeCompare(PGAMES[b].name, 'de')), 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
+    return pgPush();
+  }
   const opts = s.nch > 0 ? shuffle(ids.slice()).slice(0, s.nch) : ids;
   s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
   pgPush();
@@ -16846,9 +16851,10 @@ function pgPick(){
   pgT(pgVoteEnd, 15000);
 }
 const PG_LV = [{n: 'Kurz', ic: '⚡', f: .6}, {n: 'Normal', ic: '⏱️', f: 1}, {n: 'Lang', ic: '🐢', f: 1.6}];
-function pgLenVote(i, v){ const s = PQ.s; if (s.ph !== 'pick' || s.pk.win || !PG_LV[v]) return; s.pk.lv[i] = v; pgPush(); }
+function pgLenVote(i, v){ const s = PQ.s; if (s.ph !== 'pick' || s.pk.win || !PG_LV[v] || (s.pk.host && !s.pk.hs.includes(i))) return; if (s.pk.host) s.pk.lv = s.pk.lv.map(() => null); s.pk.lv[i] = v; pgPush(); }
 function pgPicked(i, id){
   const s = PQ.s; if (s.ph !== 'pick' || s.pk.win || s.pk.v[i] != null || !s.pk.opts.includes(id)) return;
+  if (s.pk.host) { if (!s.pk.hs.includes(i)) return; s.pk.v[i] = id; return pgVoteEnd(); }
   s.pk.v[i] = id; pgPush();
   if (s.pk.v.every(v => v != null)) pgVoteEnd();
 }
@@ -16964,14 +16970,16 @@ function pgRender(){
       <div class="pgord">${(done ? s.ord : s.pl.map((p, i) => i)).map((i, k) => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${done ? k + 1 + '.' : ''}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><span class="gn mxdice pgod">${pbDie(s.or.d[i])}</span>${!s.or.d[i] && pgMine(i) ? `<button class="btn pgor" data-i="${i}">Würfeln ${kbp(PT.role === 'local' ? seats.indexOf(i) : 0, 'bz')}</button>` : ''}</div>`).join('')}</div>
       ${done ? `<p class="hint">${esc(s.pl[s.ord[0]].n)} fängt an.</p>` : ''}`;
   } else if (s.ph === 'pick') {
-    const P = s.pk, me = P.win ? null : seats.filter(i => i >= 0).find(i => P.v[i] == null && !PQ.taps['vt' + P.n + ':' + i]), seat = me == null ? 0 : pgSeat(seats, me);
+    const P = s.pk, may = i => i >= 0 && (!P.host || P.hs.includes(i)), me = P.win ? null : seats.filter(may).find(i => P.v[i] == null && !PQ.taps['vt' + P.n + ':' + i]), seat = me == null ? 0 : pgSeat(seats, me);
+    const hostN = P.host ? (P.hs.length === 1 ? esc(s.pl[P.hs[0]].n) : 'Ihr') : '';
+    const lenRow = (() => { const me1 = seats.filter(may), myL = P.host ? (P.lv.find(v => v != null) ?? 1) : me1.map(i => P.lv && P.lv[i]).find(v => v != null), cnt = P.host ? [0, 0, 0] : [0, 1, 2].map(k => (P.lv || []).filter(v => v === k).length);
+        return `<div class="pglen"><span>Länge:</span>${PG_LV.map((L, k) => `<button class="pglv${P.win ? (P.lw === k ? ' on' : '') : myL === k ? ' sel' : ''}" data-lv="${k}"${P.win || !me1.length ? ' disabled' : ''}>${L.ic} ${L.n} <small>${pgMinTxt((s.len0 || 3)*L.f)}</small>${cnt[k] ? ` <em>${cnt[k]}</em>` : ''}</button>`).join('')}</div>`; })();
     const mineV = seats.filter(i => i >= 0).map(i => P.v[i] || PQ.taps['vt' + P.n + ':' + i]).find(v => typeof v === 'string');
-    body = `${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}</div>` : ''}<h2 class="who">${P.win ? (P.win === 'rnd' ? `🎲 Zufall: ${esc(PGAMES[P.go].name)}` : `${PGAMES[P.win].icon} ${esc(PGAMES[P.win].name)}`) : 'Abstimmen: welches Minispiel?'}</h2>
-      ${P.win ? '' : `<p class="hint">${me != null && seats[1] >= 0 ? `<b style="color:${PT_COL[me]}">${esc(s.pl[me].n)}</b> stimmt ab · ` : ''}${pgCdn('vt' + P.n, 15000)}</p>`}
-      <div class="choices${P.opts.length > 3 ? ' many' : ''}">${P.opts.map((id, k) => `<button class="choice pgpick${P.win === id ? ' on' : ''}${!P.win && mineV === id ? ' sel' : ''}" data-id="${id}"${me != null ? '' : ' disabled'}><span class="ti">${id === 'rnd' ? '🎲' : PGAMES[id].icon}</span><b>${id === 'rnd' ? 'Zufall' : PGAMES[id].name}</b>${P.win ? `<em>${(P.cnt && P.cnt[id]) || 0} ${(P.cnt && P.cnt[id]) === 1 ? 'Stimme' : 'Stimmen'}</em>` : me != null && k < 5 ? `<em>${kbp(seat, 'r' + k)}</em>` : ''}</button>`).join('')}</div>
-      ${(() => { const me1 = seats.filter(i => i >= 0), myL = me1.map(i => P.lv && P.lv[i]).find(v => v != null), cnt = [0, 1, 2].map(k => (P.lv || []).filter(v => v === k).length);
-        return `<div class="pglen"><span>Länge:</span>${PG_LV.map((L, k) => `<button class="pglv${P.win ? (P.lw === k ? ' on' : '') : myL === k ? ' sel' : ''}" data-lv="${k}"${P.win || !me1.length ? ' disabled' : ''}>${L.ic} ${L.n} <small>${pgMinTxt((s.len0 || 3)*L.f)}</small>${cnt[k] ? ` <em>${cnt[k]}</em>` : ''}</button>`).join('')}</div>`; })()}
-      ${P.win ? '<p class="hint">Gleich geht es los …</p>' : pgDots(s, i => P.v[i] != null)}`;
+    body = `${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}</div>` : ''}<h2 class="who">${P.win ? (P.win === 'rnd' ? `🎲 Zufall: ${esc(PGAMES[P.go].name)}` : `${PGAMES[P.win].icon} ${esc(PGAMES[P.win].name)}`) : P.host ? `👑 ${hostN} wählt das Minispiel` : 'Abstimmen: welches Minispiel?'}</h2>
+      ${P.win ? '' : P.host ? `<p class="hint">${me != null ? 'Erst die Länge, dann das Spiel antippen.' : 'Der Gastgeber sucht aus …'}</p>` : `<p class="hint">${me != null && seats[1] >= 0 ? `<b style="color:${PT_COL[me]}">${esc(s.pl[me].n)}</b> stimmt ab · ` : ''}${pgCdn('vt' + P.n, 15000)}</p>`}
+      ${P.host ? lenRow : ''}<div class="choices${P.opts.length > 12 ? ' allch' : P.opts.length > 3 ? ' many' : ''}">${P.opts.map((id, k) => `<button class="choice pgpick${P.win === id ? ' on' : ''}${!P.win && mineV === id ? ' sel' : ''}" data-id="${id}"${me != null ? '' : ' disabled'}><span class="ti">${id === 'rnd' ? '🎲' : PGAMES[id].icon}</span><b>${id === 'rnd' ? 'Zufall' : PGAMES[id].name}</b>${P.win ? `<em>${(P.cnt && P.cnt[id]) || 0} ${(P.cnt && P.cnt[id]) === 1 ? 'Stimme' : 'Stimmen'}</em>` : me != null && k < 5 ? `<em>${kbp(seat, 'r' + k)}</em>` : ''}</button>`).join('')}</div>
+      ${P.host ? '' : lenRow}
+      ${P.win ? '<p class="hint">Gleich geht es los …</p>' : P.host ? '' : pgDots(s, i => P.v[i] != null)}`;
   } else if (s.ph === 'board') body = pgBoardView(s, seats);
   else if (s.ph === 'intro') { const rd = s.rdy || [], wait = seats.filter(i => i >= 0 && !rd[i] && !pgBot(i));
     body = `<div class="pgintro">${s.boss ? '<div class="pgteam boss">⚡ Boss-Kampf: alle zusammen gegen den Boss!<small>Besiegt ihr ihn, bekommt jeder je nach Schaden 10 bis 25 🪙, der beste Kämpfer +1 ⭐. Gewinnt der Boss, verliert jeder 5 🪙.</small></div>' : ''}${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1>${g.rp && g.rp.n > 1 ? `<p class="hint pgrp">${g.rp.n} Durchgänge, die Platzpunkte werden zusammengezählt</p>` : ''}<p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
