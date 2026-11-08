@@ -15341,7 +15341,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'bc81e576e';
+const NET_BUILD = 'b5434051f';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16585,7 +16585,7 @@ function ptView(){
   if (q('ptjoin')) { q('ptjoin').onclick = join; q('ptc').addEventListener('keydown', e => { if (e.key === 'Enter') join(); }); }
   if (q('ptx')) q('ptx').onclick = () => { ptStop(); ptView(); };
   if (q('ptleave')) q('ptleave').onclick = ptLeave;
-  if (q('ptbot')) q('ptbot').onclick = ptAddBot;
+  if (q('ptbot')) q('ptbot').onclick = () => ptAddBot();
   main.querySelectorAll('.ptkick').forEach(b => b.onclick = () => ptKick(+b.dataset.k));
   if (q('ptcopy')) q('ptcopy').onclick = () => { const l = ptLink(), ok = () => { q('ptcopy').textContent = 'Kopiert ✓'; }; if (navigator.clipboard) navigator.clipboard.writeText(l).then(ok, () => toast(l)); else toast(l); };
   main.querySelectorAll('#ptmode button').forEach(b => b.onclick = () => { PT.mode = b.dataset.v; ptSync(); });
@@ -16594,7 +16594,7 @@ function ptView(){
   main.querySelectorAll('#pttempo button').forEach(b => b.onclick = () => { PT.tempo = +b.dataset.v; ptSync(); });
   const setR = v => { PT.rounds = clamp(Math.round(v) || 1, 1, 50); ptSync(); };
   if (q('ptrm')) { q('ptrm').onclick = () => setR(PT.rounds - 1); q('ptrp').onclick = () => setR(PT.rounds + 1); q('ptrn').addEventListener('change', e => setR(+e.target.value)); }
-  if (q('ptloc')) q('ptloc').onclick = ptAddLocal;
+  if (q('ptloc')) q('ptloc').onclick = () => ptAddLocal();
   const n2 = q('ptn2'); if (n2) n2.addEventListener('input', () => { const p = PT.pl.find(x => x.seat === 1); if (p) { p.name = ptClean(n2.value); P[1].name = p.name; } });
   main.querySelectorAll('.ptlvl').forEach(g => g.querySelectorAll('button').forEach(b => b.onclick = () => { const p = PT.pl[+g.dataset.l]; if (p) { p.lvl = +b.dataset.v; ptSync(); } }));
   const nAll = Object.keys(PGAMES).filter(k => !PGAMES[k].boss).length;   // Boss-Spiele kommen nie in die Abstimmung
