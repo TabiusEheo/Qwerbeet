@@ -2227,6 +2227,18 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .hnav button{border:0;border-radius:999px;padding:5px 11px;font:800 13px Nunito,sans-serif;background:var(--track);color:var(--ink);cursor:pointer}
 .hnav button:hover{background:var(--sun);color:#1d1a16}
 .help .card h3{scroll-margin-top:70px}
+/* Team-Minispiel: Teamleiste mit Live-Stand */
+.pglive{display:flex;align-items:stretch;justify-content:center;gap:8px;max-width:640px;margin:0 auto 10px}
+.pglive>div{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:1px;padding:6px 10px;border-radius:12px;color:#fff;text-align:center;line-height:1.25;opacity:.9;transition:transform .2s,box-shadow .2s}
+.pglive .t0{background:#3d8bff}.pglive .t1{background:#ff4d5e}
+.pglive>div.lead{opacity:1;box-shadow:0 0 0 3px #ffd34d}
+.pglive>div.my{transform:scale(1.03)}
+.pglive b{font-weight:900;font-size:.95em}.pglive b em{font-style:normal;font-size:.72em;font-weight:800;background:rgba(255,255,255,.25);padding:1px 6px;border-radius:8px;margin-left:4px;vertical-align:middle}
+.pglive span{font-size:.78em;font-weight:700;opacity:.92;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pglive small{font-size:.8em;font-weight:800}
+.pglive .vs{align-self:center;font-style:normal;font-weight:900;font-size:.75em;opacity:.6}
+.tm{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;box-shadow:0 0 0 1.5px #fff;flex:none}
+@media (max-width:520px){.pglive{gap:6px}.pglive .vs{display:none}.pglive span{white-space:normal}.pglive>div{padding:5px 7px}.pglive>div.my{transform:none}}
 </style>
 </head>
 <body>
@@ -9445,10 +9457,19 @@ const kaState = S => ({t: S.t, tg: S.tg, sf: S.sf, zn: S.zn, ob: S.ob, b: S.b.ma
 const kaMine = S => NET.on ? (NET.role === 'host' ? 0 : 1) : S.p;
 const kaAuto = p => isBot(p) || (RT.auto && (!NET.on || p === (NET.role === 'host' ? 0 : 1)));
 
+// Tischbreite passend zur Fensterhöhe; einmal je Fenstergröße festgelegt, damit der Tisch nicht springt, wenn sich der Text darüber ändert
+const CVFIT = {};
+function cvFitW(cv, W, H){
+  const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, key = [cv.id, W, H, innerWidth, innerHeight, pw].join('x');
+  if (CVFIT[key] != null) return CVFIT[key];
+  const top = cv.getBoundingClientRect().top;
+  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  if (cv.isConnected && top > 0) CVFIT[key] = css;
+  return css;
+}
 function kaDrawBase(cv, S){
   const {W, H, R} = KA, T = KA.TABLES[S.t], sf = KA.SURF[S.sf];
-  const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const css = cvFitW(cv, W, H);
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
@@ -10084,8 +10105,7 @@ function bdBall(ctx, id, x, y, R){
 const bdCol = (S, j) => S.col ? S.col[j] : j ? PAL.p2 : PAL.p1;
 function bdDraw(cv, S, now){
   const {W, H, R, L, Rr, T, B} = BD; BD.geo();
-  const pw = (cv.parentElement && cv.parentElement.clientWidth) || W, top = cv.getBoundingClientRect().top;
-  const avail = Math.max(240, (innerHeight - Math.max(0, top))/UIZ - 185*UIHR), vw = Math.round(Math.min(pw, avail*W/H)), css = vw < pw - 2 ? `${vw}px` : '';
+  const css = cvFitW(cv, W, H);
   if (cv.style.width !== css || !cv.style.aspectRatio) { cv.style.width = css; cv.style.margin = css ? '0 auto' : ''; cv.style.aspectRatio = `${W}/${H}`; }
   const w = cv.clientWidth || W, dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(w*dpr), ch = Math.round(w*H/W*dpr);
   if (cv.width !== cw || cv.height !== ch) { cv.width = cw; cv.height = ch; S.layer = null; }
@@ -15341,7 +15361,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'b5434051f';
+const NET_BUILD = 'b8cba617d';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16839,6 +16859,8 @@ const PG_DUR = {reakt: [32, 33], ham: [14, 14], zeit: [14, 14], quiz: [68, 74], 
 const pgMinTxt = m => `≈ ${Math.max(1, Math.round(m))} min`;
 function pgLenPlan(G0, id, inner){
   if (G0.fix || G0.boss) return {li: 1, rp: 1};
+  if (G0.maxR) { const r = G0.maxR(pgN() || 4), D0 = PG_DUR[id] || [80, 80], u0 = D0[0] + (D0[1] - D0[0])*((pgN() || 4) - 4)/2, T0 = Math.max(.6, (PQ.s && PQ.s.mins) || 3)*55;
+    return {li: clamp(T0/u0, .5, r/G0.base), rp: 1}; }   // Spiele mit Rundenhöchstzahl: nie mehr als maxR Runden, keine zusätzlichen Durchgänge
   const D = PG_DUR[id] || [80, 80], n = pgN() || 4, u = Math.max(D[0]*.6, D[0] + (D[1] - D[0])*(n - 4)/2);   // nach Spielerzahl, 3 und 5 dazwischen bzw. weitergedacht
   const T = Math.max(.6, (PQ.s && PQ.s.mins) || 3)*55, li = inner && !G0.repOnly ? clamp(T/u, .5, 2.5) : 1, d = u*li;
   let rp = Math.max(1, Math.round(T/d)); if (rp*d < T*.85 && (rp + 1)*d < T*1.4) rp++;   // lieber etwas länger als zu kurz, aber nicht doppelt so lang
@@ -16858,7 +16880,21 @@ const pgMine = i => pgSeats().includes(i);
 const pgBot = i => { const p = PQ.s && PQ.s.pl[i]; if (!p) return false; if (p.bot) return true; return PT.role === 'host' && PT.pl[i] && !PT.pl[i].on; };
 const pgLvl = i => PQ.s.pl[i].bot ? (PQ.s.pl[i].lvl | 0) : 1;
 const pgT = (fn, ms) => { const t = setTimeout(fn, ms); PQ.tm.push(t); return t; };
-function pgClear(){ PQ.tm.forEach(clearTimeout); PQ.tm = []; }
+function pgClear(){ PQ.tm.forEach(clearTimeout); PQ.tm = []; PQ.bq = []; }
+/* Bots bei gleichzeitigen Fragen: sie antworten mit ihrer Zeit wie geplant, aber sobald alle Menschen (die noch dabei sind) etwas
+   abgegeben haben, kommen die restlichen Bots sofort dran. Ihre Antwort und ihre gemessene Zeit stehen vorher fest, das ändert also nichts am Ergebnis. */
+function pgBotQ(fn, ms){ const e = {fn, t0: performance.now(), done: false}; (PQ.bq = PQ.bq || []).push(e); pgT(() => { if (!e.done) { e.done = true; fn(); } }, ms); }
+// Jeder spielt für sich: sind alle Menschen fertig, reichen die Bots ihr (vorher festgelegtes) Ergebnis gleich nach, statt dass alle warten
+function pgBotDone(s, g, fin){
+  if (g.rush || !g.bv || !s.pl.every((p, k) => pgBot(k) || g.sc[k] != null)) return;
+  g.rush = true; pgT(() => { if (s.g !== g || g.st !== 'run') return; s.pl.forEach((p, k) => { if (pgBot(k) && g.sc[k] == null && g.bv[k] != null) g.sc[k] = g.bv[k]; }); pgPush(); if (g.sc.every(v => v != null)) fin(); }, 1200);
+}
+function pgBotRush(){
+  const s = PQ.s; if (!s || !PQ.bq || !PQ.bq.length) return;
+  const out = s.g && s.g.out, hum = s.pl.map((p, i) => i).filter(i => !pgBot(i) && !(out && out[i] >= 0) && s.pl[i].on !== false), hin = PQ.hin || {};
+  let k = 0; PQ.bq.forEach(e => { if (!e.done && hum.every(i => (hin[i] || 0) > e.t0)) { e.done = true; pgT(e.fn, 300 + 250*k++); } });
+  PQ.bq = PQ.bq.filter(e => !e.done);
+}
 // Zeitpunkt, an dem dieses Gerät etwas zum ersten Mal gezeigt hat
 const pgMark = (k, fn) => { if (!(k in PQ.mk)) { PQ.mk[k] = performance.now(); if (fn) fn(); } return PQ.mk[k]; };
 
@@ -16876,7 +16912,7 @@ function pgOrder(){
   if (!s.br) { s.ord = shuffle(s.pl.map((p, i) => i)); s.or = {d: Array(n).fill(0), tb: []}; return pgPick(); }   // nur Minispiele: kein Würfeln, wer anfängt
   s.ph = 'order'; s.or = {d: Array(n).fill(0), tb: s.pl.map(() => Math.random())}; s.ord = null;
   pgPush();
-  s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgOrderIn(i), 700 + Math.random()*1500); });
+  s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => pgOrderIn(i), 700 + Math.random()*1500); });
   pgT(() => s.pl.forEach((p, i) => { if (!s.or.d[i]) pgOrderIn(i); }), 20000);
 }
 function pgOrderIn(i){
@@ -16904,7 +16940,7 @@ function pgPick(){
   const opts = s.nch > 0 ? shuffle(ids.slice()).slice(0, s.nch) : ids;
   s.ph = 'pick'; s.g = null; s.res = null; s.pk = {opts: [...opts, 'rnd'], v: s.pl.map(() => null), lv: s.pl.map(() => null), win: null, n: (s.pk ? s.pk.n || 0 : 0) + 1};
   pgPush();
-  s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgPicked(i, pickOne(s.pk.opts)), 1500 + Math.random()*5000); });
+  s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => pgPicked(i, pickOne(s.pk.opts)), 1500 + Math.random()*5000); });
   pgT(pgVoteEnd, 15000);
 }
 const PG_LV = [{n: 'Kurz', ic: '⚡', f: .6}, {n: 'Normal', ic: '⏱️', f: 1}, {n: 'Lang', ic: '🐢', f: 1.6}];
@@ -17001,6 +17037,7 @@ function pgRecv(s){ PQ.s = s; if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.o
 // Eingabe eines Spielers beim Gastgeber
 function pgIn(i, a){
   const s = PQ.s; if (!s || i < 0 || i >= s.pl.length || !a || typeof a.k !== 'string') return;
+  if (!pgBot(i) && !['gh', 'sp', 'dmg', 'ready', 'emo'].includes(a.k)) { (PQ.hin = PQ.hin || {})[i] = performance.now(); pgT(pgBotRush, 0); }
   if (s.ph === 'play' && s.g && PGAMES[s.g.id]) PGAMES[s.g.id].input(s, i, a);
   else if (s.ph === 'board') pgBoardIn(s, i, a);
   else if (s.ph === 'order' && a.k === 'roll') pgOrderIn(i);
@@ -17043,8 +17080,8 @@ function pgRender(){
     body = `<div class="pgintro">${s.boss ? '<div class="pgteam boss">⚡ Boss-Kampf: alle zusammen gegen den Boss!<small>Besiegt ihr ihn, bekommt jeder je nach Schaden 10 bis 25 🪙, der beste Kämpfer +1 ⭐. Gewinnt der Boss, verliert jeder 5 🪙.</small></div>' : ''}${s.br && s.team ? `<div class="pgteam">👥 Team-Minispiel: ${pbTeamTxt(s)}<small>Der Schnitt im Team zählt. Jeder im Gewinnerteam bekommt 10 🪙.</small></div>` : ''}<div class="icon">${G0.icon}</div><h1 class="big-h">${G0.name}</h1>${g.rp && g.rp.n > 1 ? `<p class="hint pgrp">${g.rp.n} Durchgänge, die Platzpunkte werden zusammengezählt</p>` : ''}<p class="rule">${G0.rule}</p><p class="hint">${G0.keys}</p>
       ${s.go ? '<div class="pgcd" id="pgcd"></div>' : `${wait.length ? `<div class="mbtns pgrdy">${wait.map(i => `<button class="btn pgrd" data-i="${i}" style="background:${PT_COL[i]};color:#fff">✋ ${seats[1] >= 0 ? esc(s.pl[i].n) + ': ' : ''}Bereit ${kbp(pgSeat(seats, i), 'bz')}</button>`).join('')}</div>` : '<p class="hint">Warte auf die anderen …</p>'}
       ${pgDots(s, i => rd[i])}<p class="hint">Los geht es, wenn alle bereit sind, spätestens in ${pgCdn('rd' + s.g.t, pbW(15000))}</p>`}</div>`; }
-  else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div><div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
-  else if (s.ph === 'play') body = (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
+  else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div>${s.br && s.team ? pgLive(s, g) : ''}<div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${pgTm(s, i)}${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
+  else if (s.ph === 'play') body = (s.br && s.team ? pgLive(s, g) : '') + (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
   else if (s.ph === 'res') {
     const ord = s.pl.map((p, i) => i).sort((a, b) => s.res.place[a] - s.res.place[b]);
     const T = s.br && s.team, R0s = s.res, tot = R0s.tot, auto = R0s.hold ? '' : pgCdn('ra' + R0s.t, pbW(15000));
@@ -17099,8 +17136,32 @@ function pgAlert(s){
   if (b) { const st = b.stars.reduce((a, v) => a + v, 0); if (PQ.stS != null && st > PQ.stS && s.ph === 'board') { Snd.init(); Snd.win(); } PQ.stS = s.ph === 'order' ? 0 : st; }
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && PQ.title) { document.title = PQ.title; PQ.title = null; } });
+// Team-Minispiel: Teampunkt vor dem Namen
+const pgTm = (s, i) => s.br && s.team ? `<i class="tm" style="background:${PB_TC[s.team.g[i]]}"></i>` : '';
+// Team-Minispiel: Leiste mit beiden Teams und dem aktuellen Stand (aus dem, was das Spiel gerade mitzählt)
+function pgLive(s, g){
+  const n = s.pl.length, al = a => s.pl.map((p, i) => i).filter(a), mem = t => al(i => s.team.g[i] === t);
+  const avg = (a, t) => { const m = mem(t).filter(i => a[i] != null); return m.length ? m.reduce((x, i) => x + a[i], 0)/m.length : null; };
+  const f1 = v => v == null ? '–' : (Math.round(v*10)/10).toLocaleString('de-DE');
+  const isA = k => Array.isArray(g[k]) && g[k].length === n;
+  const rp = g.rp && g.rp.n > 1 && g.rp.k > 0 ? t => `Durchgänge Ø ${f1(avg(g.rp.sum, t))}` : null;
+  let txt = null, val = null, low = false;
+  const L = PGAMES[g.id] && PGAMES[g.id].live && PGAMES[g.id].live(s, g);
+  if (L) { const tv = t => L.sum ? mem(t).reduce((a, i) => a + (L.v[i] || 0), 0) : avg(L.v, t); val = tv; txt = t => `${L.sum ? 'Σ' : 'Ø'} ${f1(tv(t))} ${L.lab}`; }
+  else if (isA('out') || isA('dead')) { const o = g.out || g.dead; val = t => mem(t).filter(i => o[i] < 0).length;
+    txt = t => `noch ${val(t)}/${mem(t).length} im Spiel${isA('lv') ? ` · ${mem(t).filter(i => o[i] < 0).reduce((a, i) => a + g.lv[i], 0)} ❤️` : ''}${isA('hp') ? ` · ${mem(t).filter(i => o[i] < 0).reduce((a, i) => a + Math.max(0, g.hp[i]), 0)} ❤️` : ''}`; }
+  else if (isA('tot')) { low = true; val = t => avg(g.tot, t); txt = t => `Ø ${f1(val(t))} Schläge`; }
+  else if (isA('sum')) { val = t => avg(g.sum, t); txt = t => `Ø ${f1(val(t))} Pkt.`; }
+  else if (isA('pt') && g.mode !== '8') { val = t => avg(g.pt, t); txt = t => `Ø ${f1(val(t))} Pkt.`; }
+  else if (isA('sc') && !g.sc.includes(null)) { val = t => avg(g.sc, t); txt = t => `Ø ${f1(val(t))} Pkt.`; }
+  else if (isA('sc')) { const d = t => mem(t).filter(i => g.sc[i] != null).length; val = t => d(t) ? avg(g.sc, t) : null;
+    txt = t => d(t) ? `${d(t)}/${mem(t).length} fertig · Ø ${f1(val(t))}` : `0/${mem(t).length} fertig`; }
+  const v = val ? [val(0), val(1)] : null, lead = v && v[0] != null && v[1] != null && v[0] !== v[1] ? ((v[0] > v[1]) !== low ? 0 : 1) : -1;
+  const me = s.pl.map((p, i) => i).filter(i => pgMine(i)), myT = me.length && me.every(i => s.team.g[i] === s.team.g[me[0]]) ? s.team.g[me[0]] : -1;
+  return `<div class="pglive">${[0, 1].map(t => `<div class="t${t}${lead === t ? ' lead' : ''}${myT === t ? ' my' : ''}"><b>${t ? '🔴 Rot' : '🔵 Blau'}${myT === t ? ' <em>dein Team</em>' : ''}${lead === t ? ' 👑' : ''}</b><span>${mem(t).map(i => esc(s.pl[i].n.slice(0, 10))).join(', ')}</span>${txt || rp ? `<small>${[txt && txt(t), rp && rp(t)].filter(Boolean).join(' · ')}</small>` : ''}</div>`).join('<i class="vs">gegen</i>')}</div>`;
+}
 // Zahl in einer Zeile für jeden Spieler: wer hat schon, wer fehlt
-const pgDots = (s, done) => `<div class="pgdots">${s.pl.map((p, i) => `<span class="${done(i) ? 'ok' : ''}" style="--pc:${PT_COL[i]}">${ptHead({av: p.av}, i)}</span>`).join('')}</div>`;
+const pgDots = (s, done) => `<div class="pgdots">${s.pl.map((p, i) => `<span class="${done(i) ? 'ok' : ''}" style="--pc:${s.br && s.team ? PB_TC[s.team.g[i]] : PT_COL[i]}">${ptHead({av: p.av}, i)}</span>`).join('')}</div>`;
 const pgKeyHint = (seats, kk) => PT.role === 'local' && seats[1] >= 0 ? `${kbp(0, kk)} / ${kbp(1, kk)}` : kbp(0, kk);
 
 /* ---------- Minispiele ---------- */
@@ -17158,7 +17219,7 @@ const PGAMES = {
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<div class="pgrx ${g.st === 'go' ? 'go' : 'wait'}" id="pgrx"><span id="pght">${g.st === 'go' ? 'Hämmern!' : 'Achtung …'}</span></div>
-        <div class="pgmine">${mine.map(i => `<span style="--pc:${PT_COL[i]}">${esc(s.pl[i].n)}: <b id="pgc${i}">${PQ.taps[i] || 0}</b></span>`).join('')}</div>
+        <div class="pgmine">${mine.map(i => `<span style="--pc:${PT_COL[i]}">${pgTm(s, i)}${esc(s.pl[i].n)}: <b id="pgc${i}">${PQ.taps[i] || 0}</b></span>`).join('')}</div>
         <p class="hint">${pgKeyHint(seats, 'bz')}</p>${pgDots(s, i => g.cnt[i] != null)}`;
     },
     after(s, seats){
@@ -17194,7 +17255,7 @@ const PGAMES = {
     start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); this.ask(s); },
     ask(s){ const g = s.g, q = pickOne(MC); const o = q[1].map((t, i) => [t, i]); shuffle(o);
       g.Q = {t: q[0], o: o.map(x => x[0]), c: o.findIndex(x => x[1] === q[2])}; g.st = 'ask'; g.ans = s.pl.map(() => null);
-      s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < [.45, .65, .85][L], t = 2000 + Math.random()*[6000, 4500, 3000][L]; pgT(() => pgIn(i, {k: 'ans', a: ok ? g.Q.c : pickOne([0, 1, 2, 3].filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
+      s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < [.45, .65, .85][L], t = 2000 + Math.random()*[6000, 4500, 3000][L]; pgBotQ(() => pgIn(i, {k: 'ans', a: ok ? g.Q.c : pickOne([0, 1, 2, 3].filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
       pgT(() => this.show(s), 12000); },
     input(s, i, a){ const g = s.g; if (a.k === 'ans' && g.st === 'ask' && g.ans[i] == null && a.a >= 0 && a.a < 4 && Number.isFinite(a.t)) { g.ans[i] = {a: a.a | 0, t: clamp(a.t, 0, 20000)}; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
     show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
@@ -18117,7 +18178,7 @@ function pgQ(c){
     start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
     ask(s){
       const g = s.g; g.Q = c.make(s, g.used); g.st = 'ask'; g.ans = s.pl.map(() => null);
-      s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < c.bot[L], t = c.bt(L); pgT(() => pgIn(i, {k: 'ans', a: ok ? g.Q.c : pickOne(g.Q.o.map((x, k) => k).filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
+      s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < c.bot[L], t = c.bt(L); pgBotQ(() => pgIn(i, {k: 'ans', a: ok ? g.Q.c : pickOne(g.Q.o.map((x, k) => k).filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
       pgT(() => this.show(s), c.limit);
     },
     input(s, i, a){ const g = s.g; if (a.k === 'ans' && g.st === 'ask' && g.ans[i] == null && a.a >= 0 && a.a < g.Q.o.length && Number.isFinite(a.t)) { g.ans[i] = {a: a.a | 0, t: clamp(a.t, 0, 30000)}; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
@@ -18184,7 +18245,7 @@ PGAMES.schaetzen = {
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){
     const g = s.g, q = pgPickNew(EST, g.used); g.Q = {t: q[0], v: q[1], u: q[2] || ''}; g.st = 'ask'; g.ans = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), v = Math.max(0, Math.round(g.Q.v*(1 + gauss()*[.45, .25, .12][L]))); pgT(() => pgIn(i, {k: 'est', v}), 3000 + Math.random()*8000); } });
+    s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), v = Math.max(0, Math.round(g.Q.v*(1 + gauss()*[.45, .25, .12][L]))); pgBotQ(() => pgIn(i, {k: 'est', v}), 3000 + Math.random()*8000); } });
     pgT(() => this.show(s), 22000);
   },
   input(s, i, a){ const g = s.g; if (a.k === 'est' && g.st === 'ask' && g.ans[i] == null && Number.isFinite(a.v)) { g.ans[i] = a.v; pgPush(); if (g.ans.every(v => v != null)) this.show(s); } },
@@ -18234,7 +18295,7 @@ PGAMES.farbfalle = {
   input(s, i, a){ const g = s.g; if (a.k !== 'bz' || g.st !== 'run' || !Number.isInteger(a.n) || !g.seq[a.n] || g.hit[i][a.n]) return; g.hit[i][a.n] = 1; const [w, c] = g.seq[a.n]; g.sc[i] += w === c ? 2 : -1; pgPush(); },
   cur(g){ const T = PQ.mk.frun; if (!T) return -1; const t = performance.now() - T; let k = -1; g.seq.forEach((x, j) => { if (x[2] <= t) k = j; }); return t > g.end ? -1 : k; },
   view(s, seats){ const g = s.g, mine = seats.filter(i => i >= 0);
-    return `<div class="pgff" id="pgff">${g.st === 'cd' ? 'Achtung …' : ''}</div><div class="pgmine">${mine.map(i => `<span style="--pc:${PT_COL[i]}">${esc(s.pl[i].n)}: <b>${g.sc[i]}</b></span>`).join('')}</div><p class="hint">${pgKeyHint(seats, 'bz')}</p>`; },
+    return `<div class="pgff" id="pgff">${g.st === 'cd' ? 'Achtung …' : ''}</div><div class="pgmine">${mine.map(i => `<span style="--pc:${PT_COL[i]}">${pgTm(s, i)}${esc(s.pl[i].n)}: <b>${g.sc[i]}</b></span>`).join('')}</div><p class="hint">${pgKeyHint(seats, 'bz')}</p>`; },
   after(s, seats){
     const g = s.g; if (g.st !== 'run') return; pgMark('frun');
     const el = $('#pgff'); if (el) el.onpointerdown = e => { e.preventDefault(); this.local(s, seats[0], {k: 'bz'}); };
@@ -18260,20 +18321,20 @@ function pgSolo(c){
     start(s){
       const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.sc = s.pl.map(() => null);
       pgT(() => { g.st = 'run'; pgPush();
-        s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), [v, ms] = c.botF ? c.botF(L) : [Math.max(0, Math.round(c.bot[L] + gauss()*c.bot[L]*.3)), 0]; pgT(() => pgIn(i, {k: 'sc', v}), Math.min(c.max*1000, c.botF ? ms : c.botT(v))); } });
+        s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), [v, ms] = c.botF ? c.botF(L) : [Math.max(0, Math.round(c.bot[L] + gauss()*c.bot[L]*.3)), 0]; (g.bv = g.bv || [])[i] = v; pgT(() => pgIn(i, {k: 'sc', v}), Math.min(c.max*1000, c.botF ? ms : c.botT(v))); } });
         pgT(() => this.fin(s), c.max*1000 + 4000);
       }, PG_CD);
     },
     input(s, i, a){ const g = s.g; if (a.k === 'gh' && g.st === 'run' && Array.isArray(a.d) && a.d.length < 12) { pgRT(['gh', i, a.d.map(v => +v || 0)]); return; }
       if (a.k === 'sp' && g.st === 'run' && c.spec && a.d && typeof a.d === 'object' && JSON.stringify(a.d).length < 18000) { pgRT(['sp', i, a.d]); return; }
-      if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = Math.max(0, a.v); pgPush(); if (g.sc.every(v => v != null)) this.fin(s); } },
+      if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = Math.max(0, a.v); pgPush(); if (g.sc.every(v => v != null)) this.fin(s); else pgBotDone(s, g, () => this.fin(s)); } },
     rt(s, d){ if (d[0] === 'gh' && Number.isInteger(d[1])) (PQ.gh = PQ.gh || {})[d[1]] = d[2]; if (d[0] === 'sp' && Number.isInteger(d[1]) && d[2] && s.g.seed) { PQ.sp = PQ.sp || {}; const w = d[1]; if (!PQ.sp[w]) { try { PQ.sp[w] = c.make(pgRng(s.g.seed), s.g.seed, 0, w); } catch(e) { PQ.sp[w] = {}; } PQ.sp[w].press = PQ.sp[w].key = PQ.sp[w].shoot = PQ.sp[w].touch = null; } const T = PQ.sp[w], rv = v => { if (!v || typeof v !== 'object') return v; if (Array.isArray(v.$s)) return new Set(v.$s); if (Array.isArray(v.$m)) return new Map(v.$m); for (const k in v) v[k] = rv(v[k]); return v; }; for (const k in d[2]) T[k] = rv(d[2][k]); } },
     rk: c.rk,
     fin(s){ PQ.sp = {}; PQ.wt = null; const g = s.g; if (g.st !== 'run') return; const v = g.sc.map(x => x == null ? (c.low ? 1e9 : 0) : x); pgResult(v.map(x => c.low ? -x : x), v.map(x => c.fmt(x))); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<p class="hint">${g.st === 'cd' ? `Gleich geht es los … ${pgCdn('cd' + g.seed, PG_CD)}` : c.hint || 'Jeder spielt dieselbe Strecke'} · ${c.rk ? `<span class="kbonly">${rtKeyHint(c.rk, 0)}</span>` : pgKeyHint(seats, 'bz')}</p>
-        <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
+        <div class="pgsolo n${mine.length}">${mine.map(i => `<div class="pgsf" style="--pc:${PT_COL[i]}"><b>${pgTm(s, i)}${esc(s.pl[i].n)}</b><canvas class="pgcv2" id="pgs${i}" data-i="${i}" style="aspect-ratio:${c.W}/${c.H};width:min(100%, calc((100vh / var(--z) - 330px*var(--hr))*${(c.W/c.H).toFixed(3)}))"></canvas></div>`).join('')}</div>
         ${c.spec && g.st === 'run' && mine.length && mine.every(i => PQ.solo && PQ.solo[i] && PQ.solo[i].done) ? `<div class="pgwatch"><span>👀 Zuschauen:</span>${s.pl.map((p, k) => mine.includes(k) || pgBot(k) ? '' : `<button class="pglv${PQ.wt === k ? ' sel' : ''}" data-wt="${k}" style="color:${PT_COL[k]}">${esc(p.n)}${g.sc[k] != null ? ' ✓' : ''}</button>`).join('') || '<em>nur Bots, nichts zu sehen</em>'}</div>` : ''}
         ${pgDots(s, i => g.sc[i] != null)}`;
     },
@@ -18432,11 +18493,11 @@ const pgShuf = n => shuffle(Array.from({length: n}, (_, k) => k));
 
 // Letzter Mann: jeder wählt heimlich 1–5. Wer eine Zahl allein gewählt hat, bekommt so viele Punkte.
 PGAMES.unik = {
-  icon: '🖐️', name: 'Letzter Mann', only: true,
+  icon: '🖐️', name: 'Letzter Mann', only: true, maxR: n => n <= 3 ? 12 : 15, base: 7,
   rule: 'Mehrere Runden. Jeder wählt heimlich eine Zahl von 1 bis 5. Wer eine Zahl als Einziger gewählt hat, bekommt so viele Punkte. Haben mehrere dieselbe Zahl, gehen alle leer aus.', keys: 'Zahl antippen oder Auswahltasten 1–5 der eigenen Reihe.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); this.ask(s); },
   ask(s){ const g = s.g; g.st = 'ask'; g.ch = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'n', v: pickOne([1, 2, 2, 3, 3, 4, 4, 5, 5, 5])}), 1000 + Math.random()*4000); });
+    s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => pgIn(i, {k: 'n', v: pickOne([1, 2, 2, 3, 3, 4, 4, 5, 5, 5])}), 1000 + Math.random()*4000); });
     pgT(() => this.show(s), 15000); },
   input(s, i, a){ const g = s.g; if (a.k === 'n' && g.st === 'ask' && g.ch[i] == null && a.v >= 1 && a.v <= 5) { g.ch[i] = a.v | 0; pgPush(); if (g.ch.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
@@ -18469,12 +18530,12 @@ PGAMES.wer = {
   rule: "3 Fragen. Jeder beantwortet heimlich die Frage. Dann werden alle Antworten gezeigt, und jeder rät, wer was geschrieben hat. +1 für jede richtige Zuordnung, +1 für den Schreiber für jeden, der falsch lag.", keys: 'Antwort tippen, dann bei jeder Antwort einen Namen antippen.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){ const g = s.g, q = pgPickNew(PG_WER, g.used); g.Q = q[0]; g.st = 'write'; g.txt = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'txt', v: pickOne(q[1])}), 3000 + Math.random()*8000); });
+    s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => pgIn(i, {k: 'txt', v: pickOne(q[1])}), 3000 + Math.random()*8000); });
     pgT(() => this.toGuess(s), 45000); },
   toGuess(s){ const g = s.g; if (g.st !== 'write') return; pgClear();
     s.pl.forEach((p, i) => { if (!g.txt[i]) g.txt[i] = '(keine Antwort)'; });
     g.ord = pgShuf(s.pl.length); g.no = s.pl.map(() => pgShuf(s.pl.length)); g.st = 'guess'; g.gs = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => { const m = {}; g.ord.forEach(a => { if (a !== i) m[a] = pickOne(s.pl.map((x, k) => k).filter(k => k !== i)); }); pgIn(i, {k: 'gs', m}); }, 4000 + Math.random()*8000); });
+    s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => { const m = {}; g.ord.forEach(a => { if (a !== i) m[a] = pickOne(s.pl.map((x, k) => k).filter(k => k !== i)); }); pgIn(i, {k: 'gs', m}); }, 4000 + Math.random()*8000); });
     pgPush(); pgT(() => this.show(s), 40000); },
   input(s, i, a){ const g = s.g;
     if (a.k === 'txt' && g.st === 'write' && g.txt[i] == null && typeof a.v === 'string') { g.txt[i] = a.v.slice(0, 80) || '…'; pgPush(); if (g.txt.every(v => v != null)) this.toGuess(s); }
@@ -18511,12 +18572,12 @@ PGAMES.lex = {
   rule: '3 seltene Wörter. Jeder erfindet eine Erklärung, die echt klingt. Dann werden alle zusammen mit der echten gezeigt. +2, wenn du die echte findest, +1 für jeden, der auf deine Erklärung hereinfällt.', keys: 'Erklärung tippen, dann eine Erklärung antippen.',
   start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){ const g = s.g, w = pgPickNew(PG_LEX, g.used); g.W = w[0]; g.R = w[1]; g.st = 'write'; g.txt = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'txt', v: pickOne(PG_LEXB)}), 4000 + Math.random()*9000); });
+    s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => pgIn(i, {k: 'txt', v: pickOne(PG_LEXB)}), 4000 + Math.random()*9000); });
     pgT(() => this.toVote(s), 50000); },
   toVote(s){ const g = s.g; if (g.st !== 'write') return; pgClear();
     s.pl.forEach((p, i) => { if (!g.txt[i]) g.txt[i] = pickOne(PG_LEXB); });
     g.ord = shuffle([-1, ...s.pl.map((p, i) => i)]); g.st = 'vote'; g.vt = s.pl.map(() => null);
-    s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => { const L = pgLvl(i), opts = g.ord.filter(a => a !== i); pgIn(i, {k: 'vt', v: Math.random() < [.3, .5, .7][L] ? -1 : pickOne(opts)}); }, 3000 + Math.random()*7000); });
+    s.pl.forEach((p, i) => { if (pgBot(i)) pgBotQ(() => { const L = pgLvl(i), opts = g.ord.filter(a => a !== i); pgIn(i, {k: 'vt', v: Math.random() < [.3, .5, .7][L] ? -1 : pickOne(opts)}); }, 3000 + Math.random()*7000); });
     pgPush(); pgT(() => this.show(s), 35000); },
   input(s, i, a){ const g = s.g;
     if (a.k === 'txt' && g.st === 'write' && g.txt[i] == null && typeof a.v === 'string') { g.txt[i] = a.v.slice(0, 80) || '…'; pgPush(); if (g.txt.every(v => v != null)) this.toVote(s); }
@@ -18570,7 +18631,7 @@ function pgShot(c){
       if (p < 0) { g.st = 'done'; pgPush(); pgT(() => { if (c.round(s, g)) { this.turn(s); } }, pbW(3000)); return; }
       g.p = p; g.st = 'aim'; if (c.prep) c.prep(s, g, p);
       pgPush();
-      const auto = () => { const T0 = pgClk() + 3500; c.plan(s, g, p, pgBot(p) ? pgLvl(p) : 0, T0, (a, w) => { const go = () => pgIn(p, {k: 'shot', a, w, T: T0, n: g.n + 1}); const d = T0 - pgClk(); d > 0 ? pgT(go, d) : go(); }); };
+      const auto = () => { const T0 = pgClk() + (pgBot(p) ? 1700 : 3500); c.plan(s, g, p, pgBot(p) ? pgLvl(p) : 0, T0, (a, w) => { const go = () => pgIn(p, {k: 'shot', a, w, T: T0, n: g.n + 1}); const d = T0 - pgClk(); d > 0 ? pgT(go, d) : go(); }); };
       if (pgBot(p)) pgT(auto, 300); else pgT(auto, 30000);   // wer nicht stößt, für den stößt nach 30 Sekunden der Computer
     },
     input(s, i, a){
@@ -18723,8 +18784,8 @@ setInterval(() => { document.querySelectorAll('.pgcdn').forEach(e => { const r =
 // Zugzeit beim Gastgeber: läuft sie ab, macht fn den Zug; ein neuer Zug macht alte Uhren ungültig
 function pgTurnT(s, ms, fn){ const g = s.g, tt = g.tt = (g.tt || 0) + 1; pgT(() => { if (s.g === g && g.tt === tt) fn(tt); }, ms); return tt; }
 const pgSeat = (seats, i) => PT.role === 'local' ? Math.max(0, seats.indexOf(i)) : 0;
-const pgChips = (s, f) => `<div class="pgchips">${s.pl.map((p, i) => { const [cls, t] = f(i); return `<span class="${cls || ''}" style="--pc:${PT_COL[i]}"><b>${esc(p.n.slice(0, 12))}</b>${t ? `<small>${t}</small>` : ''}</span>`; }).join('')}</div>`;
-const pgWho = (s, i, txt) => `<h2 class="who" style="color:${PT_COL[i]}">${esc(s.pl[i].n)} ${txt}</h2>`;
+const pgChips = (s, f) => `<div class="pgchips">${s.pl.map((p, i) => { const [cls, t] = f(i); return `<span class="${cls || ''}" style="--pc:${PT_COL[i]}"><b>${pgTm(s, i)}${esc(p.n.slice(0, 12))}</b>${t ? `<small>${t}</small>` : ''}</span>`; }).join('')}</div>`;
+const pgWho = (s, i, txt) => `<h2 class="who" style="color:${PT_COL[i]}">${pgTm(s, i)}${esc(s.pl[i].n)} ${txt}</h2>`;
 // Ausscheiden: Rang nach Reihenfolge, wer übrig bleibt, gewinnt
 const pgOutRes = (s, g) => { const sc = g.out.map(v => v < 0 ? 999 : v); pgResult(sc, sc.map(v => v === 999 ? 'übrig' : `als ${v}. raus`)); };
 const pgAlive = (s, g) => s.pl.map((p, i) => i).filter(i => g.out[i] < 0);
@@ -18738,7 +18799,7 @@ PGAMES.nim = {
     const g = s.g, p = g.p = pgCyc(g, i => g.out[i] < 0); g.st = 'turn';
     const tt = pgTurnT(s, 12000, t => this.input(s, p, {k: 'take', n: 1, tt: t}));
     pgPush();
-    if (pgBot(p)) pgT(() => { const L = pgLvl(p), n = Math.random() < [.55, .3, .08][L] ? 1 + R0(3) : botNim([g.n], [1, 2, 3])[1]; this.input(s, p, {k: 'take', n: Math.min(n, g.n), tt}); }, 1000 + Math.random()*1500);
+    if (pgBot(p)) pgT(() => { const L = pgLvl(p), n = Math.random() < [.55, .3, .08][L] ? 1 + R0(3) : botNim([g.n], [1, 2, 3])[1]; this.input(s, p, {k: 'take', n: Math.min(n, g.n), tt}); }, 450 + Math.random()*600);
   },
   input(s, i, a){
     const g = s.g; if (a.k !== 'take' || g.st !== 'turn' || i !== g.p || a.tt !== g.tt || ![1, 2, 3].includes(a.n) || a.n > g.n) return;
@@ -18812,7 +18873,7 @@ PGAMES.maexchen = {
       if (st === 'claim') { let r = g.real > g.claim ? g.real : Math.min(20, g.claim + 1 + R0(2)); if (g.real > g.claim && L > 0 && Math.random() < .15) r = Math.min(20, r + 1); return this.input(s, p, {k: 'claim', r, tt}); }
       const pr = MX.pAtLeast(g.claim), th = [.3, .4, .45][L];
       this.input(s, p, {k: g.claim >= 20 || pr < th + (Math.random() - .5)*.2 ? 'doubt' : 'believe', tt});
-    }, 1200 + Math.random()*1600);
+    }, 550 + Math.random()*700);
   },
   input(s, i, a){
     const g = s.g; if (i !== g.p || a.tt !== g.tt) return;
@@ -18847,13 +18908,14 @@ PGAMES.maexchen = {
 
 // Käsekästchen: reihum Linien ziehen, wer ein Kästchen schließt, bekommt es und ist nochmal dran
 PGAMES.kaese = {
+  live(s, g){ return g.B ? {v: s.pl.map((p, k) => g.B.filter(v => v === k).length), lab: 'Kästchen'} : null; },
   disc: 'kaese', icon: '🧀', name: 'Käsekästchen', rule: 'Reihum zieht jeder eine Linie zwischen zwei Punkten. Wer die vierte Seite eines Kästchens zieht, bekommt es und ist gleich nochmal dran. Wer am Ende die meisten Kästchen hat, gewinnt. 15 Sekunden pro Zug.', keys: 'Linie antippen.',
   K(g){ if (!PQ.kk || PQ.kk.n !== g.n) PQ.kk = {n: g.n, K: KK.make(Array.from({length: g.n}, () => '#'.repeat(g.n)))}; return PQ.kk.K; },
   start(s){ const g = s.g, N = s.pl.length; g.n = N <= 3 ? 5 : N <= 4 ? 6 : 7; const K = this.K(g); g.L = K.valid.map(v => v ? 0 : 1); g.B = K.on.map(v => v ? -1 : -9); g.who = g.L.map(() => -1); g.q = pgRot(s, 0); g.k = -1; g.p = pgCyc(g, () => true); this.turn(s); },
   turn(s){ const g = s.g, p = g.p; g.st = 'turn';
     const tt = pgTurnT(s, 15000, t => this.input(s, p, {k: 'line', l: KK.pick(this.K(g), g.L.slice(), g.B.slice(), 0), tt: t}));
     pgPush();
-    if (pgBot(p)) pgT(() => this.input(s, p, {k: 'line', l: KK.pick(this.K(g), g.L.slice(), g.B.slice(), pgLvl(p)), tt}), 900 + Math.random()*1300); },
+    if (pgBot(p)) pgT(() => this.input(s, p, {k: 'line', l: KK.pick(this.K(g), g.L.slice(), g.B.slice(), pgLvl(p)), tt}), 400 + Math.random()*500); },
   input(s, i, a){
     const g = s.g, K = this.K(g); if (a.k !== 'line' || g.st !== 'turn' || i !== g.p || a.tt !== g.tt || !Number.isInteger(a.l) || a.l < 0 || a.l >= K.N || g.L[a.l]) return;
     g.who[a.l] = i; g.last = a.l; const got = KK.play(K, g.L, g.B, a.l, i);
@@ -18884,7 +18946,7 @@ PGAMES.karte = {
     const g = s.g; g.m = Math.random() < .5 ? 'welt' : 'de'; const m = MAPS[g.m], L = m.places();
     let c, n = 0; do c = pickOne(L); while (g.used.includes(c[0]) && ++n < 40); g.used.push(c[0]); g.c = c; g.st = 'ask'; g.ans = s.pl.map(() => null);
     s.pl.forEach((p, i) => { if (!pgBot(i)) return; const sd = m.sd[pgLvl(i)], km = Math.abs(gauss())*sd, a = Math.random()*Math.PI*2;
-      pgT(() => { const la = clamp(c[1] + km*Math.sin(a)/111, -80, 84), lo = c[2] + km*Math.cos(a)/(111*Math.max(.2, Math.cos(c[1]*Math.PI/180))); pgIn(i, {k: 'll', la, lo: ((lo + 540) % 360) - 180}); }, 2500 + Math.random()*6000); });
+      pgBotQ(() => { const la = clamp(c[1] + km*Math.sin(a)/111, -80, 84), lo = c[2] + km*Math.cos(a)/(111*Math.max(.2, Math.cos(c[1]*Math.PI/180))); pgIn(i, {k: 'll', la, lo: ((lo + 540) % 360) - 180}); }, 2500 + Math.random()*6000); });
     pgT(() => this.show(s), 16000);
   },
   input(s, i, a){ const g = s.g; if (a.k === 'll' && g.st === 'ask' && !g.ans[i] && Number.isFinite(a.la) && Number.isFinite(a.lo)) { g.ans[i] = [clamp(a.la, -90, 90), clamp(a.lo, -180, 180)]; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
@@ -18945,7 +19007,7 @@ PGAMES.kanone = {
     const p = g.p = pgCyc(g, i => g.out[i] < 0); g.turns++; g.wind = Math.round((Math.random()*2 - 1)*10)/10; g.st = 'aim'; g.lab = '';
     const tt = pgTurnT(s, 30000, () => this.bot(s, p, 0));
     pgPush();
-    if (pgBot(p)) pgT(() => { if (g.tt === tt) this.bot(s, p, pgLvl(p)); }, 1500 + Math.random()*1200);
+    if (pgBot(p)) pgT(() => { if (g.tt === tt) this.bot(s, p, pgLvl(p)); }, 700 + Math.random()*500);
   },
   bot(s, p, L){
     const g = s.g, T = this.H(g), al = g.out.map(v => v < 0), tg = pgAlive(s, g).filter(i => i !== p).sort((a, b) => Math.abs(g.xs[a] - g.xs[p]) - Math.abs(g.xs[b] - g.xs[p]) + (g.hp[a] - g.hp[b])*.5)[0];
@@ -19014,7 +19076,7 @@ PGAMES.ordnen = {
     if (!c.length) { this.list(g); c = g.pool.filter(x => !g.used.includes(x.n) && g.L.every(y => this.ok(g, x, y))); }
     g.cur = pickOne(c); g.used.push(g.cur.n); g.st = 'ask'; g.ans = s.pl.map(() => null); g.res = null;
     const right = g.L.filter(x => x.v < g.cur.v).length;
-    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const ok = Math.random() < [.5, .7, .85][pgLvl(i)], alt = [right - 1, right + 1].filter(v => v >= 0 && v <= g.L.length), t = 2000 + Math.random()*8000; pgT(() => pgIn(i, {k: 'pos', at: ok || !alt.length ? right : pickOne(alt), t}), t); });
+    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const ok = Math.random() < [.5, .7, .85][pgLvl(i)], alt = [right - 1, right + 1].filter(v => v >= 0 && v <= g.L.length), t = 2000 + Math.random()*8000; pgBotQ(() => pgIn(i, {k: 'pos', at: ok || !alt.length ? right : pickOne(alt), t}), t); });
     pgT(() => this.show(s), 21000); pgPush();
   },
   input(s, i, a){ const g = s.g; if (a.k === 'pos' && g.st === 'ask' && !g.ans[i] && Number.isInteger(a.at) && Number.isFinite(a.t)) { g.ans[i] = {at: a.at, t: a.t}; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
@@ -19050,16 +19112,16 @@ function pgLocal(c){
     start(s){
       const g = s.g; g.seed = 1 + R0(1e9); g.st = 'cd'; g.sc = s.pl.map(() => null); if (c.init) c.init(s, g);
       pgT(() => { g.st = 'run'; pgPush();
-        s.pl.forEach((p, i) => { if (!pgBot(i)) return; const [v, ms] = c.bot(s, g, pgLvl(i)); pgT(() => pgIn(i, {k: 'sc', v}), Math.min(ms, c.max*1000)); });
+        s.pl.forEach((p, i) => { if (!pgBot(i)) return; const [v, ms] = c.bot(s, g, pgLvl(i)); (g.bv = g.bv || [])[i] = v; pgT(() => pgIn(i, {k: 'sc', v}), Math.min(ms, c.max*1000)); });
         pgT(() => this.fin(s), c.max*1000 + 2500);
       }, PG_CD);
     },
-    input(s, i, a){ const g = s.g; if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = a.v; pgPush(); if (g.sc.every(v => v != null)) this.fin(s); } },
+    input(s, i, a){ const g = s.g; if (a.k === 'sc' && g.st === 'run' && g.sc[i] == null && Number.isFinite(a.v)) { g.sc[i] = a.v; pgPush(); if (g.sc.every(v => v != null)) this.fin(s); else pgBotDone(s, g, () => this.fin(s)); } },
     fin(s){ const g = s.g; if (g.st !== 'run') return; g.st = 'done'; const raw = g.sc.slice(); pgResult(raw.map(v => v == null ? -1e9 : c.low ? -v : v), raw.map(v => v == null ? 'nicht fertig' : c.fmt(v))); },
     view(s, seats){
       const g = s.g, mine = seats.filter(i => i >= 0);
       return `<p class="hint">${g.st === 'cd' ? `Gleich geht es los … ${pgCdn('cd' + g.seed, PG_CD)}` : `${c.hint || 'Jeder spielt für sich'} · ${pgCdn('lc' + g.seed, c.max*1000)}`}</p>
-        <div class="pglocs n${mine.length}">${mine.map(i => `<div class="pgloc" id="pgl${i}" style="--pc:${PT_COL[i]}">${g.st === 'cd' ? `<b class="pglnm">${esc(s.pl[i].n)}</b><p class="hint">Achtung …</p>` : ''}</div>`).join('')}</div>${g.st === 'run' ? pgDots(s, i => g.sc[i] != null) : ''}`;
+        <div class="pglocs n${mine.length}">${mine.map(i => `<div class="pgloc" id="pgl${i}" style="--pc:${PT_COL[i]}">${g.st === 'cd' ? `<b class="pglnm">${pgTm(s, i)}${esc(s.pl[i].n)}</b><p class="hint">Achtung …</p>` : ''}</div>`).join('')}</div>${g.st === 'run' ? pgDots(s, i => g.sc[i] != null) : ''}`;
     },
     after(s, seats){
       const g = s.g; if (g.st !== 'run') return; const mine = seats.filter(i => i >= 0);
@@ -19068,7 +19130,7 @@ function pgLocal(c){
         const key = s.ri + ':' + g.seed + ':' + i; let L = PQ.lc[i];
         if (!L || L.key !== key) { L = PQ.lc[i] = {key, i, el: document.createElement('div'), done: false, t0: performance.now()}; L.el.className = 'pglin';
           L.send = v => { if (L.done) return; L.done = true; pgSend(i, {k: 'sc', v}); };
-          c.mount(L, s, g, i, mine.length > 1 ? `<b class="pglnm">${esc(s.pl[i].n)}</b>` : ''); }
+          c.mount(L, s, g, i, mine.length > 1 ? `<b class="pglnm">${pgTm(s, i)}${esc(s.pl[i].n)}</b>` : ''); }
         const box = $('#pgl' + i); if (box && L.el.parentNode !== box) { box.appendChild(L.el); if (L.refocus) L.refocus(); }
       });
     },
@@ -19144,7 +19206,7 @@ function pgType(c){
     start(s){ const g = s.g; g.k = 0; g.sum = s.pl.map(() => 0); g.used = []; this.ask(s); },
     ask(s){
       const g = s.g; g.Q = c.make(g); g.st = 'ask'; g.ok = s.pl.map(() => null);
-      s.pl.forEach((p, i) => { if (!pgBot(i) || Math.random() > [.6, .8, .93][pgLvl(i)]) return; const t = c.bt(g, pgLvl(i)); if (t < c.limit) pgT(() => pgIn(i, {k: 'ok', t: Math.round(t), a: g.Q.a}), t); });
+      s.pl.forEach((p, i) => { if (!pgBot(i) || Math.random() > [.6, .8, .93][pgLvl(i)]) return; const t = c.bt(g, pgLvl(i)); if (t < c.limit) pgBotQ(() => pgIn(i, {k: 'ok', t: Math.round(t), a: g.Q.a}), t); });
       pgT(() => this.show(s), c.limit + 500); pgPush();
     },
     input(s, i, a){ const g = s.g; if (a.k === 'ok' && g.st === 'ask' && g.ok[i] == null && Number.isFinite(a.t) && c.check(g.Q, String(a.a))) { g.ok[i] = a.t; pgPush(); if (g.ok.every(v => v != null)) this.show(s); } },
@@ -19183,11 +19245,12 @@ PGAMES.wortsalat = pgType({
 
 // Auktion: alle bieten verdeckt, das höchste Gebot bekommt den Gegenstand, alle zahlen ihr Gebot
 PGAMES.auktion = {
+  live(s, g){ return g.it ? {v: g.it, lab: 'Stück'} : null; },
   disc: 'auktion', icon: '💰', name: 'Auktion', rule: 'Mehrere Gegenstände, jeder hat 100 Credits für alle zusammen. Alle bieten gleichzeitig und verdeckt. Das höchste Gebot bekommt den Gegenstand, bei Gleichstand keiner. Bezahlen muss jeder sein Gebot. Wer am Ende die meisten Gegenstände hat, gewinnt, bei Gleichstand zählen die übrigen Credits.', keys: 'Gebot eintippen und mit Enter abschicken.',
   IT: ['Neon-Katana', 'Enterhaken', 'Raketenstiefel', 'Glitch-Chip', 'Holo-Maske', 'Cyber-Arm', 'Drohnen-Schwarm', 'Nachtsicht-Visier', 'Chrom-Herz', 'Daten-Kristall', 'Tarnumhang', 'Plasma-Seil'],
   start(s){ const g = s.g; g.k = 0; g.m = s.pl.map(() => 100*Math.max(1, Math.round(pgR(6)/6))); g.it = s.pl.map(() => 0); g.items = shuffle(this.IT.slice()).slice(0, pgR(6)); while (g.items.length < pgR(6)) g.items.push(pickOne(this.IT)); this.ask(s); },
   ask(s){ const g = s.g; g.st = 'ask'; g.b = s.pl.map(() => null); g.w = -1;
-    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const left = g.items.length - g.k, base = g.m[i]/left, v = clamp(Math.round(base*(.5 + Math.random()*[1.4, 1.2, 1][pgLvl(i)]) + (pgLvl(i) === 2 && Math.random() < .3 ? 7 : 0)), 0, g.m[i]); pgT(() => pgIn(i, {k: 'bid', v}), 2000 + Math.random()*6000); });
+    s.pl.forEach((p, i) => { if (!pgBot(i)) return; const left = g.items.length - g.k, base = g.m[i]/left, v = clamp(Math.round(base*(.5 + Math.random()*[1.4, 1.2, 1][pgLvl(i)]) + (pgLvl(i) === 2 && Math.random() < .3 ? 7 : 0)), 0, g.m[i]); pgBotQ(() => pgIn(i, {k: 'bid', v}), 2000 + Math.random()*6000); });
     pgT(() => this.show(s), 21000); pgPush(); },
   input(s, i, a){ const g = s.g; if (a.k === 'bid' && g.st === 'ask' && g.b[i] == null && Number.isInteger(a.v) && a.v >= 0 && a.v <= g.m[i]) { g.b[i] = a.v; pgPush(); if (g.b.every(v => v != null)) this.show(s); } },
   show(s){ const g = s.g; if (g.st !== 'ask') return; pgClear(); g.st = 'show';
@@ -19229,7 +19292,7 @@ PGAMES.kniffel = pgLocal({
       L.el.innerHTML = `${nm}<div class="kdice">${d.map((v, k) => `<button class="kd${hd[k] ? ' held' : ''}${rolled.includes(k) ? ' roll' : ''}${v ? '' : ' blank'}" data-dk="${k}"${!v || rl >= 3 || L.done ? ' disabled' : ''}>${v ? pip(v) : ''}<small>${hd[k] ? 'gehalten' : ''}</small></button>`).join('')}</div>
         <div class="kinfo">${info}</div>
         ${L.done ? '' : `<div class="mbtns"><button class="btn pgkr"${rl >= 3 ? ' disabled' : ''}>🎲 ${rl ? `Nochmal (${3 - rl})` : 'Würfeln'}</button></div>`}
-        <div class="kgrid pgkg"><div class="kblk"><div class="kr k1 kh"><span></span><b>${esc(s.pl[i].n)}</b></div>${rows}<div class="kr k1 ks kt"><span>Gesamt</span><i class="kv">${tot()}</i></div></div></div>`;
+        <div class="kgrid pgkg"><div class="kblk"><div class="kr k1 kh"><span></span><b>${pgTm(s, i)}${esc(s.pl[i].n)}</b></div>${rows}<div class="kr k1 ks kt"><span>Gesamt</span><i class="kv">${tot()}</i></div></div></div>`;
       rolled = [];
       L.el.querySelectorAll('[data-dk]').forEach(b => b.onpointerdown = e => { e.preventDefault(); hold(+b.dataset.dk); });
       const r = L.el.querySelector('.pgkr'); if (r) r.onpointerdown = e => { e.preventDefault(); roll(); };
@@ -19533,7 +19596,7 @@ function pgChain(isT){
       g.nx = nx; g.used.push(nx); g.st = 'ask'; g.ans = s.pl.map(() => null); g.qn++; g.allbad = false;
       const truth = val(g, nx) > val(g, g.ref) ? 1 : 0, e = ease(g, val(g, g.ref), val(g, nx)), qn = g.qn;
       pgAlive(s, g).forEach(i => { if (!pgBot(i)) return; const L = pgLvl(i), pc = clamp(.52 + e*.4 + [-.1, 0, .08][L], .5, .97), t = 1500 + Math.random()*[5000, 3800, 2600][L];
-        pgT(() => this.input(s, i, {k: 'ans', a: Math.random() < pc ? truth : 1 - truth, q: qn}), t); });
+        pgBotQ(() => this.input(s, i, {k: 'ans', a: Math.random() < pc ? truth : 1 - truth, q: qn}), t); });
       pgPush(); pgT(() => this.show(s), T + 700);
     },
     input(s, i, a){ const g = s.g; if (a.k !== 'ans' || g.st !== 'ask' || a.q !== g.qn || g.out[i] >= 0 || g.ans[i] != null || (a.a !== 0 && a.a !== 1)) return;
@@ -19577,7 +19640,7 @@ PGAMES.ssp = {
   keys: 'Zeichen antippen oder Auswahltasten 1–3 der eigenen Reihe.',
   start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.no = 0; g.r = 0; this.ask(s); },
   ask(s){ const g = s.g, r = ++g.r; g.st = 'ask'; g.c = s.pl.map(() => null); g.rnd = []; g.lose = -1;
-    pgAlive(s, g).forEach(i => { if (pgBot(i)) pgT(() => this.input(s, i, {k: 'c', v: R0(3), r}), 800 + Math.random()*3000); });
+    pgAlive(s, g).forEach(i => { if (pgBot(i)) pgBotQ(() => this.input(s, i, {k: 'c', v: R0(3), r}), 800 + Math.random()*3000); });
     pgPush(); pgT(() => this.show(s), 5600); },
   input(s, i, a){ const g = s.g; if (a.k !== 'c' || g.st !== 'ask' || a.r !== g.r || g.out[i] >= 0 || g.c[i] != null || ![0, 1, 2].includes(a.v)) return;
     g.c[i] = a.v; pgPush(); if (pgAlive(s, g).every(k => g.c[k] != null)) this.show(s); },
@@ -19594,7 +19657,7 @@ PGAMES.ssp = {
     const myC = seats.filter(k => k >= 0).map(k => g.c[k] != null ? g.c[k] : PQ.taps['ss' + g.r + ':' + k]).find(v => v != null);
     return `<p class="hint">Runde ${g.r}${sh ? '' : ` · ${pgCdn('ss' + g.r, 5000)}`}</p>
       ${sh ? `<h2 class="who">${g.lose >= 0 ? `${PG_SSP[g.lose].ic} ${PG_SSP[g.lose].n} verliert!` : 'Unentschieden, nochmal!'}</h2>
-        <div class="pgssp">${al.map(i => `<div class="${g.out[i] >= 0 ? 'off' : ''}" style="--pc:${PT_COL[i]}"><span>${PG_SSP[g.c[i]].ic}</span><b>${esc(s.pl[i].n.slice(0, 12))}</b>${g.rnd.includes(i) ? '<small>Zufall</small>' : ''}</div>`).join('')}</div>`
+        <div class="pgssp">${al.map(i => `<div class="${g.out[i] >= 0 ? 'off' : ''}" style="--pc:${PT_COL[i]}"><span>${PG_SSP[g.c[i]].ic}</span><b>${pgTm(s, i)}${esc(s.pl[i].n.slice(0, 12))}</b>${g.rnd.includes(i) ? '<small>Zufall</small>' : ''}</div>`).join('')}</div>`
       : `<div class="pgopt pgo3">${PG_SSP.map((x, k) => `<button class="pgo pgsp${myC === k ? ' sel' : ''}" data-o="${k}"${me == null ? ' disabled' : ''}><em>${pgKeyHint(seats, 'r' + k)}</em><span>${x.ic}</span>${x.n}</button>`).join('')}</div>`}
       ${pgChips(s, i => g.out[i] >= 0 ? ['off', 'raus'] : sh ? ['on', ''] : [g.c[i] != null ? 'on' : '', g.c[i] != null ? 'hat gewählt' : ''])}`;
   },
@@ -19607,10 +19670,10 @@ PGAMES.ssp = {
 /* ---------- Billard: gerade Spielerzahl 8-Ball in zwei Teams, ungerade 9-Ball jeder gegen jeden ---------- */
 PGAMES.billard = Object.assign(pgShot({
   disc: 'billard', icon: '🎱', name: 'Billard', W: BD.W, H: BD.H, PULL: BD.PULL, FMS: 4*BD.DT*1000,
-  rule: 'Bei gerader Spielerzahl (und im Team-Minispiel) 8-Ball in zwei Teams, die Teams stoßen abwechselnd: erst die eigene Gruppe (Volle oder Halbe), dann die 8. Bei ungerader Spielerzahl 9-Ball jeder gegen jeden: immer zuerst die niedrigste Kugel treffen, wer die 9 versenkt, gewinnt. Wer richtig versenkt, bleibt dran. Nach einem Foul ist der Nächste dran, eine versenkte Weiße kommt zurück an den Anfang. Jede eigene versenkte Kugel ist ein Punkt.',
+  rule: 'Bei gerader Spielerzahl (und im Team-Minispiel) 8-Ball in zwei Teams, die Teams stoßen abwechselnd: erst die eigene Gruppe (Volle oder Halbe), dann die 8. Bei ungerader Spielerzahl 9-Ball jeder gegen jeden: immer zuerst die niedrigste Kugel treffen, wer die 9 versenkt, gewinnt. Wer richtig versenkt, bleibt dran. Nach einem Foul ist der Nächste dran, eine versenkte Weiße kommt zurück an den Anfang. Jede eigene versenkte Kugel ist ein Punkt. Gespielt wird, bis jemand gewinnt.',
   init(s, g){
     BD.geo(); const n = s.pl.length, T = s.br && s.team;
-    g.mode = T || n % 2 === 0 ? '8' : '9'; g.b = BD.rack(g.mode); g.grp = [null, null]; g.brk = true; g.pot = []; g.pt = s.pl.map(() => 0); g.win = null; g.end = false; g.msg = ''; g.cap = 30;
+    g.mode = T || n % 2 === 0 ? '8' : '9'; g.b = BD.rack(g.mode); g.grp = [null, null]; g.brk = true; g.pot = []; g.pt = s.pl.map(() => 0); g.win = null; g.end = false; g.msg = ''; g.cap = 0;
     if (g.mode === '8') {
       const tm = T ? T.g.slice() : (() => { const t = []; shuffle(s.pl.map((p, i) => i)).forEach((i, k) => { t[i] = k % 2; }); return t; })();
       g.tm = tm; g.tq = [0, 1].map(t => shuffle(s.pl.map((p, i) => i).filter(i => tm[i] === t))); g.ti = [1, 1]; g.ct = R0(2); g.ti[1 - g.ct] = 0; g.np = g.tq[g.ct][0];
@@ -19628,7 +19691,7 @@ PGAMES.billard = Object.assign(pgShot({
     if (out.foul) { g.msg = `Foul von ${nm}: ${out.foul}.`; g.np = this.nextP(g); }
     else if (out.keep) { g.msg = `${nm} ${out.msg || 'hat versenkt'} und bleibt dran.`; g.np = p; }
     else { g.msg = out.msg ? `${nm} ${out.msg}.` : ''; g.np = this.nextP(g); }
-    if (g.n >= g.cap) {   // Stoß-Grenze: 8-Ball gewinnt, wer weniger übrig hat, 9-Ball zählen nur die Punkte
+    if (g.cap && g.n >= g.cap) {   // Stoß-Grenze (aus, Billard läuft bis zum Sieg): 8-Ball gewinnt, wer weniger übrig hat, 9-Ball zählen nur die Punkte
       g.end = true;
       if (g.mode === '8') { const left = [0, 1].map(t => g.grp[t] ? g.b.filter(b => !b.f && b.id && BD.grp(b.id) === g.grp[t]).length : 99); g.win = left[0] === left[1] ? -1 : left[0] < left[1] ? 0 : 1; } else g.win = -1;
       g.msg = `Nach ${g.cap} Stößen ist Schluss.`;
@@ -19650,7 +19713,7 @@ PGAMES.billard = Object.assign(pgShot({
   status(s, g){
     const who = g.p != null && g.st !== 'done' ? ` · <b style="color:${PT_COL[g.p]}">${esc(s.pl[g.p].n)}</b> ist dran` : '';
     const head = g.mode === '9' ? `9-Ball · nächste Kugel: ${BD.low(g.b)}` : `8-Ball · ${[0, 1].map(t => `<b style="color:${PB_TC[t]}">Team ${t ? 'Rot' : 'Blau'}</b>${g.grp[t] ? ` (${g.grp[t] === 's' ? 'Volle' : 'Halbe'})` : ''}`).join(' gegen ')}`;
-    return `${head}${who} · Stoß ${Math.min(g.n + 1, g.cap)} von ${g.cap}${g.msg ? `<br>${esc(g.msg)}` : ''}<br><span class="pgsk">${s.pl.map((p, i) => `<i style="--pc:${g.mode === '8' ? PB_TC[g.tm[i]] : PT_COL[i]}">${esc(p.n.slice(0, 10))} ${g.pt[i]}</i>`).join('')}</span>`;
+    return `${head}${who} · Stoß ${g.n + 1}<br>${g.msg ? esc(g.msg) : '&nbsp;'}<br><span class="pgsk">${s.pl.map((p, i) => `<i style="--pc:${g.mode === '8' ? PB_TC[g.tm[i]] : PT_COL[i]}">${esc(p.n.slice(0, 10))} ${g.pt[i]}</i>`).join('')}</span>`;
   },
   evMs(e){ return e[0]*BD.DT*1000; },
   sound(e){ if (e[1] === 'b') Snd.tone(1200, .03, 'triangle', .02 + .05*e[2]); else if (e[1] === 'r') Snd.tone(220, .04, 'sine', .03); else if (e[1] === 'p') Snd.tone(140, .12, 'sine', .07); return ''; },
@@ -19663,7 +19726,7 @@ PGAMES.billard = Object.assign(pgShot({
     S.hud = g.mode === '9' ? ctx => { if (g.p != null && g.st !== 'done') pgHi(ctx, null, g.p, '', s); } : null;
     bdDraw(cv, S, now);
   },
-}), {fix: true});
+}), {fix: true, live: (s, g) => g.pt ? {v: g.pt, lab: 'Kugeln', sum: true} : null});
 
 /* ---------- Fruit Ninja: Obst zerschneiden, Bomben meiden; bei allen fliegt dasselbe Obst ---------- */
 const PG_FRUIT = ['🍉', '🍎', '🍊', '🍋', '🍐', '🍑', '🍍', '🥝'];
@@ -19948,7 +20011,7 @@ PGAMES.bquiz = {
   start(s){ const g = s.g; g.k = 0; g.N = 8; g.hp0 = g.hp = Math.round(s.pl.length*7); g.dm = s.pl.map(() => 0); g.used = []; this.ask(s); },
   ask(s){ const g = s.g, q = pgPickNew(MC, g.used), o = q[1].map((t, i) => [t, i]); shuffle(o);
     g.Q = {t: q[0], o: o.map(x => x[0]), c: o.findIndex(x => x[1] === q[2])}; g.st = 'ask'; g.ans = s.pl.map(() => null); g.d = null;
-    s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < [.45, .65, .85][L], t = 2000 + Math.random()*[6000, 4500, 3000][L]; pgT(() => this.input(s, i, {k: 'ans', a: ok ? g.Q.c : pickOne([0, 1, 2, 3].filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
+    s.pl.forEach((p, i) => { if (pgBot(i)) { const L = pgLvl(i), ok = Math.random() < [.45, .65, .85][L], t = 2000 + Math.random()*[6000, 4500, 3000][L]; pgBotQ(() => this.input(s, i, {k: 'ans', a: ok ? g.Q.c : pickOne([0, 1, 2, 3].filter(x => x !== g.Q.c)), t: Math.round(t)}), t); } });
     pgPush(); pgT(() => this.show(s), 12000); },
   input(s, i, a){ const g = s.g; if (a.k === 'ans' && g.st === 'ask' && g.ans[i] == null && a.a >= 0 && a.a < 4 && Number.isFinite(a.t)) { g.ans[i] = {a: a.a | 0, t: clamp(a.t, 0, 20000)}; pgPush(); if (g.ans.every(v => v)) this.show(s); } },
   show(s){
