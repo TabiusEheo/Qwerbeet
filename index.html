@@ -2085,7 +2085,7 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 @media (min-aspect-ratio:5/4) and (min-width:640px){
   .bxw{grid-template-columns:minmax(0,1fr) clamp(250px,calc(25vw / var(--z)),340px);grid-template-areas:"bd h" "bd st" "bd pl" "bd tk";grid-template-rows:auto auto auto 1fr}
   .bxbw{position:sticky;top:8px}
-  .bxbd:not(.zoom) .pbd{width:min(100%,calc((100vh / var(--z) - 172px)*1.6))!important}
+  .bxbd .pbd{width:min(100%,calc((100vh / var(--z) - 172px)*1.6))!important}
 }
 @media (max-width:520px){.pgwrap.board{width:calc(100vw / var(--z) - 12px)}.pgwrap.board .pgcard.bxcard{padding:7px}}
 .bxt{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -2134,8 +2134,8 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .bxbd .pbd{margin:0 auto}
 .bxbar{display:flex;justify-content:flex-end;margin-top:6px}
 .bxzm{border:0;border-radius:10px;padding:4px 10px;background:var(--track);color:var(--ink);font:900 12px Nunito,sans-serif;cursor:pointer;box-shadow:var(--shs)}
-.bxbd.zoom{overflow:auto;max-height:calc(100vh / var(--z) - 150px);border-radius:18px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.bxbd.zoom .pbd{width:230%!important;max-width:none;margin:0}
+.pbcam{position:absolute;inset:0;transform-origin:0 0;transition:transform .7s cubic-bezier(.3,.7,.3,1)}
+.bxbd.cam .pbd{overflow:hidden}
 .pbk::before{content:"";position:absolute;left:10%;right:10%;bottom:-12%;height:30%;border-radius:50%;background:var(--pc);box-shadow:0 0 0 2px #fff,0 2px 0 2px rgba(0,0,0,.35);z-index:-1}
 .pbk.on{transform:translate(-50%,-72%) scale(1.15)}
 .pbk.on::after{content:"▼";position:absolute;left:50%;top:-58%;transform:translateX(-50%);font:900 clamp(11px,calc(1.5vw / var(--z)),19px)/1 Nunito,sans-serif;color:var(--pc);-webkit-text-stroke:1.5px #1d1a16;animation:pbbob .7s ease-in-out infinite alternate}
@@ -15361,7 +15361,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'b8cba617d';
+const NET_BUILD = 'b0b0d529b';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16864,6 +16864,7 @@ function pgLenPlan(G0, id, inner){
   const D = PG_DUR[id] || [80, 80], n = pgN() || 4, u = Math.max(D[0]*.6, D[0] + (D[1] - D[0])*(n - 4)/2);   // nach Spielerzahl, 3 und 5 dazwischen bzw. weitergedacht
   const T = Math.max(.6, (PQ.s && PQ.s.mins) || 3)*55, li = inner && !G0.repOnly ? clamp(T/u, .5, 2.5) : 1, d = u*li;
   let rp = Math.max(1, Math.round(T/d)); if (rp*d < T*.85 && (rp + 1)*d < T*1.4) rp++;   // lieber etwas länger als zu kurz, aber nicht doppelt so lang
+  if (G0.maxRp) rp = Math.min(rp, G0.maxRp);   // kurze, immer gleiche Spiele: nicht endlos wiederholen
   return {li, rp};
 }
 const pgHost = () => PT.role === 'host' || PT.role === 'local';
@@ -17208,7 +17209,7 @@ const PGAMES = {
   // Hämmern: 5 Sekunden so oft wie möglich drücken, jedes Gerät zählt selbst
   ham: {
     disc: 'haemmern', rep: 3,
-    icon: '🔨', name: 'Hämmern', rule: 'Nach dem Startsignal 5 Sekunden lang so oft wie möglich drücken.', keys: 'Buzzer oder auf die Fläche tippen.',
+    maxRp: 4, icon: '🔨', name: 'Hämmern', rule: 'Nach dem Startsignal 5 Sekunden lang so oft wie möglich drücken.', keys: 'Buzzer oder auf die Fläche tippen.',
     start(s){ const g = s.g; g.st = 'cd'; g.cnt = s.pl.map(() => null);
       pgT(() => { g.st = 'go'; pgPush();
         s.pl.forEach((p, i) => { if (pgBot(i)) pgT(() => pgIn(i, {k: 'cnt', n: Math.round([26, 33, 39][pgLvl(i)] + gauss()*3)}), 5300); });
@@ -17233,7 +17234,7 @@ const PGAMES = {
   // Zeitgefühl: genau nach X Sekunden drücken, die Uhr verschwindet nach 2 Sekunden
   zeit: {
     disc: 'zeit', rep: 3,
-    icon: '⏱️', name: 'Zeitgefühl', rule: 'Drückt genau nach der angesagten Zeit. Die Uhr verschwindet nach 2 Sekunden. Wer am nächsten dran ist, gewinnt.', keys: 'Buzzer, einmal drücken.',
+    maxRp: 5, icon: '⏱️', name: 'Zeitgefühl', rule: 'Drückt genau nach der angesagten Zeit. Die Uhr verschwindet nach 2 Sekunden. Wer am nächsten dran ist, gewinnt.', keys: 'Buzzer, einmal drücken.',
     start(s){ const g = s.g; g.X = Math.round((4 + Math.random()*4)*10)/10; g.st = 'show'; g.err = s.pl.map(() => null);
       pgT(() => { g.st = 'run'; pgPush();
         s.pl.forEach((p, i) => { if (pgBot(i)) { const e = gauss()*[700, 420, 250][pgLvl(i)]; pgT(() => pgIn(i, {k: 't', t: Math.round(g.X*1000 + e)}), g.X*1000 + e); } });
@@ -17878,8 +17879,8 @@ function pgBoardView(s, seats){
   const wheel = W ? `<div class="pbwh${W.done || wel > 3100 ? ' dn' : ''}"><div class="pbwr" style="--rot:${1800 - W.r*60 - 30}deg;--ad:-${Math.round(wel)}ms">${PB_WH.map((x, k) => `<span style="transform:rotate(${k*60 + 30}deg)"><i>${x.ic}</i></span>`).join('')}</div><b class="pbwp">▼</b>${W.done ? `<em>${PB_WH[W.r].ic} ${PB_WH[W.r].n}</em>` : ''}</div>` : '';
   const dice = W ? wheel : D ? `<div class="pbduel"><span style="color:${PT_COL[D.a]}">${pbN(D.a)}</span>${pbDie(D.da)}<b>:</b>${pbDie(D.db)}<span style="color:${PT_COL[D.b]}">${pbN(D.b)}</span></div>` : `<div class="mxdice pbdice${rolling ? ' rolling' : ''}">${b.dice.length ? b.dice.map(pbDie).join('') : pbDie(0)}</div>`;
   const status = `<div class="bxst">${dice}<p class="brmsg">${b.msg}${b.st === 'walk' && b.left > 0 && !a ? ` <b>noch ${b.left} ${b.left === 1 ? 'Feld' : 'Felder'}</b>` : ''}</p><div class="bract">${act}</div></div>`;
-  const board = `<div class="bxbw"><div class="bxbd${PQ.zoom ? ' zoom' : ''}" id="bxbd"><div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g>${paths}</svg>${tiles}${blk}${nums}${toks}${badges}${fx}<div class="pbtip" id="pbtip" hidden></div></div></div>
-    <div class="bxbar"><button class="bxzm" id="bxzm">${PQ.zoom ? '🔎 Ganzes Brett' : '🔍 Brett vergrößern'}</button></div></div>`;
+  const board = `<div class="bxbw"><div class="bxbd${PQ.zoom ? ' cam' : ''}" id="bxbd"><div class="pbd" id="pbd" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><div class="pbcam" id="pbcam" style="transform:${PQ.zoom && PQ.camT || 'none'}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g><g class="shut">${shut}</g><g class="arw">${arrows}</g><g class="tol">${tolls}</g>${paths}</svg>${tiles}${blk}${nums}${toks}${badges}${fx}<div class="pbtip" id="pbtip" hidden></div></div></div></div>
+    <div class="bxbar"><button class="bxzm" id="bxzm">${PQ.zoom ? '🗺️ Ganzes Brett' : '🎥 Kamera folgt der Figur'}</button></div></div>`;
   // Spieler in Zugreihenfolge, Platz rechts
   const sc = i => b.stars[i]*10000 + b.coins[i], rk = s.pl.map((x, i) => i).sort((x, y) => sc(y) - sc(x)), place = []; rk.forEach((i, k) => { place[i] = k && sc(i) === sc(rk[k - 1]) ? place[rk[k - 1]] : k; });
   const ord = s.ord || s.pl.map((x, i) => i), nx = p >= 0 ? ord[ord.indexOf(p) + 1] : -1;
@@ -17901,13 +17902,12 @@ function pgBoardAfter(s, seats){
   const hot = (k, on) => main.querySelectorAll(`[data-pi="${k}"]`).forEach(e => e.classList.toggle('hot', on));
   main.querySelectorAll('.pbfo[data-pi],.pbbadge[data-pi]').forEach(x => { x.onpointerenter = () => hot(x.dataset.pi, true); x.onpointerleave = () => hot(x.dataset.pi, false); });
   const lg = main.querySelector('.pblog'); if (lg) lg.ontoggle = () => { PQ.logOpen = lg.open; };
-  if (q('bxzm')) q('bxzm').onclick = () => { PQ.zoom = !PQ.zoom; PQ.zf = ''; pgRender(); };
-  // vergrößertes Brett: Lage behalten, der Figur folgen, die gerade zieht oder gefragt ist
-  const zb = q('bxbd');
-  if (zb && PQ.zoom) { const f = b.ask ? b.ask.p : b.act, key = f >= 0 ? f + ':' + b.pos[f] : '';
-    if (key && key !== PQ.zf) { const n = pbG(b.mi)[b.pos[f]], w = zb.scrollWidth, h = zb.scrollHeight; zb.scrollLeft = n.x/100*w - zb.clientWidth/2; zb.scrollTop = n.y/100*h - zb.clientHeight/2; PQ.zf = key; }
-    else { zb.scrollLeft = PQ.zsx || 0; zb.scrollTop = PQ.zsy || 0; }
-    PQ.zsx = zb.scrollLeft; PQ.zsy = zb.scrollTop; zb.onscroll = () => { PQ.zsx = zb.scrollLeft; PQ.zsy = zb.scrollTop; }; }
+  if (q('bxzm')) q('bxzm').onclick = () => { PQ.zoom = !PQ.zoom; PQ.camT = ''; pgRender(); };
+  // Kamera: Brett vergrößert, gleitet zur Figur, die gerade zieht oder gefragt ist; ohne aktive Figur ganzes Brett
+  const cam = q('pbcam');
+  if (cam && PQ.zoom) { const f = b.ask ? b.ask.p : b.act, n = f >= 0 && b.pos[f] != null ? pbG(b.mi)[b.pos[f]] : null;
+    const z = innerWidth < 640 ? 2 : 1.65, t = n ? `translate(${clamp(50 - z*n.x, 100 - 100*z, 0).toFixed(2)}%,${clamp(50 - z*n.y, 100 - 100*z, 0).toFixed(2)}%) scale(${z})` : 'none';
+    if (t !== PQ.camT) { requestAnimationFrame(() => { cam.style.transform = t; }); PQ.camT = t; } }
   const bd = q('pbd'), tip = q('pbtip'); if (!bd || !tip) return;
   if (PQ.tipAct !== b.act) { PQ.tipN = null; PQ.tipAct = b.act; }   // neuer Zug: alte Feld-Info zu
   const show = el => { const i = +el.dataset.n, n = pbG(b.mi)[i]; tip.innerHTML = pbTip(s, i); tip.hidden = false;
@@ -19635,7 +19635,7 @@ PGAMES.mehr = pgChain(false);
 const PG_SSP = [{ic: '✌️', n: 'Schere'}, {ic: '✊', n: 'Stein'}, {ic: '✋', n: 'Papier'}];
 const pgSspBeats = (a, b) => (a - b + 3) % 3 === 1;   // Stein schlägt Schere, Papier schlägt Stein, Schere schlägt Papier
 PGAMES.ssp = {
-  disc: 'ssp', rep: 2, icon: '✂️', name: 'Schnick Schnack Schnuck',
+  disc: 'ssp', rep: 2, maxRp: 4, icon: '✂️', name: 'Schnick Schnack Schnuck',
   rule: 'Alle wählen gleichzeitig und verdeckt Schere, Stein oder Papier, 5 Sekunden pro Runde. Kommen genau zwei Zeichen vor, fliegen alle raus, die verloren haben. Kommt nur eins oder kommen alle drei vor, geht es nochmal. Wer nicht wählt, bekommt ein zufälliges Zeichen. Wer übrig bleibt, gewinnt.',
   keys: 'Zeichen antippen oder Auswahltasten 1–3 der eigenen Reihe.',
   start(s){ const g = s.g; g.out = s.pl.map(() => -1); g.no = 0; g.r = 0; this.ask(s); },
@@ -19815,7 +19815,7 @@ PGAMES.ballon = Object.assign(pgLocal({
     setTimeout(() => { if (!L.done && PQ.lc && PQ.lc[i] === L) { L.send(tot); draw(); } }, 59000);
     draw();
   },
-}), {only: true});
+}), {only: true, maxRp: 4});
 
 /* ---------- Boss-Kämpfe: alle zusammen gegen einen Boss, nur auf dem Brett ----------
    Jedes Gerät spielt für sich (gleicher Zufall, also gleiche Angriffe), schickt seinen Schaden alle 0,3 s an den Gastgeber.
