@@ -1,0 +1,17 @@
+{
+  "name": "Qwerbeet",
+  "short_name": "Qwerbeet",
+  "description": "Partyspiel mit über 60 Minispielen: Duell, Party, Brett und Turnier",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1d6b45",
+  "theme_color": "#2e8b5a",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
