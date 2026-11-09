@@ -2239,6 +2239,29 @@ input[type=range]:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .pglive .vs{align-self:center;font-style:normal;font-weight:900;font-size:.75em;opacity:.6}
 .tm{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:middle;box-shadow:0 0 0 1.5px #fff;flex:none}
 @media (max-width:520px){.pglive{gap:6px}.pglive .vs{display:none}.pglive span{white-space:normal}.pglive>div{padding:5px 7px}.pglive>div.my{transform:none}}
+/* Gesamtstand nach jedem Minispiel mit Pfeilen */
+.pgstand{display:flex;flex-direction:column;gap:4px;max-width:520px;margin:0 auto 12px}
+.pgstand>div{display:grid;grid-template-columns:2.2em 2.6em 1fr auto;align-items:center;gap:6px;padding:5px 10px;border-radius:10px;background:var(--card);box-shadow:var(--shs);border-left:5px solid var(--pc);font-size:.92em;text-align:left}
+.pgstand>div.me{box-shadow:0 0 0 2px var(--pc)}
+.pgstand .pl{font-weight:900;opacity:.7}.pgstand b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pgstand .v{font-weight:800;white-space:nowrap}
+.pgstand i{font-style:normal;font-weight:900;font-size:.85em;text-align:center}
+.pgstand i.up{color:#1fa45a}.pgstand i.dn{color:#e5484d}.pgstand i.eq{opacity:.35}
+.pgnew{font-weight:900;color:#d99a00;margin:2px 0 6px}
+.pghl{max-width:520px;margin:16px auto 6px}
+.pbn.t-c{background:#0f7a4a;box-shadow:0 0 0 2px #c9a227 inset}.pbn.t-x{background:#5d4a7a}.pbn.t-p{background:#c4589c}
+/* Turnier: Baum und nächstes Match */
+.trb{display:flex;gap:14px;overflow-x:auto;padding:4px 2px 10px;margin:8px auto 4px;max-width:100%;justify-content:safe center}
+.trc{display:flex;flex-direction:column;gap:6px;min-width:150px;flex:0 0 auto}.trms{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:10px}
+.trc>.kick{margin:0 0 2px;text-align:center}
+.trm{border-radius:12px;overflow:hidden;box-shadow:var(--shs);background:var(--card);border:2px solid transparent}
+.trm.cur{border-color:#ffb020;box-shadow:0 0 0 3px rgba(255,176,32,.3)}
+.trp{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border-left:5px solid var(--pc,#bbb);font-size:.9em;text-align:left}
+.trp+.trp{border-top:1px solid rgba(0,0,0,.08)}
+.trp b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.trp span{font-weight:900}
+.trp.w{font-weight:900;background:rgba(255,211,77,.18)}.trp.w b::after{content:' ✓'}.trp.l{opacity:.5}.trp.me b{text-decoration:underline}
+.trp.bye,.trp.tbd{border-left-color:transparent;opacity:.45;font-style:italic}
+.trvs{display:flex;align-items:center;justify-content:center;gap:12px;font-size:1.5em;font-weight:900;margin:8px 0}.trvs i{font-size:.55em;opacity:.6;font-style:normal}
+.trw{font-weight:900;color:#d99a00}
 </style>
 </head>
 <body>
@@ -14606,7 +14629,7 @@ function mPlay(){
       <button class="mpo" id="pdu"><span class="e">⚔️</span><b>Duell</b><small>1 gegen 1, zu zweit oder gegen den Bot. Alle Modi: Klassisch, Late Game, Endlos, Brett</small></button>
       <button class="mpo" id="pbp"><span class="e">🤖</span><b>Party mit Bots</b><small>3–6 Spieler: du (oder ihr zu zweit) plus Bots, jeder Bot mit eigener Stärke</small></button>` : on ? `
       <button class="mpo" id="pnet"><span class="e">⚔️</span><b>Duell</b><small>1 gegen 1, jeder am eigenen Gerät. Alle Modi: Klassisch, Late Game, Endlos, Brett</small></button>
-      <button class="mpo" id="ppar"><span class="e">🎲</span><b>Party</b><small>3–6 Spieler: Brett oder Minispiele am Stück</small></button>` : `
+      <button class="mpo" id="ppar"><span class="e">🎲</span><b>Party</b><small>3–6 Spieler: Brett, Minispiele am Stück oder Turnier</small></button>` : `
       <button class="mpo" id="ploc"><span class="e">🖥️</span><b>Offline</b><small>An einem Gerät: Duell 1 gegen 1 oder Party mit Bots</small></button>
       <button class="mpo" id="ponl"><span class="e">🌐</span><b>Online</b><small>Duell 1 gegen 1 oder Party mit 3–6 Spielern</small></button>`}
     </div></div>`);
@@ -15052,7 +15075,8 @@ function openHelp(){
     <p class="ctlnote">Jede Auswahl liegt im eigenen Feld, von links nach rechts wie die Tasten. Am Touchscreen tippt jeder in seinem Feld.${TOUCH ? '' : ` ${kb('Esc')} schließt die Hilfe.`}</p>
     ${d ? '' : `<h3>Party (3–6 Spieler)</h3>
     <ul><li>Unter „Party“ einen Raum erstellen und den Link schicken, oder lokal an einem Gerät spielen. Freie Plätze füllt der Gastgeber mit Bots (drei Stärken).</li>
-      <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, oder ♾️ nur Minispiele mit Punkten nach Platz.</li>
+      <li><b>Modus:</b> 🎲 Brett mit Würfeln, Münzen und Sternen, ♾️ nur Minispiele mit Punkten nach Platz (nach jedem Spiel der Gesamtstand mit ▲▼, am Ende Highlights) oder 🏆 Turnier.</li>
+      <li><b>🏆 Turnier:</b> K.-o.-Baum, immer zwei spielen ein Match gegeneinander, die anderen schauen zu. Ein Match geht über Best of 1, 3 oder 5 Minispiele (in der Lobby einstellbar), das Finale zwei mehr (höchstens 5). Ein Minispiel ohne Sieger wird nachgespielt. Bei 3, 5 oder 6 Spielern gibt es Freilose. Bot gegen Bot wird ausgewürfelt.</li>
       <li><b>Einstellungen des Gastgebers:</b> Runden, Karte, Dauer pro Minispiel (ungefähr 1 bis 5 Minuten, Standard etwa 3; Billard und Boss-Kämpfe dauern immer gleich), Tempo (⚡ schnell, normal, 🐢 gemütlich: wie lange Meldungen stehen bleiben und wie schnell Bots ziehen) und wie das Minispiel bestimmt wird: abstimmen (mit Anzahl zur Wahl oder alle), 🎲 Zufall oder 👑 Host wählt. Die Dauer stellt man nur bei Zufall in der Lobby ein, sonst wird sie mit abgestimmt bzw. vom Host gewählt.</li>
       <li><b>Minispiel wählen:</b> bei „👑 Host wählt“ sucht der Gastgeber jedes Mal aus allen Spielen aus (lokal alle am Gerät), ohne Zeitlimit. Sonst stimmen alle gleichzeitig ab, 15 s. Die meisten Stimmen gewinnen, Gleichstand wird ausgelost. Dabei stimmt ihr auch über die Länge ab: ⚡ Kurz, ⏱️ Normal oder 🐢 Lang, daneben steht, wie viele Minuten das ungefähr sind. Kurze Spiele bekommen dafür mehrere Durchgänge.</li>
       <li><b>Vor dem Minispiel</b> stehen die Regeln da, bis alle ✋ Bereit getippt haben, höchstens 15 s. Dann zählt es 3, 2, 1 herunter.</li>
@@ -15065,14 +15089,15 @@ function openHelp(){
       <li><b>⭐ Stern:</b> beim Vorbeilaufen für ${BR_STAR} Münzen kaufen, in der letzten Runde für die Hälfte. Danach zieht er auf ein anderes Feld, meist 8–18 Felder vor dem nächsten Spieler, nie auf einen gesperrten Weg. Wer am Ende die meisten Sterne hat, gewinnt, bei Gleichstand entscheiden die Münzen.</li>
       <li><b>🛒 Shop:</b> beim Vorbeilaufen oder Stehenbleiben einkaufen, höchstens ${PB_MAX} Gegenstände: ${Object.values(PB_IT).map(x => `${x.ic} ${esc(x.n)} (${x.c} 🪙)`).join(', ')}. Vor dem Würfeln einen benutzen, das 🛡️ Schild wirkt von selbst.</li>
       <li><b>⚔️ Münzduell:</b> bleibst du auf dem Feld eines Mitspielers stehen, kannst du ihn herausfordern. Beide würfeln, der höhere Wurf gewinnt 5 Münzen (im Endspurt 10).</li>
+      <li>Nach jedem Minispiel steht der <b>Gesamtstand</b> da, mit Pfeilen, wer Plätze gutgemacht ▲ oder verloren ▼ hat. Am Ende gibt es Highlights wie längste Siegesserie und größte Aufholjagd.</li>
       <li>Nach jeder Runde ein Minispiel, die Plätze bringen Münzen. <b>👥 Team-Minispiel:</b> stehen nach der Runde Spieler auf Blau und auf Rot, spielt Blau gegen Rot (die übrigen werden aufgeteilt). Der Schnitt im Team zählt, jeder im Gewinnerteam bekommt 10 Münzen. Nie zweimal hintereinander.</li>
-      <li>Die Karte verändert sich: die Torte dreht alle 3 Runden ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum, der Vulkan bricht aus (Lava sperrt einen Weg und macht blaue Felder rot), am Bahnhof geht eine Schranke zu. Die Zugbrücke der Burg geht alle 2 Runden hoch oder runter. Gesperrte Wege stehen oben in der Spalte.</li>
-      <li><b>🎰 Glücksrad:</b> ${PB_WH.map(x => `${x.ic} ${esc(x.n)}`).join(', ')}. <b>🏦 Bank:</b> wer vorbeiläuft, zahlt 3 Münzen ein, wer stehen bleibt, bekommt alles. <b>🚉 Bahnhof:</b> für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.</li>
+      <li>Die Karte verändert sich: die Torte dreht alle 3 Runden ihren inneren Ring, in der Lagune kommt Flut oder Ebbe, im Wald fällt ein Baum, der Vulkan bricht aus (Lava sperrt einen Weg und macht blaue Felder rot), am Bahnhof geht eine Schranke zu, im Casino tauschen rote und blaue Felder die Farbe, im Weltraum sperrt ein Meteoritenschauer einen Weg. Die Zugbrücke der Burg geht alle 2 Runden hoch oder runter, im Geisterhaus ist jede Runde eine andere Geheimtür zu. Gesperrte Wege stehen oben in der Spalte.</li>
+      <li><b>🎰 Glücksrad:</b> ${PB_WH.map(x => `${x.ic} ${esc(x.n)}`).join(', ')}. <b>🏦 Bank:</b> wer vorbeiläuft, zahlt 3 Münzen ein, wer stehen bleibt, bekommt alles. <b>🚉 Bahnhof:</b> für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren. <b>🎲 Spieltisch:</b> 5, 10 oder 20 Münzen setzen, Kopf oder Zahl. <b>👻 Geist:</b> 3 Felder zurück und Münzen verlieren. <b>🪐 Schwerkraft:</b> 1–3 Felder vor oder zurück.</li>
       <li><b>⚡ Boss-Kampf:</b> wer auf dem Boss-Feld stehen bleibt, weckt den Boss, außerdem kommt er einmal pro Partie in einer zufälligen Runde. Dann spielen alle zusammen gegen ihn. Nach ${PB_BOSSMAX} Kämpfen übers Boss-Feld verschwinden die Boss-Felder, mehr als 4 Boss-Kämpfe gibt es also nie. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern, gewinnt der Boss, verliert jeder 5 Münzen.</li>
       <li><b>🍀 Trost:</b> wer im Minispiel Letzter ist, bekommt 2 Münzen extra.</li>
       <li><b>🔥 Endspurt:</b> in den letzten 3 Runden zählen blaue und rote Felder und der Dieb doppelt, der Letzte bekommt einen Gegenstand. <b>⭐ Letzte Chance:</b> in der letzten Runde kostet der Stern die Hälfte.</li>
       <li><b>Bonus-Sterne</b> am Ende: jede Partie werden 3 von ${Object.keys(PB_BON).length} Kategorien ausgelost, für jede gibt es +1 ⭐. Möglich sind: ${Object.values(PB_BON).map(x => `${x.ic} ${esc(x.t)}`).join(', ')}.</li>
-      <li>Am Handy vergrößert „🔍 Brett vergrößern“ das Brett, es folgt dann der Figur, die gerade zieht.</li></ul>`}
+      <li>„🎥 Kamera folgt der Figur“ vergrößert das Brett und gleitet zur Figur, die gerade zieht. „🗺️ Ganzes Brett“ schaltet zurück.</li></ul>`}
     <h3>Anzeige</h3>
     <ul><li>Unter 🎨 lässt sich die Größe automatisch an den Bildschirm anpassen oder per Regler einstellen.</li></ul>
     <h3>Duell</h3>
@@ -15361,7 +15386,7 @@ function statsScreen(w){
   $('#back').onclick = menu;
 }
 
-const NET_BUILD = 'b0b0d529b';
+const NET_BUILD = 'b3d6667e0';
 const NET = {on:false, role:'', code:'', peer:null, conn:null, open:false, from:0, scr:0, mid:0, ping:0, hostPing:0, rtts:[], lastRx:0,
   text:null, tok:'', saved:null, mirror:false, html:null, lastScr:-1, lastMain:null, lastG:'', lastL:'', pbLast:['',''], ck:{}, ckid:0,
   sp:null, spT:0, spLabel:'', spRaf:0, mute:false, rlT:0, rlN:0, fixed:new WeakSet(), lobby:null, myName:'', myAv:null, tries:0,
@@ -16334,12 +16359,14 @@ netFromLink();
    ===================================================================== */
 const PT_PREFIX = 'qwparty-', PT_MAX = 6;
 const PT_COL = ['#ff5a36', '#16b8c9', '#ffc531', '#8a63d2', '#1fae5b', '#ff6fb1'];
+const PT_COL0 = PT_COL.slice();   // Grundfarben; im Turnier-Match zeigen Platz 0 und 1 die Farben der beiden Spieler aus der Lobby
 const PT_TEMPO = [{v: .6, n: '⚡ Schnell'}, {v: 1, n: 'Normal'}, {v: 1.5, n: '🐢 Gemütlich'}];
-const PT = {len: 3, tempo: 1, map: -1, nch: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
+const PT = {len: 3, tempo: 1, map: -1, nch: 3, bo: 3, lost: 0, mode: 'board', rounds: 10, role: '', peer: null, code: '', pl: [], me: -1, host: null, st: 'start', msg: '', T: 0, hbT: 0, rtT: 0, avKey: '', started: false};
 // Lobby-Einstellungen bleiben im Browser gespeichert (Modus, Karte, Runden, Tempo, Auswahl, Dauer und lokal die Bots)
-const PT_SAVE = ['mode', 'map', 'rounds', 'tempo', 'nch', 'len'];
+const PT_SAVE = ['mode', 'map', 'rounds', 'tempo', 'nch', 'len', 'bo'];
+const PT_MODES = {board: '🎲 Brett', endless: '♾️ Minispiele', tour: '🏆 Turnier'};
 (() => { try { const o = JSON.parse(localStorage.getItem('qw-party') || 'null'); if (!o) return;
-  if (o.mode === 'board' || o.mode === 'endless') PT.mode = o.mode; if (Number.isInteger(o.map) && o.map >= -1 && o.map < 99) PT.map = o.map; if (Number.isInteger(o.rounds)) PT.rounds = clamp(o.rounds, 1, 50);
+  if (PT_MODES[o.mode]) PT.mode = o.mode; if ([1, 3, 5].includes(o.bo)) PT.bo = o.bo; if (Number.isInteger(o.map) && o.map >= -1 && o.map < 99) PT.map = o.map; if (Number.isInteger(o.rounds)) PT.rounds = clamp(o.rounds, 1, 50);
   if ([.6, 1, 1.5].includes(o.tempo)) PT.tempo = o.tempo; if (Number.isInteger(o.nch) && o.nch >= -2) PT.nch = o.nch; if (Number.isInteger(o.len)) PT.len = clamp(o.len, 1, 5); PT.bots0 = Array.isArray(o.bots) ? o.bots.slice(0, 5) : null; PT.loc2 = !!o.loc2; } catch(e) {} })();
 function ptSave(){
   if (PT.try || (PT.role !== 'host' && PT.role !== 'local')) return;
@@ -16415,8 +16442,11 @@ function ptCand(c){
       const cl = m.slot | 0;
       if (i < 0 && Number.isInteger(m.slot) && PT.pl[cl] && !PT.pl[cl].bot && !PT.pl[cl].on && cl !== PT.me && !PT.pl[cl].tok) i = cl;
       if (i < 0) {
-        if (PT.started) return bye('Das Spiel läuft schon, Beitreten geht nur in der Lobby.');
-        if (PT.pl.length < PT_MAX) i = PT.pl.length;
+        // Spiel läuft: wer rausgeflogen ist (auch mit neuem Tab oder Gerät), bekommt seinen Platz zurück, zuerst nach Namen, sonst den ersten freien
+        if (PT.started) { const nm = ptClean(m.name), off = PT.pl.map((p, k) => k).filter(k => !PT.pl[k].bot && !PT.pl[k].host && k !== PT.me && (!PT.pl[k].on || PT.pl[k].name === nm)), k = off.find(x => PT.pl[x].name === nm);
+          i = k != null ? k : (off.find(x => !PT.pl[x].on) ?? -1); if (i < 0) return bye('Das Spiel läuft schon und alle Plätze sind besetzt. Beitreten geht nur in der Lobby oder für jemanden, der rausgeflogen ist.');
+          toast(`${PT.pl[i].name} ist wieder dabei.`); }
+        else if (PT.pl.length < PT_MAX) i = PT.pl.length;
         else { i = PT.pl.map(p => !!p.bot).lastIndexOf(true); if (i < 0) return bye('Der Raum ist voll (6 Spieler).'); }
       }
       const old = PT.pl[i] && PT.pl[i].c; if (old && old !== c) { try { old.close(); } catch(e) {} }
@@ -16429,7 +16459,7 @@ function ptCand(c){
     if (pl.c !== c) return;
     pl.last = performance.now();
     if (m.t === 'upd' && !PT.started) { pl.name = ptClean(m.name); pl.av = m.av; ptSync(); }
-    else if (m.t === 'pi' && m.a && typeof m.a === 'object') pgIn(PT.pl.indexOf(pl), m.a);
+    else if (m.t === 'pi' && m.a && typeof m.a === 'object') { const gi = PT.pl.indexOf(pl); pgIn(PQ.s && PQ.s.map ? PQ.s.map.indexOf(gi) : gi, m.a); }
     else if (m.t === 'rs' && PQ.s) ptSend(c, {t: 'pg', s: PQ.s, q: PQ.seq || 0});
     else if (m.t === 'pp') ptSend(c, {t: 'pq', c: m.c});
   });
@@ -16443,7 +16473,7 @@ function ptSync(){
   if (PT.role === 'local') return ptView();
   if (PT.role !== 'host') return;
   const pub = ptPublic();
-  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, map: PT.map, len: PT.len, tempo: PT.tempo, go: PT.started}); });
+  PT.pl.forEach((p, i) => { if (p.c) ptSend(p.c, {t: 'lob', pl: pub, me: i, code: PT.code, mode: PT.mode, bo: PT.bo, rounds: PT.rounds, nch: PT.nch, map: PT.map, len: PT.len, tempo: PT.tempo, go: PT.started}); });
   if (!PT.started) ptView();
 }
 // Herzschlag: der Gastgeber pingt, wer 7 Sekunden stumm ist, gilt als getrennt
@@ -16503,7 +16533,7 @@ function ptConnect(){
     PT.lost = 0; { const bn = document.getElementById('ptban'); if (bn && /unterbrochen/.test(bn.textContent)) bn.hidden = true; }
     if (m.t === 'lob' && Array.isArray(m.pl)) {
       PT.pl = m.pl.slice(0, PT_MAX); PT.me = m.me | 0; try { sessionStorage.setItem('qw-pslot', String(PT.me)); } catch(e) {}
-      if (m.mode === 'board' || m.mode === 'endless') PT.mode = m.mode; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(Math.round(m.len), 1, 5); if (Number.isFinite(m.tempo)) PT.tempo = clamp(m.tempo, .5, 2);
+      if (PT_MODES[m.mode]) PT.mode = m.mode; if ([1, 3, 5].includes(m.bo)) PT.bo = m.bo; PT.rounds = clamp(m.rounds | 0, 1, 50) || 10; if (Number.isInteger(m.nch)) PT.nch = m.nch; if (Number.isInteger(m.map)) PT.map = m.map; if (Number.isFinite(m.len)) PT.len = clamp(Math.round(m.len), 1, 5); if (Number.isFinite(m.tempo)) PT.tempo = clamp(m.tempo, .5, 2);
       if (m.go) PT.started = true;
       else { PT.started = false; PT.st = 'lobby'; PT.msg = ''; if (PQ.s) pgStop(); ptView(); }
     }
@@ -16584,7 +16614,8 @@ function ptView(){
       ${host && !loc ? `<div class="mkv"><span>Link für die anderen<small>oder Code ${esc(PT.code)} unter „Party → Beitreten“</small></span><button class="btn ghost" id="ptcopy">Link kopieren</button></div>` : ''}
       <div class="ptslots">${slots}</div>
       <div class="mkv"><span>Deine Figur & Name</span><span class="mkr"><input id="ptn" class="ptin" maxlength="14" value="${nmv}"><button class="btn ghost" id="ptav">Figur</button></span></div>
-      <div class="mkv"><span>Modus<small>${PT.mode === 'board' ? 'Würfeln, Münzen und Sterne, nach jeder Runde ein Minispiel' : 'Ein Minispiel nach dem anderen, Punkte nach Platz, bis ihr aufhört'}</small></span>${host ? `<div class="seg" id="ptmode"><button data-v="board" class="${PT.mode === 'board' ? 'on' : ''}">🎲 Brett</button><button data-v="endless" class="${PT.mode === 'endless' ? 'on' : ''}">♾️ Minispiele</button></div>` : `<b>${PT.mode === 'board' ? '🎲 Brett' : '♾️ Minispiele'}</b>`}</div>
+      <div class="mkv"><span>Modus<small>${{board: 'Würfeln, Münzen und Sterne, nach jeder Runde ein Minispiel', endless: 'Ein Minispiel nach dem anderen, Punkte nach Platz, bis ihr aufhört', tour: 'K.-o.-Turnier: immer zwei spielen gegeneinander, die anderen schauen zu. Wer das Match gewinnt, kommt eine Runde weiter.'}[PT.mode]}</small></span>${host ? `<div class="seg" id="ptmode">${Object.entries(PT_MODES).map(([k, v]) => `<button data-v="${k}" class="${PT.mode === k ? 'on' : ''}">${v}</button>`).join('')}</div>` : `<b>${PT_MODES[PT.mode]}</b>`}</div>
+      ${PT.mode === 'tour' ? `<div class="mkv"><span>Match<small>${PT.bo === 1 ? 'Ein Minispiel entscheidet' : `Wer zuerst ${(PT.bo + 1)/2} Minispiele gewinnt`}, das Finale geht ${PT.bo === 5 ? 'auch über Best of 5' : `über Best of ${PT.bo + 2}`}</small></span>${host ? `<div class="seg" id="ptbo">${[1, 3, 5].map(v => `<button data-v="${v}" class="${PT.bo === v ? 'on' : ''}">Best of ${v}</button>`).join('')}</div>` : `<b>Best of ${PT.bo}</b>`}</div>` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Karte<small>${PT.map >= 0 ? esc(PB_MAPS[PT.map].d) : 'jedes Mal eine andere'}</small></span>${host ? `<div class="seg" id="ptmap">${PB_MAPS.map((m, k) => `<button data-v="${k}" class="${PT.map === k ? 'on' : ''}">${m.ic} ${m.n}</button>`).join('')}<button data-v="-1" class="${PT.map < 0 ? 'on' : ''}">🎲 Zufall</button></div>` : `<b>${PT.map >= 0 ? PB_MAPS[PT.map].ic + ' ' + PB_MAPS[PT.map].n : '🎲 Zufall'}</b>`}</div>${PT.map >= 0 && PB_MAPS[PT.map] ? pbPreview(PT.map) : ''}` : ''}
       ${PT.mode === 'board' ? `<div class="mkv"><span>Runden</span>${host ? `<div class="stepper"><button id="ptrm" aria-label="Weniger">−</button><input id="ptrn" type="number" min="1" max="50" value="${PT.rounds}"><button id="ptrp" aria-label="Mehr">+</button></div>` : `<b>${PT.rounds}</b>`}</div>` : ''}
       ${PT.nch === -1 ? `<div class="mkv"><span>Dauer pro Minispiel<small>Ungefähr, je nach Spiel und wie gut ihr spielt. Billard und Boss-Kämpfe dauern immer gleich lang.</small></span>${host ? `<div class="seg" id="ptlen">${PG_MINS.map(m => `<button data-v="${m}" class="${PT.len === m ? 'on' : ''}">${pgMinTxt(m)}</button>`).join('')}</div>` : `<b>${pgMinTxt(PT.len)}</b>`}</div>` : ''}
@@ -16609,6 +16640,7 @@ function ptView(){
   main.querySelectorAll('.ptkick').forEach(b => b.onclick = () => ptKick(+b.dataset.k));
   if (q('ptcopy')) q('ptcopy').onclick = () => { const l = ptLink(), ok = () => { q('ptcopy').textContent = 'Kopiert ✓'; }; if (navigator.clipboard) navigator.clipboard.writeText(l).then(ok, () => toast(l)); else toast(l); };
   main.querySelectorAll('#ptmode button').forEach(b => b.onclick = () => { PT.mode = b.dataset.v; ptSync(); });
+  main.querySelectorAll('#ptbo button').forEach(b => b.onclick = () => { PT.bo = +b.dataset.v; ptSync(); });
   main.querySelectorAll('#ptlen button').forEach(b => b.onclick = () => { PT.len = +b.dataset.v; ptSync(); });
   main.querySelectorAll('#ptmap button').forEach(b => b.onclick = () => { PT.map = +b.dataset.v; ptSync(); });
   main.querySelectorAll('#pttempo button').forEach(b => b.onclick = () => { PT.tempo = +b.dataset.v; ptSync(); });
@@ -16871,14 +16903,13 @@ const pgHost = () => PT.role === 'host' || PT.role === 'local';
 const pgN = () => PQ.s ? PQ.s.pl.length : 0;
 // welche Spieler sitzen an diesem Gerät (Sitz 0 = linke Tasten, Sitz 1 = rechte Tasten, nur offline)
 function pgSeats(){
-  if (PT.role === 'guest') return [PT.me, -1];
-  if (PT.role === 'host') return [PT.me, -1];
+  if (PT.role === 'guest' || PT.role === 'host') return [PQ.s && PQ.s.map ? PQ.s.map.indexOf(PT.me) : PT.me, -1];   // im Turnier-Match: Platz im Match
   const s = PQ.s ? PQ.s.pl : PT.pl;
   return [s.findIndex(p => p.seat === 0), s.findIndex(p => p.seat === 1)];
 }
 const pgMine = i => pgSeats().includes(i);
 // Bot oder getrennter Mensch: der Gastgeber spielt für ihn
-const pgBot = i => { const p = PQ.s && PQ.s.pl[i]; if (!p) return false; if (p.bot) return true; return PT.role === 'host' && PT.pl[i] && !PT.pl[i].on; };
+const pgBot = i => { const p = PQ.s && PQ.s.pl[i]; if (!p) return false; if (p.bot) return true; const g = PQ.s.map ? PQ.s.map[i] : i; return PT.role === 'host' && PT.pl[g] && !PT.pl[g].on; };
 const pgLvl = i => PQ.s.pl[i].bot ? (PQ.s.pl[i].lvl | 0) : 1;
 const pgT = (fn, ms) => { const t = setTimeout(fn, ms); PQ.tm.push(t); return t; };
 function pgClear(){ PQ.tm.forEach(clearTimeout); PQ.tm = []; PQ.bq = []; }
@@ -16905,6 +16936,7 @@ function pgBegin(){
   if (PQ.botWas == null) { PQ.botWas = BOT.on; BOT.on = false; }
   PQ.s = {ph: 'intro', ri: 0, mode: PT.mode, rounds: PT.rounds, nch: PT.nch, len: 1, len0: PT.nch === -1 && !PT.try ? PT.len || 3 : 3, mins: 3, try: PT.try || null, tempo: PT.tempo || 1, pl: PT.pl.map(p => ({n: p.name, av: p.av, bot: !!p.bot, lvl: p.lvl | 0, seat: p.seat})), pts: PT.pl.map(() => 0), g: null, res: null, prev: ''};
   if (PQ.s.mode === 'board') pgBoardInit(PQ.s, PT.map);
+  if (PQ.s.mode === 'tour') return pgTourInit();
   pgOrder();
 }
 // Reihenfolge: jeder würfelt einmal, die höchste Zahl beginnt (Gleichstand: Los)
@@ -16988,6 +17020,13 @@ function pgResult(sc, txt){
   } }
   pgResultF(sc, txt);
 }
+// Rangliste der ganzen Partie: Brett nach Sternen, dann Münzen; sonst nach Punkten. Gleichstand = gleicher Platz.
+function pgRank(s){
+  const v = i => s.br ? s.br.stars[i]*1e5 + s.br.coins[i] : s.pts[i], ord = s.pl.map((p, i) => i).sort((a, b) => v(b) - v(a)), rk = [];
+  ord.forEach((i, k) => { rk[i] = k && v(i) === v(ord[k - 1]) ? rk[ord[k - 1]] : k; }); return rk;
+}
+// nach jedem Minispiel: Platz im Spiel und in der Gesamtwertung merken (für Pfeile und Highlights am Ende)
+function pgHist(s, place, rk0){ const rk = pgRank(s); (s.hist = s.hist || []).push({g: (s.g && s.g.id) || '', place: place.slice(), rk}); s.res.rk = [rk0, rk]; }
 function pgResultF(sc, txt){
   const s = PQ.s, n = s.pl.length, pay = BR_PAY[n] || BR_PAY[6], T = s.br && s.team;
   let place, gain, tr = [];
@@ -17002,32 +17041,36 @@ function pgResultF(sc, txt){
     // Trost: wer im Minispiel Letzter ist, bekommt 2 Münzen extra (Glückspilz)
     if (s.br && n >= 3) { const lp = Math.max(...place); if (lp > 0) { tr = s.pl.map((p, i) => i).filter(i => place[i] === lp); tr.forEach(i => { gain[i] += 2; s.br.lastp[i]++; }); } }
   }
+  const rk0 = pgRank(s);
   gain.forEach((g, i) => { if (s.br) { s.br.coins[i] += g; s.br.got[i] += g; if (place[i] === 0 && !(T && T.win < 0)) s.br.mw[i]++; } else s.pts[i] += g; });
   s.ph = 'res'; s.res = {place, gain, tr, txt: txt || sc.map(String), tot: s.br ? s.br.coins.slice() : s.pts.slice(), t: Date.now(), hold: false};
+  pgHist(s, place, rk0);
   pgAutoNext(); pgPush();
 }
 // Boss-Kampf vorbei: dmg = Schaden je Spieler. Gewonnen: 10 bis 25 Münzen nach Schaden, der Beste +1 Stern. Verloren: alle −5.
 function pgBossEnd(dmg, won, txt){
   pgClear(); const s = PQ.s, b = s.br, mx = Math.max(1, ...dmg);
+  const rk0 = pgRank(s);
   const ord = dmg.map((v, i) => i).sort((x, y) => dmg[y] - dmg[x]), place = []; ord.forEach((i, k) => { place[i] = k && dmg[i] === dmg[ord[k - 1]] ? place[ord[k - 1]] : k; });
   const gain = won ? dmg.map(d => Math.round(10 + 15*Math.max(0, d)/mx)) : dmg.map((d, i) => -Math.min(5, b ? b.coins[i] : 5)), best = won ? ord[0] : -1;
   gain.forEach((g, i) => { if (b) { if (g > 0) pbAdd(i, g); else b.coins[i] = Math.max(0, b.coins[i] + g); } else s.pts[i] += Math.max(0, g); });
   if (b && best >= 0) { b.stars[best]++; b.mw[best]++; }
   s.ph = 'res'; s.res = {place, gain, tr: [], txt: txt || dmg.map(d => `${d} Schaden`), tot: b ? b.coins.slice() : s.pts.slice(), t: Date.now(), hold: false, boss: {won, best}};
+  pgHist(s, place, rk0);
   pgAutoNext(); pgPush();
 }
 // Ergebnis bleibt stehen, bis der Gastgeber weitermacht, spätestens nach 15 Sekunden (anhalten geht)
 function pgAutoNext(){ const s = PQ.s; if (!s || s.ph !== 'res' || !s.res || s.res.hold) return; const t = s.res.t; clearTimeout(PQ.autoT); PQ.autoT = pgT(() => { if (PQ.s === s && s.ph === 'res' && s.res && s.res.t === t && !s.res.hold) pgNext(); }, pbW(15000)); }
 function pgHold(){ const s = PQ.s; if (!pgHost() || !s || s.ph !== 'res' || !s.res) return; s.res.hold = true; clearTimeout(PQ.autoT); pgPush(); }
-function pgNext(){ if (!pgHost() || !PQ.s) return; clearTimeout(PQ.autoT); PQ.s.ri++; if (PQ.s.br) { if (PQ.s.ri >= PQ.s.rounds) pgFinish(); else pgBoardRound(); } else pgPick(); }
-function pgFinish(){ if (!pgHost() || !PQ.s) return; pgClear(); if (PQ.s.br && !PQ.s.br.bonus) return pgBonus(); PQ.s.ph = 'end'; pgPush(); }
+function pgNext(){ if (!pgHost() || !PQ.s) return; clearTimeout(PQ.autoT); PQ.s.ri++; if (PQ.s.tour) return pgTourAfter(); if (PQ.s.br) { if (PQ.s.ri >= PQ.s.rounds) pgFinish(); else pgBoardRound(); } else pgPick(); }
+function pgFinish(){ if (!pgHost() || !PQ.s) return; pgClear(); if (PQ.s.tour) return pgTourEnd(PQ.s.tour); if (PQ.s.br && !PQ.s.br.bonus) return pgBonus(); PQ.s.ph = 'end'; pgPush(); }
 function pgLobby(){
   if (!pgHost()) return;
   if (PQ.s && PQ.s.try) { pgStop(); ptStop(); return menu('lib'); }   // Ausprobieren: zurück zur Spielesammlung
   pgStop(); PT.started = false; PT.st = 'lobby';
   if (PT.role === 'host') ptSync(); else ptView();
 }
-function pgStop(){ document.body.classList.remove('pgon'); pgClear(); cancelAnimationFrame(PQ.raf); PQ.s = null; PQ.mk = {}; if (PQ.botWas != null) { BOT.on = PQ.botWas; PQ.botWas = null; } }
+function pgStop(){ document.body.classList.remove('pgon'); pgClear(); PT_COL0.forEach((c, i) => { PT_COL[i] = c; }); cancelAnimationFrame(PQ.raf); PQ.s = null; PQ.mk = {}; if (PQ.botWas != null) { BOT.on = PQ.botWas; PQ.botWas = null; } }
 // Stand verteilen und selbst zeichnen
 function pgPush(){
   const S = PQ.s; if (S && S.br && pgHost() && S.br.fx) { const t = Date.now(); S.br.fx = S.br.fx.filter(f => t - f.at < 5000); }
@@ -17051,8 +17094,9 @@ function pgSend(i, a){ if (i < 0) return; if (pgHost()) pgIn(i, a); else if (PT.
 /* ---------- Anzeige ---------- */
 function pgRender(){
   if (mode !== 'party' || !PQ.s) return;
+  PT_COL0.forEach((c, i) => { PT_COL[i] = PQ.s.map ? PT_COL0[PQ.s.map[i] != null ? PQ.s.map[i] : i] : c; });
   const s = PQ.s, g = s.g, G0 = g && PGAMES[g.id], seats = pgSeats();
-  const key = s.ph + ':' + s.ri + ':' + (g && g.rp ? g.rp.k : 0) + (g && g.show ? 's' : '');
+  const key = s.ph + ':' + s.ri + ':' + (g && g.rp ? g.rp.k : 0) + (g && g.show ? 's' : '') + ':' + (s.mid || 0);
   if (key !== PQ.last) { const ch = PQ.last && PQ.last.split(':')[2] !== key.split(':')[2]; PQ.last = key; if (s.ph === 'intro' || (s.ph === 'play' && ch)) { PQ.mk = {}; PQ.taps = {}; PQ.grid = null; PQ.aim = {}; PQ.solo = {}; PQ.lc = {}; PQ.gh = {}; PQ.sp = {}; PQ.wt = null; PQ.spT = {}; PQ.spC = {}; RTK[0].clear(); RTK[1].clear(); } }
   // Stand als Tabelle unter dem Spiel, sortiert wie nach den Minispielen
   const scv = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i];
@@ -17082,25 +17126,28 @@ function pgRender(){
       ${s.go ? '<div class="pgcd" id="pgcd"></div>' : `${wait.length ? `<div class="mbtns pgrdy">${wait.map(i => `<button class="btn pgrd" data-i="${i}" style="background:${PT_COL[i]};color:#fff">✋ ${seats[1] >= 0 ? esc(s.pl[i].n) + ': ' : ''}Bereit ${kbp(pgSeat(seats, i), 'bz')}</button>`).join('')}</div>` : '<p class="hint">Warte auf die anderen …</p>'}
       ${pgDots(s, i => rd[i])}<p class="hint">Los geht es, wenn alle bereit sind, spätestens in ${pgCdn('rd' + s.g.t, pbW(15000))}</p>`}</div>`; }
   else if (s.ph === 'play' && g.show) { const sh = g.show, o = s.pl.map((p, i) => i).sort((a, b) => sh.pl[a] - sh.pl[b]); body = `<div class="kick">${G0.icon} ${G0.name} · Durchgang ${g.rp.k} von ${g.rp.n}</div>${s.br && s.team ? pgLive(s, g) : ''}<div class="pgres">${o.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${sh.pl[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${pgTm(s, i)}${esc(s.pl[i].n)}</b><small>${esc(String(sh.txt[i]))}</small><span class="gn">${g.rp.sum[i]}</span></div>`).join('')}</div><p class="hint">${g.rp.k >= g.rp.n ? 'Gleich kommt das Endergebnis …' : 'Gleich geht es weiter …'}</p>`; }
-  else if (s.ph === 'play') body = (s.br && s.team ? pgLive(s, g) : '') + (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
+  else if (s.ph === 'play') body = (s.tour && seats.every(x => x < 0) ? '<p class="hint trw">👀 Du schaust bei diesem Match zu</p>' : '') + (s.br && s.team ? pgLive(s, g) : '') + (g.rp && g.rp.n > 1 ? `<p class="hint pgrp">Durchgang ${g.rp.k + 1} von ${g.rp.n}</p>` : '') + G0.view(s, seats);
   else if (s.ph === 'res') {
     const ord = s.pl.map((p, i) => i).sort((a, b) => s.res.place[a] - s.res.place[b]);
     const T = s.br && s.team, R0s = s.res, tot = R0s.tot, auto = R0s.hold ? '' : pgCdn('ra' + R0s.t, pbW(15000));
     const BS = R0s.boss, sg = v => v < 0 ? `−${-v}` : `+${v}`;
     body = `${G0 ? `<div class="kick">${G0.icon} ${G0.name}</div>` : ''}${BS ? `<div class="pgteam boss${BS.won ? '' : ' lost'}">${BS.won ? `⚡ Der Boss ist besiegt!<small>Je mehr Schaden, desto mehr Münzen · bester Kämpfer: ${esc(s.pl[BS.best].n)} +1 ⭐</small>` : `💀 Der Boss hat gewonnen<small>Jeder verliert bis zu 5 🪙</small>`}</div>` : ''}${T ? `<div class="pgteam${T.win < 0 ? '' : ' w' + T.win}">${T.win < 0 ? '👥 Unentschieden! Alle bekommen 3 🪙.' : `${T.win ? '🔴 Team Rot' : '🔵 Team Blau'} gewinnt! Jeder im Team bekommt 10 🪙.`}</div>` : ''}
       <div class="pgres">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${T ? `<i class="tm" style="background:${PB_TC[T.g[i]]}"></i>` : `${R0s.place[i] + 1}.`}</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}</b><small>${esc(String(R0s.txt[i]))}${(R0s.tr || []).includes(i) ? ' <i class="pgtr" title="Trost für den letzten Platz">🍀 +2</i>' : ''}${BS && BS.best === i ? ' <i class="pgtr">+1 ⭐</i>' : ''}</small><span class="gn">${sg(R0s.gain[i])}${s.br ? ' 🪙' : ''}${tot ? `<em class="pgtot">= ${tot[i]}${s.br ? ' 🪙' : ''}</em>` : ''}</span></div>`).join('')}</div>
-      ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgnx">${s.br ? (s.ri + 1 >= s.rounds ? 'Zum Ergebnis' : 'Weiter zum Brett') : 'Nächstes Minispiel'}${enterKb()}</button><button class="btn ghost${PQ.endArm > performance.now() ? ' warn' : ''}" id="pgend">${PQ.endArm > performance.now() ? 'Wirklich beenden?' : 'Party beenden'}</button></div>
+      ${s.tour ? '' : pgStand(s)}
+      ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgnx">${s.br ? (s.ri + 1 >= s.rounds ? 'Zum Ergebnis' : 'Weiter zum Brett') : s.tour ? 'Weiter' : 'Nächstes Minispiel'}${enterKb()}</button><button class="btn ghost${PQ.endArm > performance.now() ? ' warn' : ''}" id="pgend">${PQ.endArm > performance.now() ? 'Wirklich beenden?' : 'Party beenden'}</button></div>
         ${auto ? `<p class="hint">Geht automatisch weiter in ${auto} · <button class="link" id="pghold">anhalten</button></p>` : ''}` : `<p class="hint">Der Gastgeber ${s.br ? 'macht weiter' : 'startet das nächste Minispiel'}${auto ? `, spätestens in ${auto}` : ''}.</p>`}`;
   } else if (s.ph === 'bonus') { body = pgBonusView(s);
+  } else if (s.ph === 'tour') { body = pgTourView(s);
+  } else if (s.ph === 'end' && s.tour) { body = pgTourEndView(s);
   } else if (s.ph === 'end') {
     const sc = i => s.br ? s.br.stars[i]*10000 + s.br.coins[i] : s.pts[i], B = s.br;
     const ord = s.pl.map((p, i) => i).sort((a, b) => sc(b) - sc(a)), place = []; ord.forEach((i, k) => { place[i] = k && sc(i) === sc(ord[k - 1]) ? place[ord[k - 1]] : k; });
     const win = ord.filter(i => place[i] === 0);
-    body = `<div class="icon">🏆</div><h1 class="big-h">${win.map(i => esc(s.pl[i].n)).join(' & ')} ${win.length > 1 ? 'gewinnen' : 'gewinnt'} die Party</h1><div class="pgres pgfin">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${place[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}${B ? `<em>🏆 ${B.mw[i]} · ⭐ ${B.sb[i] || 0} gekauft · 🪙 ${B.got[i]} gesammelt</em>` : ''}</b>${B ? `<small>🪙 ${B.coins[i]}</small><span class="gn">⭐ ${B.stars[i]}</span>` : `<span class="gn">${s.pts[i]}</span>`}</div>`).join('')}</div>${B ? '<p class="hint">Bei gleich vielen Sternen entscheiden die Münzen. 🏆 = gewonnene Minispiele.</p>' : ''}
+    body = `<div class="icon">🏆</div><h1 class="big-h">${win.map(i => esc(s.pl[i].n)).join(' & ')} ${win.length > 1 ? 'gewinnen' : 'gewinnt'} die Party</h1><div class="pgres pgfin">${ord.map(i => `<div class="pgr${pgMine(i) ? ' me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${place[i] + 1}.</span><span class="hd">${ptHead({av: s.pl[i].av}, i)}</span><b>${esc(s.pl[i].n)}${B ? `<em>🏆 ${B.mw[i]} · ⭐ ${B.sb[i] || 0} gekauft · 🪙 ${B.got[i]} gesammelt</em>` : ''}</b>${B ? `<small>🪙 ${B.coins[i]}</small><span class="gn">⭐ ${B.stars[i]}</span>` : `<span class="gn">${s.pts[i]}</span>`}</div>`).join('')}</div>${B ? '<p class="hint">Bei gleich vielen Sternen entscheiden die Münzen. 🏆 = gewonnene Minispiele.</p>' : ''}${pgHigh(s)}
       ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgre">Nochmal</button><button class="btn ghost" id="pglob">${s.try ? 'Zur Spielesammlung' : 'Zur Lobby'}</button></div>` : '<p class="hint">Warte auf den Gastgeber.</p>'}`;
   }
   if (s.ph === 'board') view(`<div class="pgwrap board"><div class="card cut pgcard bxcard">${body}</div></div>`);
-  else view(`<div class="pgwrap"><div class="card cut pgcard">${s.ph === 'end' || s.ph === 'order' ? '' : `<div class="kick">${s.br ? (s.ph === 'bonus' ? '🎲 Brett · Ende' : `🎲 Brett · Runde ${s.ri + 1} von ${s.rounds}`) : `♾️ Minispiel ${s.ri + 1}`}</div>`}${body}${!s.br && s.ph === 'pick' ? `<div class="kick pgtk">Stand</div>${board}` : ''}</div></div>`);
+  else view(`<div class="pgwrap"><div class="card cut pgcard">${s.ph === 'end' || s.ph === 'order' || s.ph === 'tour' ? '' : `<div class="kick">${s.br ? (s.ph === 'bonus' ? '🎲 Brett · Ende' : `🎲 Brett · Runde ${s.ri + 1} von ${s.rounds}`) : s.tour ? pgTourKick(s) : `♾️ Minispiel ${s.ri + 1}`}</div>`}${body}${!s.br && !s.tour && s.ph === 'pick' ? `<div class="kick pgtk">Stand</div>${board}` : ''}</div></div>`);
   pgAlert(s);
   const q = id => main.querySelector('#' + id);
   if (q('pgnx')) { q('pgnx').onclick = pgNext; enterTo('#pgnx'); }
@@ -17108,6 +17155,7 @@ function pgRender(){
   if (q('pghold')) q('pghold').onclick = pgHold;
   main.querySelectorAll('.pgrd').forEach(x => x.onclick = () => pgSend(+x.dataset.i, {k: 'ready'}));
   if (q('pgre')) q('pgre').onclick = pgBegin;
+  if (q('pgtgo')) { q('pgtgo').onclick = pgTourMatch; enterTo('#pgtgo'); }
   if (q('pglob')) q('pglob').onclick = pgLobby;
   if (s.ph === 'intro' && s.go) { const T = pgMark('go' + s.go); cancelAnimationFrame(PQ.raf); const tick = () => { const e = q('pgcd'); if (!e || PQ.s !== s || s.ph !== 'intro') return; const r = Math.max(0, Math.ceil((2900 - (performance.now() - T))/1000)); e.textContent = r ? `Gleich geht es los … ${r}` : 'Los!'; PQ.raf = requestAnimationFrame(tick); }; tick(); }
   if (s.ph === 'play' && G0.after && !g.show) G0.after(s, seats);
@@ -17137,6 +17185,27 @@ function pgAlert(s){
   if (b) { const st = b.stars.reduce((a, v) => a + v, 0); if (PQ.stS != null && st > PQ.stS && s.ph === 'board') { Snd.init(); Snd.win(); } PQ.stS = s.ph === 'order' ? 0 : st; }
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && PQ.title) { document.title = PQ.title; PQ.title = null; } });
+// Gesamtstand nach dem Minispiel: Platz, Wert und Pfeil, wie viele Plätze jemand gutgemacht oder verloren hat
+function pgStand(s){
+  const R = s.res && s.res.rk; if (!R) return '';
+  const [r0, r1] = R, ord = s.pl.map((p, i) => i).sort((a, b) => r1[a] - r1[b] || a - b), B = s.br;
+  const ar = i => { const d = r0[i] - r1[i]; return d > 0 ? `<i class="up">▲${d}</i>` : d < 0 ? `<i class="dn">▼${-d}</i>` : '<i class="eq">–</i>'; };
+  const lead = s.hist && s.hist.length > 1 ? (() => { const a = ord.filter(i => r1[i] === 0); return a.length === 1 && s.hist[s.hist.length - 2].rk[a[0]] !== 0 ? `<p class="hint pgnew">👑 ${esc(s.pl[a[0]].n)} übernimmt die Führung!</p>` : ''; })() : '';
+  return `<div class="kick pgtk">Gesamtstand</div>${lead}<div class="pgstand">${ord.map(i => `<div class="${pgMine(i) ? 'me' : ''}" style="--pc:${PT_COL[i]}"><span class="pl">${r1[i] + 1}.</span>${ar(i)}<b>${esc(s.pl[i].n)}</b><span class="v">${B ? `⭐ ${B.stars[i]} · 🪙 ${B.coins[i]}` : `${s.pts[i]} P.`}</span></div>`).join('')}</div>`;
+}
+// Highlights am Ende der Party, aus dem Verlauf aller Minispiele
+function pgHigh(s){
+  const H = s.hist || [], n = s.pl.length, L = [], nm = i => esc(s.pl[i].n); if (H.length < 2) return '';
+  const best = (f, min = 1) => { let b = -1, v = min - 1; for (let i = 0; i < n; i++) { const x = f(i); if (x > v) { v = x; b = i; } } return b >= 0 && v >= min ? [b, v] : null; };
+  const lead = best(i => H.filter(h => h.rk[i] === 0).length); if (lead) L.push(['👑 Am längsten vorn', `${nm(lead[0])}, nach ${lead[1]} von ${H.length} Spielen`]);
+  const strk = best(i => { let m = 0, c = 0; H.forEach(h => { c = h.place[i] === 0 ? c + 1 : 0; m = Math.max(m, c); }); return m; }, 2); if (strk) L.push(['🔥 Längste Siegesserie', `${nm(strk[0])}, ${strk[1]} Minispiele am Stück`]);
+  const fin = H[H.length - 1].rk, up = best(i => Math.max(...H.map(h => h.rk[i])) - fin[i]); if (up) L.push(['🚀 Größte Aufholjagd', `${nm(up[0])}, ${up[1]} ${up[1] > 1 ? 'Plätze' : 'Platz'} gutgemacht`]);
+  const dn = best(i => fin[i] - Math.min(...H.map(h => h.rk[i]))); if (dn) L.push(['📉 Tiefster Fall', `${nm(dn[0])}, ${dn[1]} ${dn[1] > 1 ? 'Plätze' : 'Platz'} verloren`]);
+  const avg = i => H.reduce((a, h) => a + h.place[i], 0)/H.length, cons = s.pl.map((p, i) => i).sort((a, b) => avg(a) - avg(b))[0];
+  L.push(['🎯 Bester Schnitt', `${nm(cons)}, im Mittel Platz ${(avg(cons) + 1).toLocaleString('de-DE', {maximumFractionDigits: 1})}`]);
+  const unl = best(i => H.filter(h => h.place[i] === Math.max(...h.place) && Math.max(...h.place) > 0).length, 2); if (unl) L.push(['🍀 Pechvogel', `${nm(unl[0])}, ${unl[1]}-mal Letzter`]);
+  return `<div class="hl pghl"><div class="kick">Highlights</div>${L.map(([a, b]) => `<div class="hlr"><span>${a}</span><b>${b}</b></div>`).join('')}</div>`;
+}
 // Team-Minispiel: Teampunkt vor dem Namen
 const pgTm = (s, i) => s.br && s.team ? `<i class="tm" style="background:${PB_TC[s.team.g[i]]}"></i>` : '';
 // Team-Minispiel: Leiste mit beiden Teams und dem aktuellen Stand (aus dem, was das Spiel gerade mitzählt)
@@ -17281,8 +17350,9 @@ const pgT0 = (fn, ms) => { const t = setTimeout(fn, ms); PQ.tm.push(t); return t
    Der Gastgeber hält den Stand in s.br und entscheidet alles. Entscheidungen (Abzweigung, Shop, Stern, Ziel, Duell) laufen
    über b.ask: wählen kann nur, wer gefragt ist, die anderen sehen dieselben Knöpfe ausgegraut; nach Ablauf gilt die Vorgabe. */
 const PB_T = {h: {ic: '🏁', n: 'Start'}, b: {ic: '+3', n: 'Blau: +3 Münzen'}, r: {ic: '−3', n: 'Rot: −3 Münzen'}, e: {ic: '❓', n: 'Ereignis'}, s: {ic: '🛒', n: 'Shop'}, d: {ic: '🦹', n: 'Dieb'}, w: {ic: '🔄', n: 'Tausch'},
-  g: {ic: '🎰', n: 'Glücksrad'}, k: {ic: '⚡', n: 'Boss'}, n: {ic: '🏦', n: 'Bank'}, z: {ic: '🚉', n: 'Bahnhof'}};
-const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', w: '🔄', g: '🎰', k: '⚡', n: '🏦', z: '🚉'};
+  g: {ic: '🎰', n: 'Glücksrad'}, k: {ic: '⚡', n: 'Boss'}, n: {ic: '🏦', n: 'Bank'}, z: {ic: '🚉', n: 'Bahnhof'},
+  c: {ic: '🎲', n: 'Spieltisch'}, x: {ic: '👻', n: 'Geist'}, p: {ic: '🪐', n: 'Schwerkraft'}};
+const PB_EM = {h: '🏁', b: '🔵', r: '🔴', e: '❓', s: '🛒', d: '🦹', w: '🔄', g: '🎰', k: '⚡', n: '🏦', z: '🚉', c: '🎲', x: '👻', p: '🪐'};
 // Glücksrad: was passieren kann
 const PB_WH = [{ic: '🎉', n: 'Alle +5'}, {ic: '💰', n: 'Du +10'}, {ic: '💸', n: 'Du −8'}, {ic: '⚖️', n: 'Münzen gerecht verteilen'}, {ic: '🎁', n: 'Gegenstand'}, {ic: '🔀', n: 'Sterne tauschen'}];
 // Bonus-Sterne: pro Partie werden 3 davon ausgelost
@@ -17400,6 +17470,52 @@ const PB_MAPS = [
       h.s('F', 'D', 'bzbrb'); h.s('D', 'H', 'bbkbeb'); h.s('H', 'A', 'bzbbrb');
       h.s('E', 'M', 'bbeb', null, {lab: 'in die Stadt'}); h.s('G', 'M', 'brb', null, {lab: 'in die Stadt', g: 1}); h.s('M', 'F', 'bbeb', null, {lab: 'nach Osten', g: 0}); h.s('M', 'H', 'bgb', null, {lab: 'nach Süden'});
     }},
+  {n: 'Casino', ic: '🎰', d: 'Ein Casino mit Roulette-Tisch in der Mitte: viele Glücksräder und Spieltische, aber rote Felder kosten 5 Münzen. Alle 3 Runden tauschen rote und blaue Felder die Farbe.', ev: 'flip', red: 5, bg: ['#1f8a5a', '#0f5a3a'],
+    deco: () => `<rect x="4" y="4" width="152" height="92" rx="12" fill="none" stroke="#c9a227" stroke-width="1.6"/><rect x="7" y="7" width="146" height="86" rx="10" fill="none" stroke="#c9a227" stroke-width=".6" stroke-dasharray="2 2"/>
+      <ellipse cx="80" cy="50" rx="17" ry="13" fill="#5a2a12" stroke="#c9a227" stroke-width="1.4"/>${Array.from({length: 12}, (_, k) => { const a = k*Math.PI/6, a2 = a + Math.PI/6; return `<path d="M80 50 L${(80 + 15*Math.cos(a)).toFixed(1)} ${(50 + 11.4*Math.sin(a)).toFixed(1)} A15 11.4 0 0 1 ${(80 + 15*Math.cos(a2)).toFixed(1)} ${(50 + 11.4*Math.sin(a2)).toFixed(1)}Z" fill="${k % 2 ? '#1d1a16' : '#d63b3b'}"/>`; }).join('')}<ellipse cx="80" cy="50" rx="5" ry="4" fill="#c9a227"/>
+      ${[[40, 30], [120, 30], [40, 70], [120, 70]].map(([x, y], k) => `<circle cx="${x}" cy="${y}" r="4.5" fill="${['#ff4d5e', '#3d8bff', '#ffd34d', '#fff'][k]}" stroke="#1d1a16" stroke-width=".6" stroke-dasharray="1.5 1.5"/>`).join('')}`,
+    build(h){
+      const I = (a, b, n) => pbArc(80, 50, 30, 23, a, b, n);
+      h.j('st', 8, 94, 'h'); h.j('A', 16, 86, 'b'); h.j('B', 16, 14, 'e'); h.j('C', 80, 8, 'b'); h.j('D', 144, 14, 's'); h.j('E', 144, 86, 'b'); h.j('F', 80, 92, 'b');
+      h.j('G', ...I(90, 90, 1)[0], 'b'); h.j('H', ...I(0, 0, 1)[0], 'c'); h.j('I', ...I(-90, -90, 1)[0], 'b'); h.j('J', ...I(180, 180, 1)[0], 'c');
+      h.s('st', 'A', 'b');
+      h.s('A', 'B', 'bgbrbcb', [[8, 50]]); h.s('B', 'C', 'bcbrbg'); h.s('C', 'D', 'bgbnbr'); h.s('D', 'E', 'bcbrbgb', [[152, 50]]); h.s('E', 'F', 'brbgbc'); h.s('F', 'A', 'bgbrbb', null, {lab: 'außen weiter'});
+      h.s('F', 'G', 'b', null, {lab: 'an den Roulette-Tisch 🎰', min: 1});
+      h.s('G', 'H', 'bgb', I(90, 0, 6), {exact: 1}); h.s('H', 'I', 'brb', I(0, -90, 6), {exact: 1}); h.s('I', 'J', 'bgb', I(-90, -180, 6), {lab: 'am Tisch weiter', exact: 1}); h.s('J', 'G', 'brb', I(180, 90, 6), {lab: 'am Tisch weiter', exact: 1});
+      h.s('I', 'C', 'b', null, {lab: 'raus nach oben', min: 1}); h.s('J', 'A', 'bb', null, {lab: 'raus zum Ausgang'});
+    }},
+  {n: 'Geisterhaus', ic: '👻', d: 'Ein Spukhaus mit drei Geheimtüren: jede Runde ist eine andere zu. Geister scheuchen dich zurück, Tauschfelder wirbeln alles durcheinander.', ev: 'ghost', bg: ['#4b4266', '#2a2340'], cg: 3, blk: '🚪',
+    where: ['durchs Kaminzimmer', 'durch den Keller', 'durch die Bibliothek'],
+    deco: () => `<rect x="20" y="18" width="120" height="66" rx="4" fill="#5d5280"/>${[[22, 20, 56, 30], [82, 20, 56, 30], [22, 52, 56, 30], [82, 52, 56, 30]].map(([x, y, w, hh]) => `<rect x="${x}" y="${y}" width="${w}" height="${hh}" rx="2" fill="#6f6496"/>`).join('')}
+      ${[[40, 34], [108, 34], [40, 70], [108, 70]].map(([x, y]) => `<rect x="${x}" y="${y}" width="12" height="9" rx="1.5" fill="#ffe27a" opacity=".85"/><path d="M${x + 6} ${y} V${y + 9} M${x} ${y + 4.5} H${x + 12}" stroke="#4b4266" stroke-width=".8"/>`).join('')}
+      <circle cx="140" cy="10" r="6" fill="#fff6c9"/><circle cx="143" cy="8" r="5" fill="#4b4266"/>${[[60, 60], [100, 46], [70, 34]].map(([x, y]) => `<path d="M${x} ${y} q4 -8 8 0 v5 l-2 -1.5 -2 1.5 -2 -1.5 -2 1.5Z" fill="#fff" opacity=".55"/>`).join('')}`,
+    build(h){
+      h.j('st', 8, 94, 'h'); h.j('A', 14, 86, 'b'); h.j('L', 14, 50, 'b'); h.j('B', 14, 12, 'e'); h.j('M1', 80, 12, 'b'); h.j('K1', 50, 12, 'b'); h.j('K2', 112, 90, 'b'); h.j('C', 146, 12, 's'); h.j('R', 146, 50, 'b'); h.j('D', 146, 88, 'e'); h.j('M2', 80, 92, 'b'); h.j('Z', 80, 50, 'e');
+      h.s('st', 'A', 'b');
+      h.s('A', 'L', 'bbebrb'); h.s('L', 'B', 'bxbbe', null, {lab: 'außen weiter'}); h.s('B', 'K1', 'beb'); h.s('K1', 'M1', 'rwb'); h.s('M1', 'C', 'bbxbgb'); h.s('C', 'R', 'bbebrb'); h.s('R', 'D', 'bxbbrb', null, {lab: 'außen weiter'});
+      h.s('D', 'K2', 'bbe'); h.s('K2', 'M2', 'bwb'); h.s('M2', 'A', 'brbxbb', null, {lab: 'außen weiter'});
+      h.s('L', 'K1', 'bwbe', [[36, 30]], {lab: 'durchs Kaminzimmer 🚪', g: 0});
+      h.s('R', 'K2', 'bebx', [[124, 68]], {lab: 'durch den Keller 🚪', g: 1});
+      h.s('M2', 'Z', 'bxb', null, {lab: 'durch die Bibliothek 🚪', g: 2}); h.s('Z', 'M1', 'bwb');
+    },
+    closed: b => `🚪 Die Tür ${pbWhere(b)} ist zu.`},
+  {n: 'Weltraum', ic: '🚀', d: 'Eine Umlaufbahn um einen Planeten: Schwerkraftfelder ziehen dich vor oder zurück, das Raumschiff fliegt für 4 Münzen eine Abkürzung. Alle 3 Runden sperrt ein Meteoritenschauer einen Weg.', ev: 'meteor', bg: ['#2b2d5c', '#0f1030'], cg: 3, blk: '☄️',
+    where: ['in die Umlaufbahn', 'aus der Umlaufbahn nach Westen', 'aus der Umlaufbahn nach Osten'],
+    deco: () => `${[[12, 30], [30, 8], [52, 20], [104, 6], [130, 26], [150, 60], [140, 92], [100, 96], [56, 84], [20, 66], [70, 70], [94, 30]].map(([x, y], k) => `<circle cx="${x}" cy="${y}" r="${k % 3 ? .6 : 1}" fill="#fff" opacity="${k % 2 ? .6 : .9}"/>`).join('')}
+      <circle cx="80" cy="50" r="10" fill="#c4589c"/><circle cx="76" cy="46" r="3.5" fill="#e07bb8" opacity=".7"/><ellipse cx="80" cy="50" rx="17" ry="4" fill="none" stroke="#ffd34d" stroke-width="1.2" transform="rotate(-18 80 50)"/>
+      <circle cx="138" cy="14" r="4" fill="#9aa3c7"/><circle cx="137" cy="13" r="1" fill="#6b7299"/>`,
+    build(h){
+      const O = (a, b, n) => pbArc(80, 50, 66, 40, a, b, n), R = (a, b, n) => pbArc(80, 50, 22, 15, a, b, n), at = a => O(a, a, 1)[0], ri = a => R(a, a, 1)[0];
+      h.j('st', 8, 94, 'h'); h.j('A', ...at(135), 'b'); h.j('B', ...at(180), 'b'); h.j('C', ...at(225), 'e'); h.j('D', ...at(270), 's'); h.j('E', ...at(315), 'b'); h.j('F', ...at(360), 'b'); h.j('G', ...at(405), 'e'); h.j('H', ...at(450), 'b');
+      h.j('Pb', ...ri(90), 'p'); h.j('Pl', ...ri(180), 'b'); h.j('Pt', ...ri(270), 'p'); h.j('Pr', ...ri(360), 'b');
+      h.s('st', 'A', 'b');
+      h.s('A', 'B', 'brb', O(135, 180, 6), {exact: 1}); h.s('B', 'C', 'bpb', O(180, 225, 6), {exact: 1}); h.s('C', 'D', 'brb', O(225, 270, 6), {lab: 'außen weiter', exact: 1}); h.s('D', 'E', 'bgb', O(270, 315, 6), {exact: 1});
+      h.s('E', 'F', 'bpb', O(315, 360, 6), {exact: 1}); h.s('F', 'G', 'brb', O(360, 405, 6), {exact: 1}); h.s('G', 'H', 'bnb', O(405, 450, 6), {exact: 1}); h.s('H', 'A', 'bpb', O(450, 495, 6), {lab: 'außen weiter', exact: 1});
+      h.s('C', 'E', 'b', [[54, 27], [106, 27]], {lab: 'mit dem Raumschiff 🚀 (schnell)', toll: 4, n: 2});
+      h.s('H', 'Pb', 'b', null, {lab: 'in die Umlaufbahn 🪐', g: 0});
+      h.s('Pb', 'Pl', 'b', R(90, 180, 5), {exact: 1}); h.s('Pl', 'Pt', 'e', R(180, 270, 5), {lab: 'um den Planeten', exact: 1}); h.s('Pt', 'Pr', 'b', R(270, 360, 5), {exact: 1}); h.s('Pr', 'Pb', 'r', R(360, 450, 5), {lab: 'um den Planeten', exact: 1});
+      h.s('Pl', 'B', 'bb', null, {lab: 'raus nach Westen', g: 1}); h.s('Pr', 'F', 'bb', null, {lab: 'raus nach Osten', g: 2});
+    }},
 ];
 const PB_G = [];
 // Linienzug glätten (Catmull-Rom), dann gleichmäßig abtasten
@@ -17428,7 +17544,7 @@ function pbG(mi){
     // Wegstück: so viele Felder, wie gleichmäßig draufpassen; die Feldtypen als Muster (wird wiederholt)
     s(a, z, types, via, o = {}){
       const A = N[J[a]], Z = N[J[z]], raw = [[A.X, A.Y], ...(via || []), [Z.X, Z.Y]], P = via && via.length > 1 && !o.exact ? pbSmooth(raw) : raw;
-      const n = Math.max(o.min != null ? o.min : 0, Math.round(pbLen(P)/PB_SP) - 1), pat = types || 'b';
+      const n = o.n != null ? o.n : Math.max(o.min != null ? o.min : 0, Math.round(pbLen(P)/PB_SP) - 1), pat = types || 'b';
       const ids = pbAlong(P, n).map((q, k) => add(q[0], q[1], pat[k % pat.length])), ch = [J[a], ...ids, J[z]];
       for (let k = 0; k < ch.length - 1; k++) { const nd = N[ch[k]]; nd.nx.push(ch[k + 1]); nd.eg.push(k ? -1 : (o.g != null ? o.g : -1)); nd.toll.push(k ? 0 : o.toll || 0); nd.lab.push(k ? '' : o.lab || ''); }
       segs.push({P, g: o.g, toll: o.toll || 0, ids: ch}); if (o.spin) ch.forEach(i => { N[i].spin = 1; });
@@ -17489,13 +17605,14 @@ function pbFx(i, t, k){ const b = PQ.s.br; b.fx.push({id: ++b.fxn, p: i, t, k: k
 function pbShield(i){ const it = PQ.s.br.items[i], k = it.indexOf('sh'); if (k < 0) return false; it.splice(k, 1); pbFx(i, '🛡️', 'star'); return true; }
 const pbWhere = b => (PB_MAPS[b.mi].where || [])[b.closed[0]] || '';
 function pbClosedTxt(b){ const M = PB_MAPS[b.mi]; if (!b.closed.length) return ''; if (M.closed) return M.closed(b);
-  return {tide: '🌊 Flut: Die untere Brücke ist gesperrt.', tree: `🌲 Ein Baum sperrt den Weg ${pbWhere(b)}.`, lava: `🌋 Lava sperrt den Weg ${pbWhere(b)}.`, train: `🚧 Schranke zu: der Weg ${pbWhere(b)} ist gesperrt.`}[M.ev] || ''; }
+  return {meteor: `☄️ Meteoriten sperren den Weg ${pbWhere(b)}.`, tide: '🌊 Flut: Die untere Brücke ist gesperrt.', tree: `🌲 Ein Baum sperrt den Weg ${pbWhere(b)}.`, lava: `🌋 Lava sperrt den Weg ${pbWhere(b)}.`, train: `🚧 Schranke zu: der Weg ${pbWhere(b)} ist gesperrt.`}[M.ev] || ''; }
 const pbTeamTxt = s => [0, 1].map(t => `${t ? '🔴' : '🔵'} ${s.pl.map((p, i) => s.team.g[i] === t ? esc(p.n) : '').filter(Boolean).join(', ')}`).join(' gegen ');
 // Rundenbeginn: Karte verändert sich, Endspurt, letzte Chance
 function pgBoardRound(){
   const s = PQ.s, b = s.br, M = PB_MAPS[b.mi], N = pbG(b.mi), msg = [];
   s.ph = 'board'; s.g = null; s.res = null; s.team = null; s.boss = false; b.act = -1; b.ask = null; b.dice = []; b.duel = null; b.fk = null; b.rev = ''; b.wheel = null;
   if (s.ri > 0 && s.ri % 2 === 0 && M.ev === 'bridge') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🏰 Die Zugbrücke geht runter: der Weg in die Burg ist frei!' : '🏰 Die Zugbrücke geht hoch: Niemand kommt mehr in die Burg. Wer drin ist, kommt nur noch durchs Tor raus (5 🪙 Zoll).'); if (c) b.rev = '🏰 Die Zugbrücke ist wieder unten.'; }
+  if (s.ri > 0 && M.ev === 'ghost') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`👻 Es spukt: die Geheimtüren haben sich verschoben, jetzt ist die Tür ${pbWhere(b)} zu.`); }
   if (s.ri > 0 && s.ri % 3 === 0) {
     if (M.ev === 'lava') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g];
       const tot = b.T.filter(t => t === 'b' || t === 'r').length, red = b.T.filter(t => t === 'r').length, k = Math.max(0, Math.min(3, Math.floor(tot*.35) - red));
@@ -17504,6 +17621,8 @@ function pgBoardRound(){
     if (M.ev === 'train') { const g = pickOne([0, 1].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🚂 Ein Zug kommt: die Schranke ${pbWhere(b)} geht zu!`); }
     if (M.ev === 'spin') { const ring = pbRing(N), ty = ring.map(i => b.T[i]); ring.forEach((i, k) => { b.T[i] = ty[(k + 2) % ty.length]; }); msg.push('🎂 Die Torte dreht sich: die Felder im inneren Ring rutschen weiter!'); b.rev = '🎂 Der innere Ring hat sich gedreht.'; }
     if (M.ev === 'tide') { const c = b.closed.includes(0); b.closed = c ? [] : [0]; msg.push(c ? '🌊 Ebbe: die untere Brücke ist wieder frei!' : '🌊 Flut: die untere Brücke steht unter Wasser!'); if (c) b.rev = '🌊 Ebbe: Die untere Brücke ist wieder frei.'; }
+    if (M.ev === 'flip') { const c = b.T.map((t, i) => t === 'b' || t === 'r' ? i : -1).filter(i => i >= 0); c.forEach(i => { b.T[i] = b.T[i] === 'b' ? 'r' : 'b'; }); msg.push('🎰 Glück und Pech drehen sich: alle roten Felder werden blau und alle blauen rot!'); b.rev = '🎰 Rote und blaue Felder haben die Farbe getauscht.'; }
+    if (M.ev === 'meteor') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`☄️ Meteoritenschauer! Der Weg ${pbWhere(b)} ist gesperrt.`); }
     if (M.ev === 'tree') { const g = pickOne([0, 1, 2].filter(x => !b.closed.includes(x))); b.closed = [g]; msg.push(`🌲 Ein Baum ist umgefallen und sperrt den Weg ${pbWhere(b)}!`); }
   }
   { const sh = pbShut(b); if (b.T[b.star] !== 'b' || sh.has(b.star) || b.pos.some(p => !sh.has(p) && pbDist(b, p, b.star) >= 99)) { pgStarMove(); msg.push('⭐ Der Stern zieht auf ein anderes Feld.'); } }
@@ -17661,11 +17780,14 @@ function pbTile(p){
   const s = PQ.s, b = s.br, at = b.pos[p], t = b.T[at], m = b.end ? 2 : 1, others = s.pl.map((x, i) => i).filter(i => i !== p);
   const fin = () => pbFin(p);
   if (t === 'b') { b.blue[p]++; pbAdd(p, 3*m); pbFx(p, `+${3*m} 🪙`); pbSay(`🔵 ${pbN(p)} bekommt ${3*m} Münzen.`, true); return fin(); }
-  if (t === 'r') { b.red[p]++; const x = Math.min(3*m, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); pbSay(`🔴 ${pbN(p)} verliert ${x} Münzen.`, true); return fin(); }
+  if (t === 'r') { b.red[p]++; const x = Math.min((PB_MAPS[b.mi].red || 3)*m, b.coins[p]); pbAdd(p, -x); if (x) pbFx(p, `−${x} 🪙`); pbSay(`🔴 ${pbN(p)} verliert ${x} Münzen.`, true); return fin(); }
   if (t === 'h') { pbSay(`${pbN(p)} steht auf dem Start.`); return fin(); }
   if (t === 's') return pbShop(p, fin, false);
   if (t === 'g') return pbWheel(p, fin);
   if (t === 'z') return pbTrain(p, fin);
+  if (t === 'c') return pbBet(p, fin);
+  if (t === 'x') { const k = 3, x = Math.min(2*m, b.coins[p]); pbShift(p, -k); if (x) { pbAdd(p, -x); pbFx(p, `−${x} 🪙`); } pbFx(p, '👻', 'bad'); pbSay(`👻 Buh! Der Geist scheucht ${pbN(p)} ${k} Felder zurück${x ? ` und ${x} Münzen fallen aus der Tasche` : ''}.`, true); return fin(); }
+  if (t === 'p') { const k = pickOne([-2, -1, 1, 2, 3]), w = pbShift(p, k); pbFx(p, '🪐', 'star'); pbSay(w ? `🪐 Schwerkraft! Der Planet zieht ${pbN(p)} ${Math.abs(w)} ${Math.abs(w) > 1 ? 'Felder' : 'Feld'} ${w > 0 ? 'nach vorn' : 'zurück'}.` : `🪐 Der Planet zerrt an ${pbN(p)}, aber nichts passiert.`, true); return fin(); }
   if (t === 'k') { pbFx(p, '⚡', 'star'); pbSay(b.boss ? `⚡ Der Boss ist schon wach: nach dieser Runde kommt der Boss-Kampf.` : `⚡ ${pbN(p)} weckt den Boss! Nach dieser Runde kämpfen alle zusammen gegen ihn.`, true); b.boss = true; return fin(); }
   if (t === 'n') { const x = b.bank; if (x) { b.bank = 0; pbAdd(p, x); pbFx(p, `+${x} 🪙`); pbSay(`🏦 ${pbN(p)} räumt die Bank ab: ${x} Münzen!`, true); } else pbSay(`🏦 Die Bank ist leer, ${pbN(p)} geht leer aus.`, true); return fin(); }
   if (t === 'd') {
@@ -17693,6 +17815,25 @@ function pbTile(p){
   if (ev === 'again' && !b.again) { b.again = true; pbSay(`❓ Glückswurf: ${pbN(p)} darf nochmal würfeln!`, true); pgPush(); const d = PQ.bdone; return pgT(() => pgTurn(p, () => { b.again = false; d(); }), pbW(1600)); }
   pbAdd(p, 6); pbFx(p, '+6 🪙'); pbSay(`❓ Goldregen: ${pbN(p)} bekommt 6 Münzen.`, true); fin();
 }
+// Figur k Felder vor (k > 0) oder zurück (k < 0) schieben, nur über offene Wege; gibt die wirklich gegangenen Schritte zurück
+function pbShift(p, k){
+  const b = PQ.s.br, N = pbG(b.mi), shut = pbShut(b); let at = b.pos[p], d = 0;
+  const back = i => N.map((n, j) => j).filter(j => pbNext(b, j).includes(i) && !shut.has(j));
+  for (let s0 = 0; s0 < Math.abs(k); s0++) { const c = k > 0 ? pbNext(b, at).filter(j => !shut.has(j)) : back(at); if (!c.length) break; at = pickOne(c); d += Math.sign(k); }
+  b.pos[p] = at; return d;
+}
+// Spieltisch (Casino): Einsatz wählen, dann Münzwurf, gewonnen = Einsatz doppelt zurück
+function pbBet(p, fin){
+  const b = PQ.s.br, opts = [5, 10, 20].filter(v => v <= b.coins[p]);
+  if (!opts.length) { pbSay(`🎲 ${pbN(p)} steht am Spieltisch, hat aber keine 5 Münzen.`); return fin(); }
+  pbSay(`🎲 ${pbN(p)} steht am Spieltisch.`);
+  pbAsk(p, '🎲 Wie viel setzt du? Kopf oder Zahl: gewinnst du, bekommst du den Einsatz doppelt.', [...opts.map(v => ({id: String(v), l: `${v} 🪙 setzen`, sub: `+${v} oder −${v}`})), {id: '0', l: 'Nicht spielen', ghost: 1}], '0',
+    () => { const L = pgLvl(p), c = b.coins[p]; return c >= 30 && Math.random() < .5 + .15*L ? String(opts[Math.min(opts.length - 1, 1)]) : c >= 12 && Math.random() < .6 ? '5' : '0'; }, v => {
+      const x = +v; if (!x || b.coins[p] < x) { pbSay(`${pbN(p)} geht lieber weiter.`); pgPush(); return pgT(fin, pbW(700)); }
+      const win = Math.random() < .5; pbAdd(p, win ? x : -x); b.spent[p] += win ? 0 : x; pbFx(p, `${win ? '+' : '−'}${x} 🪙`, win ? 'good' : 'bad');
+      pbSay(win ? `🎲 Gewonnen! ${pbN(p)} verdoppelt und bekommt ${x} Münzen dazu.` : `🎲 Verloren! ${pbN(p)} ist ${x} Münzen los.`, true); pgPush(); pgT(fin, pbW(1600));
+    }, 'bet');
+}
 // Glücksrad: dreht 3 Sekunden, dann passiert, was oben steht
 function pbWheel(p, fin){
   const s = PQ.s, b = s.br, all = s.pl.map((x, i) => i), r = R0(PB_WH.length);
@@ -17713,7 +17854,7 @@ function pbWheel(p, fin){
   }, 3300);
 }
 // kleine Vorschau einer Karte für die Lobby: Hintergrund, Straßen und Felder
-const PB_PCOL = {h: '#1d1a16', b: '#3d8bff', r: '#ff4d5e', e: '#9b6bd6', s: '#1fae5b', d: '#5a4630', w: '#2ec4d6', g: '#ff8a1f', k: '#7a1fd6', n: '#1f9e6a', z: '#5b5f73'};
+const PB_PCOL = {h: '#1d1a16', b: '#3d8bff', r: '#ff4d5e', e: '#9b6bd6', s: '#1fae5b', d: '#5a4630', w: '#2ec4d6', g: '#ff8a1f', k: '#7a1fd6', n: '#1f9e6a', z: '#5b5f73', c: '#0f7a4a', x: '#5d4a7a', p: '#c4589c'};
 function pbPreview(mi){
   const M = PB_MAPS[mi], N = pbG(mi), pl = P => `<polyline points="${P.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}"/>`, road = N.segs.map(sg => pl(sg.P)).join('');
   return `<div class="pbprev" style="--bg1:${M.bg[0]};--bg2:${M.bg[1]}"><svg class="pbl" viewBox="0 0 160 100" preserveAspectRatio="none">${M.deco ? M.deco(N) : ''}<g class="rd0">${road}</g><g class="rd1">${road}</g>${N.map(n => `<circle cx="${n.X}" cy="${n.Y}" r="${n.nx.length > 1 ? 3.2 : 2.5}" fill="${PB_PCOL[n.t] || '#999'}" stroke="#fff" stroke-width=".6"/>`).join('')}</svg></div>`;
@@ -17803,7 +17944,7 @@ function pgBonusView(s){
 function pbTip(s, i){
   const b = s.br, N = pbG(b.mi), n = N[i], t = b.T[i], m = b.end ? 2 : 1, out = [];
   if (i === b.star) out.push(`<b>⭐ Stern</b>Wer hier vorbeiläuft, kann ihn für ${pbStar(b)} Münzen kaufen. Danach zieht er auf ein anderes Feld.`);
-  else out.push({h: '<b>🏁 Start</b>Hier geht es los, das Feld macht nichts.', b: `<b>🔵 Blaues Feld</b>Wer hier stehen bleibt, bekommt ${3*m} Münzen.`, r: `<b>🔴 Rotes Feld</b>Wer hier stehen bleibt, verliert ${3*m} Münzen.`,
+  else out.push({h: '<b>🏁 Start</b>Hier geht es los, das Feld macht nichts.', b: `<b>🔵 Blaues Feld</b>Wer hier stehen bleibt, bekommt ${3*m} Münzen.`, r: `<b>🔴 Rotes Feld</b>Wer hier stehen bleibt, verliert ${(PB_MAPS[b.mi].red || 3)*m} Münzen.`,
     e: '<b>❓ Ereignis</b>Etwas Zufälliges passiert: Goldregen (+6), Robin Hood (der Reichste gibt dem Ärmsten 5), Teleport, Sturm (der Stern zieht um), Geschenk (ein Gegenstand), Steuer (alle −3) oder nochmal würfeln.',
     s: '<b>🛒 Shop</b>Schon beim Vorbeilaufen kannst du Gegenstände kaufen: ' + Object.values(PB_IT).map(x => `${x.ic} ${x.n} ${x.c} 🪙`).join(', ') + `. Höchstens ${PB_MAX} Stück.`,
     d: `<b>🦹 Dieb</b>Wer hier stehen bleibt, lässt den Dieb für sich klauen: ${5*m} Münzen vom reichsten Mitspieler, mit etwas Glück (12 %) sogar einen Stern.`,
@@ -17811,7 +17952,10 @@ function pbTip(s, i){
     g: '<b>🎰 Glücksrad</b>Wer hier stehen bleibt, dreht am Rad: ' + PB_WH.map(x => `${x.ic} ${x.n}`).join(', ') + '.',
     k: `<b>⚡ Boss</b>Wer hier stehen bleibt, weckt den Boss: nach der Runde kämpfen alle zusammen gegen ihn. Gewinnt ihr, bekommt jeder je nach Schaden 10 bis 25 Münzen und der beste Kämpfer einen Stern. Gewinnt der Boss, verliert jeder 5 Münzen. Nach ${PB_BOSSMAX} Kämpfen übers Boss-Feld verschwinden die Boss-Felder${b.bossT ? ` (bisher ${b.bossT})` : ''}.`,
     n: `<b>🏦 Bank</b>Wer vorbeiläuft, zahlt 3 Münzen ein. Wer hier stehen bleibt, bekommt alles. Gerade drin: ${b.bank} 🪙.`,
-    z: `<b>🚉 Bahnhof ${pbStName(n)}</b>Wer hier stehen bleibt, kann für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.`}[t] || '');
+    z: `<b>🚉 Bahnhof ${pbStName(n)}</b>Wer hier stehen bleibt, kann für ${PB_FARE} Münzen zu einem anderen Bahnhof fahren.`,
+    c: '<b>🎲 Spieltisch</b>Wer hier stehen bleibt, kann 5, 10 oder 20 Münzen setzen: Kopf oder Zahl, gewonnen gibt es den Einsatz doppelt zurück.',
+    x: `<b>👻 Geist</b>Wer hier stehen bleibt, wird 3 Felder zurückgescheucht und verliert ${2*m} Münzen.`,
+    p: '<b>🪐 Schwerkraft</b>Wer hier stehen bleibt, wird vom Planeten 1 bis 3 Felder nach vorn oder 1 bis 2 zurückgezogen.'}[t] || '');
   const op = n.nx.length > 1 ? n.nx.map((z, k) => `${n.lab[k] || (k ? 'abbiegen' : 'weiter')}${n.toll[k] ? ` (${n.toll[k]} 🪙 Zoll)` : ''}${b.closed.includes(n.eg[k]) ? ' – gesperrt' : ''}`) : null;
   if (op) out.push(`<b>Abzweigung</b>${op.join(' oder ')}`);
   if (pbShut(b).has(i)) out.push('<b>Gesperrt</b>Dieser Weg ist gerade nicht befahrbar.');
@@ -20035,6 +20179,112 @@ PGAMES.bquiz = {
     main.querySelectorAll('.pgo').forEach(b => b.onclick = () => { const i = seats.filter(k => k >= 0 && !pgBot(k)).find(k => !g.ans[k] && !PQ.taps['bq' + g.k + ':' + k]); if (i != null) this.local(s, i, {k: 'row', i: +b.dataset.o}); }); },
   local(s, i, a){ const g = s.g; if (i == null || i < 0 || g.st !== 'ask' || a.k !== 'row' || a.i > 3 || g.ans[i] || PQ.taps['bq' + g.k + ':' + i]) return; PQ.taps['bq' + g.k + ':' + i] = a.i + 1; Snd.tick(); pgSend(i, {k: 'ans', a: a.i, t: Math.round(performance.now() - (PQ.mk['bq' + g.k] || performance.now()))}); pgRender(); },
 };
+/* ---------- Turnier (Party, 3–6 Spieler): K.-o.-Baum, jedes Match zwei Spieler über Best of 1/3/5 Minispiele ----------
+   Der Gastgeber hält den Baum in T (liegt in jedem Stand als s.tour). Für ein Match wird PQ.s durch einen eigenen Stand
+   mit nur den beiden Spielern ersetzt; s.map sagt, welcher Platz in der Lobby dahintersteht (Eingaben und Bots laufen darüber).
+   Die anderen schauen zu. Bot gegen Bot wird ausgewürfelt, damit niemand lange warten muss. Freilose bei 3, 5 oder 6 Spielern. */
+const TR_RN = (r, R) => { const k = R - r; return k === 1 ? 'Finale' : k === 2 ? 'Halbfinale' : k === 3 ? 'Viertelfinale' : `Runde ${r + 1}`; };
+const trBo = (T, r) => r === T.R.length - 1 ? Math.min(5, T.bo + 2) : T.bo;   // das Finale ist länger
+const trNm = (T, i) => i >= 0 ? esc(T.pl[i].n) : '';
+
+function pgTourInit(){
+  const s0 = PQ.s, n = s0.pl.length; let size = 2; while (size < n) size *= 2;
+  // Setzliste: zufällig, Freilose gehen an die ersten Plätze; Paarung 1–8, 4–5, 2–7, 3–6 (bei 4: 1–4, 2–3)
+  const seed = shuffle(s0.pl.map((p, i) => i)), ord = size === 8 ? [[0, 7], [3, 4], [1, 6], [2, 5]] : [[0, 3], [1, 2]];
+  const R = [ord.map(([a, b]) => ({a: seed[a] != null ? seed[a] : -1, b: seed[b] != null ? seed[b] : -1, w: -1, sc: [0, 0], g: []}))];
+  for (let k = R[0].length/2; k >= 1; k /= 2) R.push(Array.from({length: k}, () => ({a: -2, b: -2, w: -1, sc: [0, 0], g: []})));
+  const T = {bo: [1, 3, 5].includes(PT.bo) ? PT.bo : 3, R, pl: s0.pl, cur: null, gw: s0.pl.map(() => 0), gp: s0.pl.map(() => 0), mid: 0, sim: null};
+  PQ.base = {nch: s0.nch, len0: s0.len0, tempo: s0.tempo};
+  trBye(T); pgTourShow(T);
+}
+// Freilose: wer keinen Gegner hat, kommt direkt weiter
+function trBye(T){
+  T.R.forEach((rd, r) => rd.forEach((m, k) => {
+    if (m.w >= 0 || m.a === -2 || m.b === -2) return;
+    if (m.a === -1 || m.b === -1) { m.w = m.a === -1 ? m.b : m.a; m.bye = true; trAdv(T, r, k); }
+  }));
+}
+function trAdv(T, r, k){ const nx = T.R[r + 1]; if (!nx) return; const m = nx[k >> 1]; if (k & 1) m.b = T.R[r][k].w; else m.a = T.R[r][k].w; }
+const trNext = T => { for (let r = 0; r < T.R.length; r++) for (let k = 0; k < T.R[r].length; k++) { const m = T.R[r][k]; if (m.w < 0 && m.a >= 0 && m.b >= 0) return [r, k]; } return null; };
+
+// Übersicht: Baum, nächstes Match, Start-Knopf beim Gastgeber
+function pgTourShow(T){
+  pgClear(); trBye(T); T.cur = trNext(T);
+  PQ.s = {ph: 'tour', mode: 'tour', ri: T.mid, pl: T.pl, tour: T, tempo: PQ.base.tempo, pts: T.pl.map(() => 0), g: null, res: null};
+  if (!T.cur) return pgTourEnd(T);
+  const [r, k] = T.cur, m = T.R[r][k];
+  if (T.pl[m.a].bot && T.pl[m.b].bot) { T.sim = {r, k}; pgPush(); return pgT(() => trSim(T, r, k), pbW(2600)); }
+  T.sim = null; T.at = Date.now(); pgPush();
+  pgT(() => { if (PQ.s && PQ.s.ph === 'tour' && PQ.s.tour === T && T.cur && T.cur[0] === r && T.cur[1] === k) pgTourMatch(); }, pbW(15000));
+}
+// Bot gegen Bot: Minispiel für Minispiel auswürfeln, die Stufe zählt etwas mit
+function trSim(T, r, k){
+  const m = T.R[r][k], need = (trBo(T, r) + 1)/2, L = i => T.pl[i].lvl | 0;
+  while (m.sc[0] < need && m.sc[1] < need) { const x = Math.random() < .5 + .12*(L(m.a) - L(m.b)) ? 0 : 1; m.sc[x]++; m.g.push({id: '', w: x}); T.gw[x ? m.b : m.a]++; T.gp[m.a]++; T.gp[m.b]++; }
+  m.w = m.sc[0] >= need ? m.a : m.b; trAdv(T, r, k); T.sim = null; pgTourShow(T);
+}
+// Match starten: eigener Stand mit den beiden Spielern, danach wie im Modus „Minispiele“
+function pgTourMatch(){
+  const T = PQ.s && PQ.s.tour; if (!pgHost() || !T || !T.cur || PQ.s.ph !== 'tour') return;
+  pgClear(); const [r, k] = T.cur, m = T.R[r][k], B = PQ.base; T.mid++;
+  PQ.s = {ph: 'intro', ri: 0, mid: T.mid, mode: 'endless', nch: B.nch, len: 1, len0: B.nch === -1 ? B.len0 : 2, mins: 3, tempo: B.tempo, try: null, pl: [T.pl[m.a], T.pl[m.b]], map: [m.a, m.b], pts: [0, 0], g: null, res: null, prev: m.g.length ? m.g[m.g.length - 1].id : '', tour: T};
+  pgPick();
+}
+// nach jedem Minispiel im Match: Punkt für den Sieger (Gleichstand zählt nicht), Match vorbei → zurück zum Baum
+function pgTourAfter(){
+  const s = PQ.s, T = s.tour, [r, k] = T.cur, m = T.R[r][k], P = s.res && s.res.place;
+  if (P) { const x = P[0] === P[1] ? -1 : P[0] < P[1] ? 0 : 1; T.gp[m.a]++; T.gp[m.b]++; m.g.push({id: s.g ? s.g.id : s.prev, w: x}); if (x >= 0) { m.sc[x]++; T.gw[s.map[x]]++; } }
+  const need = (trBo(T, r) + 1)/2;
+  if (m.sc[0] >= need || m.sc[1] >= need) { m.w = m.sc[0] >= need ? m.a : m.b; trAdv(T, r, k); return pgTourShow(T); }
+  pgPick();
+}
+// Ende: Sieger, Plätze nach erreichter Runde (bei Gleichstand Minispiel-Siege), Baum und Highlights
+function pgTourEnd(T){
+  pgClear(); const n = T.pl.length, out = T.pl.map(() => 0);
+  T.R.forEach((rd, r) => rd.forEach(m => { if (m.w >= 0 && !m.bye) [m.a, m.b].forEach(i => { if (i >= 0) out[i] = Math.max(out[i], m.w === i ? r + 1 : r); }); else if (m.bye && m.w >= 0) out[m.w] = Math.max(out[m.w], r + 1); }));
+  const ord = T.pl.map((p, i) => i).sort((a, b) => out[b] - out[a] || T.gw[b] - T.gw[a]), place = [];
+  ord.forEach((i, k) => { place[i] = k && out[i] === out[ord[k - 1]] && T.gw[i] === T.gw[ord[k - 1]] ? place[ord[k - 1]] : k; });
+  T.out = out; T.place = place; T.ord = ord; T.done = T.R[T.R.length - 1][0].w;
+  PQ.s = {ph: 'end', mode: 'tour', ri: T.mid, pl: T.pl, tour: T, tempo: PQ.base.tempo, pts: T.pl.map(() => 0), g: null, res: null};
+  pgPush();
+}
+
+/* ---------- Ansicht ---------- */
+function pgTourBracket(T){
+  const cur = T.cur ? T.cur.join(':') : '';
+  return `<div class="trb">${T.R.map((rd, r) => `<div class="trc"><div class="kick">${TR_RN(r, T.R.length)}${trBo(T, r) > 1 ? ` · Bo${trBo(T, r)}` : ''}</div><div class="trms">${rd.map((m, k) => {
+    const row = (i, x) => i === -1 ? '<div class="trp bye">Freilos</div>' : i < 0 ? '<div class="trp tbd">…</div>' : `<div class="trp${m.w === i ? ' w' : m.w >= 0 ? ' l' : ''}${pgMineG(i) ? ' me' : ''}" style="--pc:${PT_COL0[i]}"><b>${trNm(T, i)}</b>${m.bye ? '' : `<span>${m.sc[x]}</span>`}</div>`;
+    return `<div class="trm${cur === r + ':' + k ? ' cur' : ''}">${row(m.a, 0)}${row(m.b, 1)}</div>`; }).join('')}</div></div>`).join('')}</div>`;
+}
+const pgMineG = i => PT.role === 'local' ? !PQ.s.pl[i].bot && PQ.s.pl[i].seat >= 0 : i === PT.me;
+function pgTourView(s){
+  const T = s.tour, c = T.cur, m = c && T.R[c[0]][c[1]];
+  if (!m) return pgTourBracket(T);
+  const vs = `<div class="trvs"><b style="color:${PT_COL0[m.a]}">${trNm(T, m.a)}</b><i>gegen</i><b style="color:${PT_COL0[m.b]}">${trNm(T, m.b)}</b></div>`;
+  const sub = `${TR_RN(c[0], T.R.length)} · ${trBo(T, c[0]) === 1 ? 'ein Minispiel entscheidet' : `Best of ${trBo(T, c[0])}: wer zuerst ${(trBo(T, c[0]) + 1)/2} Minispiele gewinnt`}`;
+  const btn = T.sim ? '<p class="hint">🤖 Bot gegen Bot wird ausgewürfelt …</p>'
+    : pgHost() ? `<div class="mbtns"><button class="btn" id="pgtgo">Match starten${enterKb()}</button><button class="btn ghost${PQ.endArm > performance.now() ? ' warn' : ''}" id="pgend">${PQ.endArm > performance.now() ? 'Wirklich beenden?' : 'Turnier beenden'}</button></div><p class="hint">Startet von selbst in ${pgCdn('tg' + T.mid + ':' + c.join(), pbW(15000))}</p>`
+    : `<p class="hint">Der Gastgeber startet das Match.</p>`;
+  const watch = !pgMineG(m.a) && !pgMineG(m.b) && !T.sim ? '<p class="hint">👀 Du schaust bei diesem Match zu.</p>' : '';
+  return `<div class="icon">🏆</div><h1 class="big-h">Turnier</h1><div class="kick">Nächstes Match · ${sub}</div>${vs}${watch}${btn}${pgTourBracket(T)}`;
+}
+// Kopfzeile während eines Matches: Runde und Stand
+function pgTourKick(s){
+  const T = s.tour, [r, k] = T.cur, m = T.R[r][k];
+  return `🏆 ${TR_RN(r, T.R.length)} · <span style="color:${PT_COL0[m.a]}">${trNm(T, m.a)}</span> ${m.sc[0]} : ${m.sc[1]} <span style="color:${PT_COL0[m.b]}">${trNm(T, m.b)}</span>${trBo(T, r) > 1 ? ` · Best of ${trBo(T, r)}` : ''}`;
+}
+function pgTourEndView(s){
+  const T = s.tour, w = T.done, L = [];
+  const ms = T.R.flat().filter(m => m.w >= 0 && !m.bye);
+  const top = T.pl.map((p, i) => i).sort((a, b) => T.gw[b] - T.gw[a])[0]; if (T.gw[top]) L.push(['🏆 Meiste Minispiel-Siege', `${trNm(T, top)}, ${T.gw[top]} von ${T.gp[top]}`]);
+  const sw = ms.filter(m => Math.min(...m.sc) === 0 && Math.max(...m.sc) > 1); if (sw.length) L.push(['🧹 Glatt durch', sw.map(m => `${trNm(T, m.w)} ${Math.max(...m.sc)}:0 gegen ${trNm(T, m.w === m.a ? m.b : m.a)}`).join(', ')]);
+  const cl = ms.filter(m => Math.abs(m.sc[0] - m.sc[1]) === 1 && m.sc[0] + m.sc[1] > 1); if (cl.length) L.push(['😮‍💨 Knappstes Match', cl.map(m => `${trNm(T, m.a)} ${m.sc[0]}:${m.sc[1]} ${trNm(T, m.b)}`).join(', ')]);
+  const ti = ms.reduce((a, m) => a + m.g.filter(g => g.w < 0).length, 0); if (ti) L.push(['🤝 Unentschieden', `${ti} Minispiel${ti > 1 ? 'e' : ''} ohne Sieger, da musste nachgespielt werden`]);
+  const hl = L.length ? `<div class="hl pghl"><div class="kick">Highlights</div>${L.map(([a, b]) => `<div class="hlr"><span>${a}</span><b>${b}</b></div>`).join('')}</div>` : '';
+  const rk = `<div class="pgres pgfin">${T.ord.map(i => `<div class="pgr${pgMineG(i) ? ' me' : ''}" style="--pc:${PT_COL0[i]}"><span class="pl">${T.place[i] + 1}.</span><span class="hd">${ptHead({av: T.pl[i].av}, i)}</span><b>${trNm(T, i)}<em>${T.out[i] >= T.R.length ? 'Turniersieg' : T.out[i] === T.R.length - 1 ? 'im Finale verloren' : `${T.out[i] < T.R.length - 3 ? 'in' : 'im'} ${TR_RN(T.out[i], T.R.length)} raus`} · 🏆 ${T.gw[i]} Minispiel-Siege</em></b><span class="gn"></span></div>`).join('')}</div>`;
+  return `<div class="icon">🏆</div><h1 class="big-h">${w >= 0 ? `${trNm(T, w)} gewinnt das Turnier` : 'Turnier beendet'}</h1>${rk}${hl}<div class="kick pgtk">Turnierbaum</div>${pgTourBracket(T)}
+    ${pgHost() ? `<div class="mbtns"><button class="btn" id="pgre">Nochmal</button><button class="btn ghost" id="pglob">Zur Lobby</button></div>` : '<p class="hint">Warte auf den Gastgeber.</p>'}`;
+}
 </script>
 </body>
 </html>
