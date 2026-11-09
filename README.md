@@ -16,13 +16,13 @@ Online wird die Verzögerung ausgeglichen: Es zählt der Moment, in dem gedrück
 
 ## Party (3–6 Spieler)
 
-- **Online:** „Spielen“ → „Online“ → „Party“ → Raum erstellen, Link teilen oder den QR-Code zeigen. Freie Plätze füllen Bots.
-- **An einem Gerät:** „Spielen“ → „Offline“ → „Party mit Bots“ (du, auf Wunsch ein zweiter Spieler, dazu Bots).
+- **Online:** „Spielen“ → „Online“ → „Party“ oder „Turnier“ → Raum erstellen, Link teilen oder den QR-Code zeigen. Freie Plätze füllen Bots.
+- **An einem Gerät:** „Spielen“ → „Offline“ → „Party mit Bots“ oder „Turnier mit Bots“ (du, auf Wunsch ein zweiter Spieler, dazu Bots).
 
 Drei Modi:
 - **🎲 Brett:** würfeln, laufen, Sterne kaufen, nach jeder Runde ein Minispiel. Mehrere Karten, die sich während der Partie verändern.
 - **♾️ Minispiele:** ein Minispiel nach dem anderen, Punkte nach Platz, nach jedem Spiel der Gesamtstand.
-- **🏆 Turnier:** K.-o.-Baum, immer zwei spielen gegeneinander. Zur Wahl stehen auch die Spiele, die es nur im Duell gibt (Pong, Lufthockey, Vier gewinnt …).
+- **🏆 Turnier (3–16 Spieler):** K.-o.-Baum, immer zwei spielen gegeneinander. Online laufen die Matches gleichzeitig an den Geräten der Spieler (gespielt werden die 1-gegen-1-Spiele aus dem Duell, der Gastgeber wählt sie aus oder sie werden gelost), oder nacheinander mit allen Party-Minispielen, dann schauen die anderen zu.
 
 Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link zurück auf seinen Platz. Fällt der Gastgeber aus, übernimmt der Nächste.
 
