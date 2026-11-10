@@ -22,7 +22,7 @@ Online wird die Verzögerung ausgeglichen: Es zählt der Moment, in dem gedrück
 Drei Modi:
 - **🎲 Brett:** würfeln, laufen, Sterne kaufen, nach jeder Runde ein Minispiel. Mehrere Karten, die sich während der Partie verändern.
 - **♾️ Minispiele:** ein Minispiel nach dem anderen, Punkte nach Platz, nach jedem Spiel der Gesamtstand.
-- **🏆 Turnier (3–16 Spieler):** K.-o.-Baum, immer zwei spielen gegeneinander. Online laufen die Matches gleichzeitig an den Geräten der Spieler (gespielt werden die 1-gegen-1-Spiele aus dem Duell, der Gastgeber wählt sie aus oder sie werden gelost), oder nacheinander mit allen Party-Minispielen, dann schauen die anderen zu.
+- **🏆 Turnier (3–16 Spieler):** K.-o.-Baum, immer zwei spielen gegeneinander. Online laufen die Matches einer Runde gleichzeitig an den Geräten der Spieler, die nächste Runde startet gemeinsam, und wer fertig ist, kann bei den anderen live zuschauen (gespielt werden die 1-gegen-1-Spiele aus dem Duell, der Gastgeber wählt sie aus oder sie werden gelost), oder nacheinander mit allen Party-Minispielen, dann schauen die anderen zu.
 
 Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link zurück auf seinen Platz. Fällt der Gastgeber aus, übernimmt der Nächste.
 
