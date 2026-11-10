@@ -1,6 +1,6 @@
 # Qwerbeet
 
-Partyspiel mit 55 Duell-Spielen in fünf Kategorien (Reaktion & Geschick, Arcade, Kopf, Wissen, Taktik & Bluff) und einer Party für 3–6 Spieler mit rund 50 Minispielen. Dazu Powerups, Bots in drei Stärken und ein eigener Held für jeden, den man im Editor zusammenbaut.
+Partyspiel mit 55 Duell-Spielen in fünf Kategorien (Reaktion & Geschick, Arcade, Kopf, Wissen, Taktik & Bluff) und einer Party für 3–6 Spieler mit 54 Minispielen (davon 4 Boss-Kämpfe), dazu ein Turnier für 3–16 Spieler. Dazu Powerups, Bots in drei Stärken und ein eigener Held für jeden, den man im Editor zusammenbaut.
 
 **Spielen:** https://tabiuseheo.github.io/Qwerbeet/
 
