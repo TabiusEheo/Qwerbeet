@@ -28,7 +28,12 @@ Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link
 
 ## Brett- & Kartenspiele
 
-Vierte Auswahl unter „Spielen“ (offline gegen Bots oder online): ein Spiel am Stück. Bisher **Schafkopf** (Sauspiel, Wenz, Solo), **Skat** (Reizen, Farbspiel, Grand, Null), **Doppelkopf** und **Zauberer** (3–6 Spieler). Online sieht jeder nur seine eigenen Karten, freie Plätze füllen Bots.
+Vierte Auswahl unter „Spielen“ (offline gegen Bots oder online): ein Spiel am Stück.
+
+- **Karten:** Schafkopf (Sauspiel, Wenz, Solo), Skat (Reizen, Farbspiel, Grand, Null), Doppelkopf, Zauberer (Stiche ansagen, 3–6), Poker (Texas Hold'em um Spielchips), Canasta (vereinfacht, jeder für sich), Durak, Farbrausch (wie Uno).
+- **Brett:** Schach, Backgammon, Mensch ärgere dich nicht. Diese gehen auch zu zweit an einem Gerät.
+
+Online sieht jeder nur seine eigenen Karten, freie Plätze füllen Bots.
 
 ## Als App
 
