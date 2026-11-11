@@ -30,7 +30,8 @@ Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link
 
 Vierte Auswahl unter „Spielen“ (offline gegen Bots oder online): ein Spiel am Stück.
 
-- **Karten:** Schafkopf (Sauspiel, Wenz, Solo), Skat (Reizen, Farbspiel, Grand, Null), Doppelkopf, Zauberer (Stiche ansagen, 3–6), Poker (Texas Hold'em um Spielchips), Canasta (vereinfacht, jeder für sich), Durak, Farbrausch (wie Uno).
+- **Karten:** Schafkopf (Sauspiel, Wenz, Solo), Skat (Reizen, Farbspiel, Grand, Null), Doppelkopf, Zauberer (Stiche ansagen, 3–6), Poker (Texas Hold'em um Spielchips), Canasta (vereinfacht, jeder für sich), Romme (Erstauslage 40, Anlegen, Joker tauschen), Durak, Farbrausch (wie Uno).
+- **Schreiben:** Stadt, Land, Fluss mit frei eintippbaren Kategorien, einstellbaren Punkten und Selbstwertung, bei der alle alle Antworten und Punkte sehen.
 - **Brett:** Schach, Backgammon, Mensch ärgere dich nicht. Diese gehen auch zu zweit an einem Gerät.
 
 Online sieht jeder nur seine eigenen Karten, freie Plätze füllen Bots.
