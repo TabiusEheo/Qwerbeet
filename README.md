@@ -26,6 +26,10 @@ Drei Modi:
 
 Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link zurück auf seinen Platz. Fällt der Gastgeber aus, übernimmt der Nächste.
 
+## Brett- & Kartenspiele
+
+Vierte Auswahl unter „Spielen“ (offline gegen Bots oder online): ein Spiel am Stück. Bisher **Schafkopf** (Sauspiel, Wenz, Solo), **Skat** (Reizen, Farbspiel, Grand, Null), **Doppelkopf** und **Stiche ansagen** (3–6 Spieler). Online sieht jeder nur seine eigenen Karten, freie Plätze füllen Bots.
+
 ## Als App
 
 Auf der Webseite lässt sich Qwerbeet installieren (Einstellungen → „Als App installieren“, am iPhone über „Teilen“ → „Zum Home-Bildschirm“). Dann startet es im Vollbild und läuft an einem Gerät auch offline (`manifest.webmanifest`, `sw.js`).
