@@ -31,7 +31,7 @@ Der Gastgeber kann jederzeit pausieren. Wer rausfliegt, kommt mit demselben Link
 Vierte Auswahl unter „Spielen“ (offline gegen Bots oder online): ein Spiel am Stück.
 
 - **Karten:** Schafkopf (Sauspiel, Wenz, Solo), Skat (Reizen, Farbspiel, Grand, Null), Doppelkopf, Zauberer (Stiche ansagen, 3–6), Poker (Texas Hold'em um Spielchips), Canasta (vereinfacht, jeder für sich), Romme (Erstauslage 40, Anlegen, Joker tauschen), Durak, Farbrausch (wie Uno).
-- **Ein Raum für alles:** Unter „Spielen“ wählt man nur noch „An einem Gerät“ oder „Online-Raum“. Im Raum geht es in drei Schritten: Leute (einladen, Bots), Spielart (Duell, Party-Brett, Minispiele, Turnier, Brett- & Kartenspiele; auf Wunsch mit Abstimmung), Einstellungen. Die Spielart lässt sich jederzeit wechseln, alle bleiben im Raum.
+- **Ein Raum für alles:** Unter „Spielen“ wählt man nur noch „An einem Gerät“ oder „Online-Raum“. Im Raum geht es in drei Schritten: Leute (einladen, Bots), Spielart (Duell, Party-Brett, Minispiele, Turnier, Brett- & Kartenspiele; wer wählt, ist einstellbar: Gastgeber, Abstimmung, Sieger oder Verlierer der letzten Partie), Einstellungen. Die Spielart lässt sich jederzeit wechseln, alle bleiben im Raum.
 - **Duell im Raum:** zwei spielen das normale Online-Duell, die anderen können zuschauen, danach sind alle wieder im Raum.
 - **Zuschauer:** Sind online mehr Leute im Raum, als das Spiel Plätze hat, schauen die übrigen zu (ohne Karten zu sehen). Der Gastgeber legt in der Lobby mit „zuschauen/mitspielen“ fest, wer spielt.
 - **Nochmal mit Zuschauern:** „Nochmal (Sieger bleibt)“ lässt den Sieger sitzen, die anderen Plätze gehen an die, die am längsten zugeschaut haben.
