@@ -1,0 +1,7 @@
+{
+  "name": "qwerbeet-tests",
+  "private": true,
+  "description": "Automatischer Test: läuft bei jedem Push auf GitHub (Actions)",
+  "scripts": {"test": "node run.js"},
+  "dependencies": {"peer": "^1.0.2", "playwright": "1.48.2"}
+}
