@@ -63,7 +63,7 @@ async function tableSmoke(b){
 // 3. Raum-Formate mit Bots bis zum Ende
 async function formats(b){
   const p = await page(b, {clock: true});
-  const runs = [['one', "PT.one = 'p:reakt'; PT.olen = 0;"], ['one', "PT.one = 't:durak'; PT.olen = 0;"], ['ffa', "PT.ffaN = 2; PT.nch = -3; PT.lenM = 0;"], ['board', "PT.rounds = 2; PT.nch = -1;"], ['tour', "PT.bo = 1; PT.nch = -1;"]];
+  const runs = [['one', "PT.one = 'p:reakt'; PT.olen = 0;"], ['one', "PT.one = 't:durak'; PT.olen = 0;"], ['one', "PT.one = 'p:bomberman'; PT.olen = 0;"], ['one', "PT.one = 'p:wordle'; PT.olen = 0;"], ['one', "PT.one = 'p:flaggen'; PT.olen = 0;"], ['one', "PT.one = 'p:maulwurf'; PT.olen = 0;"], ['one', "PT.one = 'p:papierkorb'; PT.olen = 0; for (let i = 0; i < 8; i++) ptAddBot(true);"], ['ffa', "PT.ffaN = 2; PT.nch = -3; PT.lenM = 0;"], ['board', "PT.rounds = 2; PT.nch = -1;"], ['tour', "PT.bo = 1; PT.nch = -1;"]];
   for (const [fmt, setup] of runs) {
     await p.evaluate(([fmt, setup]) => { try { pgStop(); ptStop(); } catch(e) {} localStorage.removeItem('qw-party'); menu('home'); ptLocal(); for (let i = 0; i < 4; i++) ptAddBot(true); PT.fmt = fmt; PT.step = 'games'; eval(setup); PT.pl[0].watch = true; PT.tempo = .6; ptSync(); rmGo(); }, [fmt, setup]);
     let ok = false;
